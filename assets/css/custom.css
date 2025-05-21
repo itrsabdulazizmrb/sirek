@@ -1,0 +1,270 @@
+/* Custom CSS for SIREK Recruitment System */
+
+/* Auth pages */
+.auth-bg {
+  background-size: cover;
+  background-position: center;
+}
+
+/* Dashboard customizations */
+.sirek-card {
+  transition: all 0.3s ease;
+}
+
+.sirek-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* Job listings */
+.job-card {
+  border-radius: 10px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.job-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+
+.job-badge {
+  font-size: 0.7rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 30px;
+}
+
+/* Application status colors */
+.status-pending {
+  color: #f5b759;
+}
+
+.status-reviewed {
+  color: #5e72e4;
+}
+
+.status-shortlisted {
+  color: #2dce89;
+}
+
+.status-interviewed {
+  color: #11cdef;
+}
+
+.status-offered {
+  color: #fb6340;
+}
+
+.status-hired {
+  color: #2dce89;
+}
+
+.status-rejected {
+  color: #f5365c;
+}
+
+/* Profile completion progress */
+.profile-completion {
+  height: 8px;
+  border-radius: 10px;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .auth-image-column {
+    display: none !important;
+  }
+}
+
+/* Assessment styles */
+.question-card {
+  border-left: 4px solid #5e72e4;
+  padding-left: 15px;
+  margin-bottom: 20px;
+}
+
+.option-item {
+  padding: 10px;
+  border: 1px solid #dee2e6;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.option-item:hover {
+  background-color: #f8f9fa;
+}
+
+.option-item.selected {
+  background-color: #e9ecef;
+  border-color: #5e72e4;
+}
+
+/* Blog styles */
+.blog-card {
+  border-radius: 10px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.blog-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+
+.blog-featured-image {
+  height: 200px;
+  object-fit: cover;
+}
+
+/* Custom file input */
+.custom-file-input::-webkit-file-upload-button {
+  visibility: hidden;
+}
+
+.custom-file-input::before {
+  content: 'Select file';
+  display: inline-block;
+  background: linear-gradient(top, #f9f9f9, #e3e3e3);
+  border: 1px solid #999;
+  border-radius: 3px;
+  padding: 5px 8px;
+  outline: none;
+  white-space: nowrap;
+  cursor: pointer;
+  text-shadow: 1px 1px #fff;
+  font-weight: 700;
+  font-size: 10pt;
+}
+
+.custom-file-input:hover::before {
+  border-color: black;
+}
+
+.custom-file-input:active::before {
+  background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9);
+}
+
+/* Notification badge */
+.notification-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  padding: 3px 6px;
+  border-radius: 50%;
+  background-color: #f5365c;
+  color: white;
+  font-size: 0.6rem;
+}
+
+/* Dashboard stats */
+.stat-card {
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+}
+
+.stat-icon {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.stat-value {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: #8898aa;
+}
+
+/* Timeline */
+.timeline {
+  position: relative;
+  padding-left: 30px;
+}
+
+.timeline:before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 2px;
+  height: 100%;
+  background-color: #e9ecef;
+}
+
+.timeline-item {
+  position: relative;
+  padding-bottom: 20px;
+}
+
+.timeline-item:before {
+  content: '';
+  position: absolute;
+  left: -34px;
+  top: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #5e72e4;
+}
+
+.timeline-date {
+  font-size: 0.8rem;
+  color: #8898aa;
+  margin-bottom: 5px;
+}
+
+.timeline-content {
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 5px;
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  .print-only {
+    display: block !important;
+  }
+  
+  body {
+    padding: 0;
+    margin: 0;
+  }
+  
+  .container {
+    width: 100%;
+    max-width: 100%;
+  }
+}

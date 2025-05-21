@@ -1,0 +1,178 @@
+<div class="page-header min-vh-50" style="background-image: url('<?= base_url('assets/img/blog-bg.jpg') ?>');">
+  <span class="mask bg-gradient-dark opacity-6"></span>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 mx-auto">
+        <div class="text-center">
+          <h1 class="text-white">Blog SIREK</h1>
+          <p class="lead text-white">Artikel, tips, dan berita terbaru seputar rekrutmen dan karir</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row mt-n6">
+    <div class="col-md-12">
+      <div class="card card-body blur shadow-blur mx-3 mx-md-4">
+        <form action="<?= base_url('home/blog') ?>" method="get">
+          <div class="row">
+            <div class="col-md-10">
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                <input type="text" class="form-control" name="q" placeholder="Cari artikel..." value="<?= $this->input->get('q') ?>">
+              </div>
+            </div>
+            <div class="col-md-2">
+              <button type="submit" class="btn bg-gradient-primary w-100">Cari</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+  <div class="row mt-4">
+    <div class="col-lg-8">
+      <div class="row">
+        <?php if (empty($posts)) : ?>
+          <div class="col-12">
+            <div class="card">
+              <div class="card-body text-center py-5">
+                <h4 class="text-secondary">Tidak ada artikel yang ditemukan</h4>
+                <p class="text-muted">Silakan coba dengan kata kunci yang berbeda atau kembali lagi nanti.</p>
+              </div>
+            </div>
+          </div>
+        <?php else : ?>
+          <?php foreach ($posts as $post) : ?>
+            <div class="col-md-6 mb-4">
+              <div class="card blog-card h-100">
+                <div class="card-header p-0 mx-3 mt-3 position-relative z-index-1">
+                  <a href="<?= base_url('home/blog_post/' . $post->slug) ?>" class="d-block">
+                    <?php if ($post->featured_image) : ?>
+                      <img src="<?= base_url('uploads/blog_images/' . $post->featured_image) ?>" class="img-fluid border-radius-lg blog-featured-image" alt="<?= $post->title ?>">
+                    <?php else : ?>
+                      <img src="<?= base_url('assets/img/blog-placeholder.jpg') ?>" class="img-fluid border-radius-lg blog-featured-image" alt="<?= $post->title ?>">
+                    <?php endif; ?>
+                  </a>
+                </div>
+                <div class="card-body pt-3">
+                  <h5 class="mb-0"><a href="<?= base_url('home/blog_post/' . $post->slug) ?>" class="text-dark"><?= $post->title ?></a></h5>
+                  <p class="text-sm mt-2 mb-0">
+                    <i class="fas fa-user me-1"></i> <?= $post->author_name ?>
+                    <span class="mx-2">|</span>
+                    <i class="fas fa-calendar me-1"></i> <?= date('d M Y', strtotime($post->created_at)) ?>
+                  </p>
+                  <p class="text-sm mt-3 mb-3"><?= character_limiter(strip_tags($post->content), 150) ?></p>
+                  <a href="<?= base_url('home/blog_post/' . $post->slug) ?>" class="text-primary text-sm font-weight-bold">Baca selengkapnya</a>
+                </div>
+              </div>
+            </div>
+          <?php endforeach; ?>
+        <?php endif; ?>
+      </div>
+      
+      <!-- Pagination -->
+      <div class="row mt-4">
+        <div class="col-md-12">
+          <nav aria-label="Page navigation">
+            <?= $pagination ?>
+          </nav>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-lg-4">
+      <!-- Categories -->
+      <div class="card">
+        <div class="card-header pb-0">
+          <h5 class="mb-0">Kategori</h5>
+        </div>
+        <div class="card-body pt-2">
+          <ul class="list-group">
+            <?php foreach ($categories as $category) : ?>
+              <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
+                <div class="d-flex align-items-center">
+                  <div class="icon icon-shape icon-sm bg-gradient-primary shadow text-center me-2">
+                    <i class="fas fa-tag text-white opacity-10"></i>
+                  </div>
+                  <a href="<?= base_url('home/blog?category=' . $category->id) ?>" class="text-dark"><?= $category->name ?></a>
+                </div>
+                <div>
+                  <span class="badge badge-sm bg-gradient-primary"><?= $this->blog_model->count_posts_by_category($category->id) ?></span>
+                </div>
+              </li>
+            <?php endforeach; ?>
+          </ul>
+        </div>
+      </div>
+      
+      <!-- Recent Posts -->
+      <div class="card mt-4">
+        <div class="card-header pb-0">
+          <h5 class="mb-0">Artikel Terbaru</h5>
+        </div>
+        <div class="card-body pt-2">
+          <?php 
+          $recent_posts = $this->blog_model->get_latest_posts(5);
+          foreach ($recent_posts as $recent_post) : 
+          ?>
+            <div class="d-flex mt-3">
+              <div>
+                <div class="avatar avatar-sm bg-gradient-primary shadow text-center rounded-circle">
+                  <i class="fas fa-newspaper text-white opacity-10"></i>
+                </div>
+              </div>
+              <div class="ms-3">
+                <a href="<?= base_url('home/blog_post/' . $recent_post->slug) ?>" class="text-dark">
+                  <h6 class="mb-0 text-sm"><?= $recent_post->title ?></h6>
+                </a>
+                <p class="text-xs text-secondary mb-0"><?= date('d M Y', strtotime($recent_post->created_at)) ?></p>
+              </div>
+            </div>
+            <hr class="horizontal dark my-3">
+          <?php endforeach; ?>
+        </div>
+      </div>
+      
+      <!-- Subscribe -->
+      <div class="card mt-4">
+        <div class="card-header p-3 pb-0">
+          <h5 class="mb-0">Berlangganan</h5>
+          <p class="text-sm mb-0">Dapatkan artikel terbaru langsung ke email Anda</p>
+        </div>
+        <div class="card-body p-3">
+          <form action="<?= base_url('home/subscribe') ?>" method="post">
+            <div class="mb-3">
+              <input type="email" class="form-control" name="email" placeholder="Email Anda" required>
+            </div>
+            <button type="submit" class="btn bg-gradient-primary w-100">Berlangganan</button>
+          </form>
+        </div>
+      </div>
+      
+      <!-- Tags -->
+      <div class="card mt-4">
+        <div class="card-header pb-0">
+          <h5 class="mb-0">Tag Populer</h5>
+        </div>
+        <div class="card-body pt-2">
+          <div class="d-flex flex-wrap">
+            <a href="<?= base_url('home/blog?tag=rekrutmen') ?>" class="badge bg-gradient-primary me-2 mb-2">Rekrutmen</a>
+            <a href="<?= base_url('home/blog?tag=karir') ?>" class="badge bg-gradient-info me-2 mb-2">Karir</a>
+            <a href="<?= base_url('home/blog?tag=wawancara') ?>" class="badge bg-gradient-success me-2 mb-2">Wawancara</a>
+            <a href="<?= base_url('home/blog?tag=cv') ?>" class="badge bg-gradient-warning me-2 mb-2">CV</a>
+            <a href="<?= base_url('home/blog?tag=tips') ?>" class="badge bg-gradient-danger me-2 mb-2">Tips</a>
+            <a href="<?= base_url('home/blog?tag=hr') ?>" class="badge bg-gradient-dark me-2 mb-2">HR</a>
+            <a href="<?= base_url('home/blog?tag=teknologi') ?>" class="badge bg-gradient-secondary me-2 mb-2">Teknologi</a>
+            <a href="<?= base_url('home/blog?tag=remote') ?>" class="badge bg-gradient-light text-dark me-2 mb-2">Remote</a>
+            <a href="<?= base_url('home/blog?tag=freelance') ?>" class="badge bg-gradient-primary me-2 mb-2">Freelance</a>
+            <a href="<?= base_url('home/blog?tag=startup') ?>" class="badge bg-gradient-info me-2 mb-2">Startup</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

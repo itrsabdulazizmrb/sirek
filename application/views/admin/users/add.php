@@ -1,0 +1,251 @@
+<div class="row">
+  <div class="col-12">
+    <div class="card mb-4">
+      <div class="card-header pb-0">
+        <div class="d-flex justify-content-between align-items-center">
+          <h6>Tambah Pengguna Baru</h6>
+          <a href="<?= base_url('admin/users') ?>" class="btn btn-sm btn-outline-primary">
+            <i class="fas fa-arrow-left me-2"></i> Kembali ke Daftar Pengguna
+          </a>
+        </div>
+        <p class="text-sm mb-0">
+          <i class="fa fa-info-circle text-primary" aria-hidden="true"></i>
+          <span class="font-weight-bold">Isi formulir di bawah ini untuk menambahkan pengguna baru</span>
+        </p>
+      </div>
+      <div class="card-body">
+        <?= form_open_multipart('admin/add_user', ['class' => 'needs-validation']) ?>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="full_name" class="form-control-label">Nama Lengkap <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="full_name" name="full_name" value="<?= set_value('full_name') ?>" required>
+                <?= form_error('full_name', '<small class="text-danger">', '</small>') ?>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="email" class="form-control-label">Email <span class="text-danger">*</span></label>
+                <input type="email" class="form-control" id="email" name="email" value="<?= set_value('email') ?>" required>
+                <?= form_error('email', '<small class="text-danger">', '</small>') ?>
+              </div>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="username" class="form-control-label">Username <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="username" name="username" value="<?= set_value('username') ?>" required>
+                <?= form_error('username', '<small class="text-danger">', '</small>') ?>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="role" class="form-control-label">Peran <span class="text-danger">*</span></label>
+                <select class="form-control" id="role" name="role" required>
+                  <option value="">Pilih Peran</option>
+                  <option value="admin" <?= set_select('role', 'admin') ?>>Admin</option>
+                  <option value="applicant" <?= set_select('role', 'applicant') ?>>Pelamar</option>
+                  <option value="recruiter" <?= set_select('role', 'recruiter') ?>>Rekruter</option>
+                </select>
+                <?= form_error('role', '<small class="text-danger">', '</small>') ?>
+              </div>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="password" class="form-control-label">Password <span class="text-danger">*</span></label>
+                <input type="password" class="form-control" id="password" name="password" required>
+                <?= form_error('password', '<small class="text-danger">', '</small>') ?>
+                <small class="text-muted">Minimal 6 karakter, kombinasi huruf dan angka.</small>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="confirm_password" class="form-control-label">Konfirmasi Password <span class="text-danger">*</span></label>
+                <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                <?= form_error('confirm_password', '<small class="text-danger">', '</small>') ?>
+              </div>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="phone" class="form-control-label">Nomor Telepon</label>
+                <input type="text" class="form-control" id="phone" name="phone" value="<?= set_value('phone') ?>">
+                <?= form_error('phone', '<small class="text-danger">', '</small>') ?>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="profile_picture" class="form-control-label">Foto Profil</label>
+                <input type="file" class="form-control" id="profile_picture" name="profile_picture" accept="image/*">
+                <small class="text-muted">Format yang diizinkan: JPG, JPEG, PNG. Maks 1MB.</small>
+              </div>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="address" class="form-control-label">Alamat</label>
+                <textarea class="form-control" id="address" name="address" rows="3"><?= set_value('address') ?></textarea>
+                <?= form_error('address', '<small class="text-danger">', '</small>') ?>
+              </div>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="is_active" name="is_active" value="1" <?= set_checkbox('is_active', '1', true) ?>>
+                <label class="form-check-label" for="is_active">Aktifkan Pengguna</label>
+              </div>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="send_email" name="send_email" value="1" <?= set_checkbox('send_email', '1', true) ?>>
+                <label class="form-check-label" for="send_email">Kirim Email Notifikasi ke Pengguna</label>
+              </div>
+            </div>
+          </div>
+          
+          <div class="row mt-4">
+            <div class="col-md-12">
+              <button type="submit" class="btn btn-primary">Simpan Pengguna</button>
+              <button type="reset" class="btn btn-secondary">Reset</button>
+            </div>
+          </div>
+        <?= form_close() ?>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row mt-4">
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-header pb-0">
+        <h6>Panduan Membuat Pengguna</h6>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6">
+            <h6 class="text-uppercase text-sm">Peran Pengguna</h6>
+            <ul class="text-sm">
+              <li><strong>Admin:</strong> Memiliki akses penuh ke semua fitur sistem, termasuk manajemen pengguna, lowongan, lamaran, penilaian, dan blog.</li>
+              <li><strong>Pelamar:</strong> Dapat membuat profil, mencari dan melamar pekerjaan, mengikuti penilaian, dan melacak status lamaran.</li>
+              <li><strong>Rekruter:</strong> Dapat membuat dan mengelola lowongan, meninjau lamaran, memberikan penilaian, dan berkomunikasi dengan pelamar.</li>
+            </ul>
+          </div>
+          <div class="col-md-6">
+            <h6 class="text-uppercase text-sm">Praktik Terbaik</h6>
+            <ul class="text-sm">
+              <li>Gunakan alamat email yang valid untuk memastikan pengguna dapat menerima notifikasi.</li>
+              <li>Tetapkan password yang kuat dengan kombinasi huruf, angka, dan karakter khusus.</li>
+              <li>Berikan peran yang sesuai dengan tanggung jawab pengguna.</li>
+              <li>Nonaktifkan pengguna yang tidak lagi memerlukan akses ke sistem.</li>
+              <li>Secara berkala tinjau dan perbarui informasi pengguna.</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="alert alert-info mt-3" role="alert">
+          <strong>Catatan:</strong> Saat membuat pengguna baru, pastikan untuk memberitahu mereka tentang kredensial login mereka melalui saluran yang aman. Jika Anda mengaktifkan opsi "Kirim Email Notifikasi", sistem akan secara otomatis mengirimkan email dengan informasi login ke alamat email yang ditentukan.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Auto-generate username from email
+    const emailInput = document.getElementById('email');
+    const usernameInput = document.getElementById('username');
+    
+    emailInput.addEventListener('blur', function() {
+      if (!usernameInput.value && this.value) {
+        // Extract username from email (part before @)
+        const emailParts = this.value.split('@');
+        if (emailParts.length > 0) {
+          usernameInput.value = emailParts[0].toLowerCase().replace(/[^a-z0-9]/g, '');
+        }
+      }
+    });
+    
+    // Password strength meter
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('confirm_password');
+    
+    if (passwordInput) {
+      const strengthMeter = document.createElement('div');
+      strengthMeter.classList.add('progress', 'mt-2');
+      strengthMeter.style.height = '5px';
+      
+      const strengthBar = document.createElement('div');
+      strengthBar.classList.add('progress-bar');
+      strengthBar.style.width = '0%';
+      
+      strengthMeter.appendChild(strengthBar);
+      
+      const strengthText = document.createElement('small');
+      strengthText.classList.add('text-muted', 'mt-1', 'd-block');
+      
+      passwordInput.parentNode.insertBefore(strengthMeter, passwordInput.nextSibling);
+      passwordInput.parentNode.insertBefore(strengthText, strengthMeter.nextSibling);
+      
+      passwordInput.addEventListener('input', function() {
+        const password = this.value;
+        let strength = 0;
+        
+        // Length check
+        if (password.length >= 6) strength += 25;
+        
+        // Uppercase check
+        if (/[A-Z]/.test(password)) strength += 25;
+        
+        // Lowercase check
+        if (/[a-z]/.test(password)) strength += 25;
+        
+        // Number/special char check
+        if (/[0-9!@#$%^&*]/.test(password)) strength += 25;
+        
+        // Update UI
+        strengthBar.style.width = strength + '%';
+        
+        if (strength < 25) {
+          strengthBar.className = 'progress-bar bg-danger';
+          strengthText.textContent = 'Sangat Lemah';
+        } else if (strength < 50) {
+          strengthBar.className = 'progress-bar bg-warning';
+          strengthText.textContent = 'Lemah';
+        } else if (strength < 75) {
+          strengthBar.className = 'progress-bar bg-info';
+          strengthText.textContent = 'Sedang';
+        } else {
+          strengthBar.className = 'progress-bar bg-success';
+          strengthText.textContent = 'Kuat';
+        }
+      });
+      
+      // Password match check
+      confirmPasswordInput.addEventListener('input', function() {
+        if (this.value === passwordInput.value) {
+          this.classList.remove('is-invalid');
+          this.classList.add('is-valid');
+        } else {
+          this.classList.remove('is-valid');
+          this.classList.add('is-invalid');
+        }
+      });
+    }
+  });
+</script>
