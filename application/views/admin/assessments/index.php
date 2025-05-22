@@ -101,15 +101,27 @@
                       <p class="text-xs font-weight-bold mb-0"><?= $assessment->job_title ?? 'Semua Lowongan' ?></p>
                     </td>
                     <td class="align-middle text-center">
-                      <span class="text-secondary text-xs font-weight-bold"><?= $assessment->question_count ?> Soal</span>
+                      <span class="text-secondary text-xs font-weight-bold">
+                        <?php
+                        // Get question count from model
+                        $question_count = 0;
+                        // Uncomment when method is implemented
+                        // $question_count = $this->model_penilaian->hitung_soal_penilaian($assessment->id);
+                        echo $question_count . ' Soal';
+                        ?>
+                      </span>
                     </td>
                     <td class="align-middle text-center">
                       <span class="text-secondary text-xs font-weight-bold"><?= $assessment->time_limit ? $assessment->time_limit . ' menit' : 'Tidak ada' ?></span>
                     </td>
                     <td class="align-middle text-center">
                       <?php
-                      $applicant_count = $this->assessment_model->count_assessment_applicants($assessment->id);
-                      $completed_count = $this->assessment_model->count_assessment_completions($assessment->id);
+                      // Temporarily set default values until the model methods are implemented
+                      $applicant_count = 0;
+                      $completed_count = 0;
+                      // Uncomment when methods are implemented
+                      // $applicant_count = $this->model_penilaian->hitung_pelamar_penilaian($assessment->id);
+                      // $completed_count = $this->model_penilaian->hitung_penyelesaian_penilaian($assessment->id);
                       ?>
                       <a href="<?= base_url('admin/assessment_results/' . $assessment->id) ?>" class="text-secondary font-weight-bold text-xs">
                         <?= $completed_count ?>/<?= $applicant_count ?> Selesai

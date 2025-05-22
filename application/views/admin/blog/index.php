@@ -4,7 +4,7 @@
       <div class="card-header pb-0">
         <div class="d-flex justify-content-between align-items-center">
           <h6>Manajemen Blog</h6>
-          <a href="<?= base_url('admin/add_post') ?>" class="btn btn-sm btn-primary">
+          <a href="<?= base_url('admin/tambah_artikel') ?>" class="btn btn-sm btn-primary">
             <i class="fas fa-plus me-2"></i> Tambah Artikel Baru
           </a>
         </div>
@@ -51,13 +51,13 @@
             </div>
           </form>
         </div>
-        
+
         <div class="table-responsive p-0">
           <?php if (empty($posts)) : ?>
             <div class="text-center py-5">
               <h4 class="text-secondary">Tidak ada artikel yang ditemukan</h4>
               <p class="text-muted">Mulai dengan menambahkan artikel blog baru.</p>
-              <a href="<?= base_url('admin/add_post') ?>" class="btn btn-primary mt-3">Tambah Artikel Baru</a>
+              <a href="<?= base_url('admin/tambah_artikel') ?>" class="btn btn-primary mt-3">Tambah Artikel Baru</a>
             </div>
           <?php else : ?>
             <table class="table align-items-center mb-0">
@@ -90,9 +90,9 @@
                       </div>
                     </td>
                     <td>
-                      <?php 
+                      <?php
                       $post_categories = $this->blog_model->get_post_categories($post->id);
-                      foreach ($post_categories as $category) : 
+                      foreach ($post_categories as $category) :
                       ?>
                         <span class="badge badge-sm bg-gradient-info me-1"><?= $category->name ?></span>
                       <?php endforeach; ?>
@@ -113,17 +113,17 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end px-2 py-3" aria-labelledby="dropdownMenuButton">
                           <li><a class="dropdown-item border-radius-md" href="<?= base_url('home/blog_post/' . $post->slug) ?>" target="_blank">Lihat</a></li>
-                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/edit_post/' . $post->id) ?>">Edit</a></li>
+                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/edit_artikel/' . $post->id) ?>">Edit</a></li>
                           <?php if ($post->status == 'draft') : ?>
-                            <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/publish_post/' . $post->id) ?>">Publikasikan</a></li>
+                            <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/publikasi_artikel/' . $post->id) ?>">Publikasikan</a></li>
                           <?php else : ?>
-                            <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/unpublish_post/' . $post->id) ?>">Jadikan Draft</a></li>
+                            <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/batalkan_publikasi_artikel/' . $post->id) ?>">Jadikan Draft</a></li>
                           <?php endif; ?>
                           <li>
                             <hr class="dropdown-divider">
                           </li>
                           <li>
-                            <a class="dropdown-item border-radius-md text-danger btn-delete" href="<?= base_url('admin/delete_post/' . $post->id) ?>" onclick="return confirm('Apakah Anda yakin ingin menghapus artikel ini?');">
+                            <a class="dropdown-item border-radius-md text-danger btn-delete" href="<?= base_url('admin/hapus_artikel/' . $post->id) ?>" onclick="return confirm('Apakah Anda yakin ingin menghapus artikel ini?');">
                               Hapus
                             </a>
                           </li>
@@ -134,7 +134,7 @@
                 <?php endforeach; ?>
               </tbody>
             </table>
-            
+
             <!-- Pagination -->
             <div class="d-flex justify-content-center mt-4">
               <?= $pagination ?>
@@ -184,7 +184,7 @@
                     <a href="javascript:;" class="text-secondary font-weight-bold text-xs" data-bs-toggle="modal" data-bs-target="#editCategoryModal" data-id="<?= $category->id ?>" data-name="<?= $category->name ?>">
                       Edit
                     </a>
-                    <a href="<?= base_url('admin/delete_category/' . $category->id) ?>" class="text-danger font-weight-bold text-xs ms-2 btn-delete" onclick="return confirm('Apakah Anda yakin ingin menghapus kategori ini?');">
+                    <a href="<?= base_url('admin/hapus_kategori_blog/' . $category->id) ?>" class="text-danger font-weight-bold text-xs ms-2 btn-delete" onclick="return confirm('Apakah Anda yakin ingin menghapus kategori ini?');">
                       Hapus
                     </a>
                   </td>
@@ -196,7 +196,7 @@
       </div>
     </div>
   </div>
-  
+
   <div class="col-md-6">
     <div class="card">
       <div class="card-header pb-0">
@@ -219,7 +219,7 @@
         <h5 class="modal-title" id="addCategoryModalLabel">Tambah Kategori Baru</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <?= form_open('admin/add_category') ?>
+      <?= form_open('admin/tambah_kategori_blog') ?>
         <div class="modal-body">
           <div class="form-group">
             <label for="category_name" class="form-control-label">Nama Kategori</label>
@@ -243,7 +243,7 @@
         <h5 class="modal-title" id="editCategoryModalLabel">Edit Kategori</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <?= form_open('admin/edit_category') ?>
+      <?= form_open('admin/edit_kategori_blog') ?>
         <div class="modal-body">
           <input type="hidden" id="edit_category_id" name="id">
           <div class="form-group">
@@ -311,13 +311,13 @@
         },
       },
     });
-    
+
     // Edit Category Modal
     $('#editCategoryModal').on('show.bs.modal', function (event) {
       var button = $(event.relatedTarget);
       var id = button.data('id');
       var name = button.data('name');
-      
+
       var modal = $(this);
       modal.find('#edit_category_id').val(id);
       modal.find('#edit_category_name').val(name);

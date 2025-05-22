@@ -8,7 +8,7 @@ class Impor extends CI_Controller {
 
         // Cek apakah user sudah login
         if (!$this->session->userdata('logged_in')) {
-            redirect('otentikasi/login');
+            redirect('auth/login');
         }
 
         // Cek apakah user adalah admin
@@ -27,7 +27,7 @@ class Impor extends CI_Controller {
     // Halaman utama import soal
     public function index() {
         // Get all assessments
-        $data['assessments'] = $this->model_penilaian->dapatkan_penilaian();
+        $data['assessments'] = $this->model_penilaian->dapatkan_semua_penilaian();
 
         // Load views
         $data['title'] = 'Impor Soal';

@@ -4,7 +4,7 @@
       <div class="card-header pb-0">
         <div class="d-flex justify-content-between align-items-center">
           <h6>Manajemen Pengguna</h6>
-          <a href="<?= base_url('admin/add_user') ?>" class="btn btn-sm btn-primary">
+          <a href="<?= base_url('admin/tambah_pengguna') ?>" class="btn btn-sm btn-primary">
             <i class="fas fa-plus me-2"></i> Tambah Pengguna Baru
           </a>
         </div>
@@ -16,7 +16,7 @@
       <div class="card-body px-0 pt-0 pb-2">
         <!-- Filter -->
         <div class="px-4 py-3">
-          <form action="<?= base_url('admin/users') ?>" method="get" class="row g-3">
+          <form action="<?= base_url('admin/pengguna') ?>" method="get" class="row g-3">
             <div class="col-md-4">
               <div class="form-group">
                 <label for="role" class="form-label">Peran</label>
@@ -108,22 +108,22 @@
                           <i class="fas fa-ellipsis-v"></i>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end px-2 py-3" aria-labelledby="dropdownMenuButton">
-                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/edit_user/' . $user->id) ?>">Edit</a></li>
+                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/edit_pengguna/' . $user->id) ?>">Edit</a></li>
                           <?php if ($user->role == 'applicant') : ?>
-                            <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/applicant_profile/' . $user->id) ?>">Lihat Profil</a></li>
-                            <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/applicant_applications/' . $user->id) ?>">Lihat Lamaran</a></li>
+                            <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/profil_pelamar/' . $user->id) ?>">Lihat Profil</a></li>
+                            <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/lamaran_pelamar/' . $user->id) ?>">Lihat Lamaran</a></li>
                           <?php endif; ?>
                           <?php if ($user->status == 'active') : ?>
-                            <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/deactivate_user/' . $user->id) ?>">Nonaktifkan</a></li>
+                            <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/nonaktifkan_pengguna/' . $user->id) ?>">Nonaktifkan</a></li>
                           <?php else : ?>
-                            <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/activate_user/' . $user->id) ?>">Aktifkan</a></li>
+                            <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/aktifkan_pengguna/' . $user->id) ?>">Aktifkan</a></li>
                           <?php endif; ?>
-                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/reset_password/' . $user->id) ?>">Reset Password</a></li>
+                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/reset_kata_sandi/' . $user->id) ?>">Reset Password</a></li>
                           <li>
                             <hr class="dropdown-divider">
                           </li>
                           <li>
-                            <a class="dropdown-item border-radius-md text-danger btn-delete" href="<?= base_url('admin/delete_user/' . $user->id) ?>" onclick="return confirm('Apakah Anda yakin ingin menghapus pengguna ini? Tindakan ini tidak dapat dibatalkan.');">
+                            <a class="dropdown-item border-radius-md text-danger btn-delete" href="<?= base_url('admin/hapus_pengguna/' . $user->id) ?>" onclick="return confirm('Apakah Anda yakin ingin menghapus pengguna ini? Tindakan ini tidak dapat dibatalkan.');">
                               Hapus
                             </a>
                           </li>

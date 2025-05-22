@@ -7,7 +7,7 @@ class Pelamar extends CI_Controller {
         parent::__construct();
         // Check if user is logged in and is an applicant
         if (!$this->session->userdata('logged_in') || $this->session->userdata('role') != 'applicant') {
-            redirect('otentikasi');
+            redirect('auth');
         }
 
         // Load models

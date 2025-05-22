@@ -56,6 +56,7 @@ $route['translate_uri_dashes'] = FALSE;
 // Rute untuk halaman publik
 $route['lowongan'] = 'beranda/lowongan';
 $route['lowongan/(:num)'] = 'beranda/detail_lowongan/$1';
+$route['lowongan/detail/(:num)'] = 'beranda/detail_lowongan/$1';
 $route['blog'] = 'beranda/blog';
 $route['blog/(:any)'] = 'beranda/artikel/$1';
 $route['tentang'] = 'beranda/tentang';
@@ -63,11 +64,11 @@ $route['kontak'] = 'beranda/kontak';
 $route['cari'] = 'beranda/cari';
 
 // Rute untuk otentikasi
-$route['login'] = 'otentikasi/login';
-$route['daftar'] = 'otentikasi/daftar';
-$route['logout'] = 'otentikasi/logout';
-$route['lupa-password'] = 'otentikasi/lupa_password';
-$route['reset-password/(:any)'] = 'otentikasi/reset_password/$1';
+$route['login'] = 'auth/login';
+$route['daftar'] = 'auth/daftar';
+$route['logout'] = 'auth/logout';
+$route['lupa-password'] = 'auth/lupa_password';
+$route['reset-password/(:any)'] = 'auth/reset_password/$1';
 
 // Rute untuk pelamar
 $route['pelamar/dasbor'] = 'pelamar/dasbor';
@@ -87,6 +88,11 @@ $route['admin/pengguna'] = 'admin/pengguna';
 $route['admin/tambah-pengguna'] = 'admin/tambah_pengguna';
 $route['admin/edit-pengguna/(:num)'] = 'admin/edit_pengguna/$1';
 $route['admin/hapus-pengguna/(:num)'] = 'admin/hapus_pengguna/$1';
+$route['admin/aktifkan-pengguna/(:num)'] = 'admin/aktifkan_pengguna/$1';
+$route['admin/nonaktifkan-pengguna/(:num)'] = 'admin/nonaktifkan_pengguna/$1';
+$route['admin/reset-kata-sandi/(:num)'] = 'admin/reset_kata_sandi/$1';
+$route['admin/profil-pelamar/(:num)'] = 'admin/profil_pelamar/$1';
+$route['admin/lamaran-pelamar/(:num)'] = 'admin/lamaran_pelamar/$1';
 $route['admin/lowongan'] = 'admin/lowongan';
 $route['admin/tambah-lowongan'] = 'admin/tambah_lowongan';
 $route['admin/edit-lowongan/(:num)'] = 'admin/edit_lowongan/$1';
@@ -105,6 +111,11 @@ $route['admin/blog'] = 'admin/blog';
 $route['admin/tambah-artikel'] = 'admin/tambah_artikel';
 $route['admin/edit-artikel/(:num)'] = 'admin/edit_artikel/$1';
 $route['admin/hapus-artikel/(:num)'] = 'admin/hapus_artikel/$1';
+$route['admin/publikasi-artikel/(:num)'] = 'admin/publikasi_artikel/$1';
+$route['admin/batalkan-publikasi-artikel/(:num)'] = 'admin/batalkan_publikasi_artikel/$1';
+$route['admin/tambah-kategori-blog'] = 'admin/tambah_kategori_blog';
+$route['admin/edit-kategori-blog'] = 'admin/edit_kategori_blog';
+$route['admin/hapus-kategori-blog/(:num)'] = 'admin/hapus_kategori_blog/$1';
 $route['admin/kategori'] = 'admin/kategori';
 $route['admin/laporan'] = 'admin/laporan';
 

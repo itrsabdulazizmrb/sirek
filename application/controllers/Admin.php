@@ -12,12 +12,12 @@ class Admin extends CI_Controller {
         }
 
         // Load models
-        $this->load->model('user_model');
-        $this->load->model('job_model');
-        $this->load->model('application_model');
-        $this->load->model('assessment_model');
-        $this->load->model('blog_model');
-        $this->load->model('category_model');
+        $this->load->model('model_pengguna');
+        $this->load->model('model_lowongan');
+        $this->load->model('model_lamaran');
+        $this->load->model('model_penilaian');
+        $this->load->model('model_blog');
+        $this->load->model('model_kategori');
 
         // Load libraries
         $this->load->library('pagination');
@@ -26,56 +26,56 @@ class Admin extends CI_Controller {
     }
 
     public function index() {
-        redirect('admin/dashboard');
+        redirect('admin/dasbor');
     }
 
-    public function dashboard() {
+    public function dasbor() {
         // Get dashboard statistics
-        $data['total_jobs'] = $this->job_model->count_jobs();
-        $data['active_jobs'] = $this->job_model->count_active_jobs();
-        $data['total_applications'] = $this->application_model->count_applications();
-        $data['new_applications'] = $this->application_model->count_new_applications();
-        $data['total_users'] = $this->user_model->count_users();
-        $data['total_applicants'] = $this->user_model->count_applicants();
+        $data['total_jobs'] = $this->model_lowongan->hitung_lowongan();
+        $data['active_jobs'] = $this->model_lowongan->hitung_lowongan_aktif();
+        $data['total_applications'] = $this->model_lamaran->hitung_lamaran();
+        $data['new_applications'] = $this->model_lamaran->hitung_lamaran_baru();
+        $data['total_users'] = $this->model_pengguna->hitung_pengguna();
+        $data['total_applicants'] = $this->model_pengguna->hitung_pelamar();
 
         // Get recent applications
-        $data['recent_applications'] = $this->application_model->get_recent_applications(5);
+        $data['recent_applications'] = $this->model_lamaran->dapatkan_lamaran_terbaru(5);
 
         // Load views
-        $data['title'] = 'Admin Dashboard';
+        $data['title'] = 'Dasbor Admin';
         $this->load->view('templates/admin_header', $data);
         $this->load->view('admin/dashboard', $data);
         $this->load->view('templates/admin_footer');
     }
 
-    // Job Management
-    public function jobs() {
+    // Manajemen Lowongan
+    public function lowongan() {
         // Get all jobs
-        $data['jobs'] = $this->job_model->get_jobs();
+        $data['jobs'] = $this->model_lowongan->dapatkan_lowongan_semua();
 
         // Load views
-        $data['title'] = 'Job Management';
+        $data['title'] = 'Manajemen Lowongan';
         $this->load->view('templates/admin_header', $data);
         $this->load->view('admin/jobs/index', $data);
         $this->load->view('templates/admin_footer');
     }
 
-    public function add_job() {
+    public function tambah_lowongan() {
         // Get job categories
-        $data['categories'] = $this->category_model->get_job_categories();
+        $data['categories'] = $this->model_kategori->dapatkan_kategori_lowongan();
 
         // Form validation rules
-        $this->form_validation->set_rules('title', 'Title', 'trim|required');
-        $this->form_validation->set_rules('description', 'Description', 'trim|required');
-        $this->form_validation->set_rules('requirements', 'Requirements', 'trim|required');
-        $this->form_validation->set_rules('responsibilities', 'Responsibilities', 'trim|required');
-        $this->form_validation->set_rules('location', 'Location', 'trim|required');
-        $this->form_validation->set_rules('job_type', 'Job Type', 'trim|required');
-        $this->form_validation->set_rules('deadline', 'Deadline', 'trim|required');
+        $this->form_validation->set_rules('title', 'Judul', 'trim|required');
+        $this->form_validation->set_rules('description', 'Deskripsi', 'trim|required');
+        $this->form_validation->set_rules('requirements', 'Persyaratan', 'trim|required');
+        $this->form_validation->set_rules('responsibilities', 'Tanggung Jawab', 'trim|required');
+        $this->form_validation->set_rules('location', 'Lokasi', 'trim|required');
+        $this->form_validation->set_rules('job_type', 'Tipe Pekerjaan', 'trim|required');
+        $this->form_validation->set_rules('deadline', 'Batas Waktu', 'trim|required');
 
         if ($this->form_validation->run() == FALSE) {
             // If validation fails, show form with errors
-            $data['title'] = 'Add New Job';
+            $data['title'] = 'Tambah Lowongan Baru';
             $this->load->view('templates/admin_header', $data);
             $this->load->view('admin/jobs/add', $data);
             $this->load->view('templates/admin_footer');
@@ -98,23 +98,23 @@ class Admin extends CI_Controller {
             );
 
             // Insert job data
-            $job_id = $this->job_model->insert_job($job_data);
+            $job_id = $this->model_lowongan->tambah_lowongan($job_data);
 
             if ($job_id) {
                 // Show success message
-                $this->session->set_flashdata('success', 'Job has been added successfully.');
-                redirect('admin/jobs');
+                $this->session->set_flashdata('success', 'Lowongan berhasil ditambahkan.');
+                redirect('admin/lowongan');
             } else {
                 // If insertion fails, show error message
-                $this->session->set_flashdata('error', 'Failed to add job. Please try again.');
-                redirect('admin/add_job');
+                $this->session->set_flashdata('error', 'Gagal menambahkan lowongan. Silakan coba lagi.');
+                redirect('admin/tambah_lowongan');
             }
         }
     }
 
-    public function edit_job($id) {
+    public function edit_lowongan($id) {
         // Get job details
-        $data['job'] = $this->job_model->get_job($id);
+        $data['job'] = $this->model_lowongan->dapatkan_lowongan($id);
 
         // If job not found, show 404
         if (!$data['job']) {
@@ -122,20 +122,20 @@ class Admin extends CI_Controller {
         }
 
         // Get job categories
-        $data['categories'] = $this->category_model->get_job_categories();
+        $data['categories'] = $this->model_kategori->dapatkan_kategori_lowongan();
 
         // Form validation rules
-        $this->form_validation->set_rules('title', 'Title', 'trim|required');
-        $this->form_validation->set_rules('description', 'Description', 'trim|required');
-        $this->form_validation->set_rules('requirements', 'Requirements', 'trim|required');
-        $this->form_validation->set_rules('responsibilities', 'Responsibilities', 'trim|required');
-        $this->form_validation->set_rules('location', 'Location', 'trim|required');
-        $this->form_validation->set_rules('job_type', 'Job Type', 'trim|required');
-        $this->form_validation->set_rules('deadline', 'Deadline', 'trim|required');
+        $this->form_validation->set_rules('title', 'Judul', 'trim|required');
+        $this->form_validation->set_rules('description', 'Deskripsi', 'trim|required');
+        $this->form_validation->set_rules('requirements', 'Persyaratan', 'trim|required');
+        $this->form_validation->set_rules('responsibilities', 'Tanggung Jawab', 'trim|required');
+        $this->form_validation->set_rules('location', 'Lokasi', 'trim|required');
+        $this->form_validation->set_rules('job_type', 'Tipe Pekerjaan', 'trim|required');
+        $this->form_validation->set_rules('deadline', 'Batas Waktu', 'trim|required');
 
         if ($this->form_validation->run() == FALSE) {
             // If validation fails, show form with errors
-            $data['title'] = 'Edit Job';
+            $data['title'] = 'Edit Lowongan';
             $this->load->view('templates/admin_header', $data);
             $this->load->view('admin/jobs/edit', $data);
             $this->load->view('templates/admin_footer');
@@ -157,45 +157,45 @@ class Admin extends CI_Controller {
             );
 
             // Update job data
-            $result = $this->job_model->update_job($id, $job_data);
+            $result = $this->model_lowongan->perbarui_lowongan($id, $job_data);
 
             if ($result) {
                 // Show success message
-                $this->session->set_flashdata('success', 'Job has been updated successfully.');
-                redirect('admin/jobs');
+                $this->session->set_flashdata('success', 'Lowongan berhasil diperbarui.');
+                redirect('admin/lowongan');
             } else {
                 // If update fails, show error message
-                $this->session->set_flashdata('error', 'Failed to update job. Please try again.');
-                redirect('admin/edit_job/' . $id);
+                $this->session->set_flashdata('error', 'Gagal memperbarui lowongan. Silakan coba lagi.');
+                redirect('admin/edit_lowongan/' . $id);
             }
         }
     }
 
-    public function delete_job($id) {
+    public function hapus_lowongan($id) {
         // Delete job
-        $result = $this->job_model->delete_job($id);
+        $result = $this->model_lowongan->hapus_lowongan($id);
 
         if ($result) {
             // Show success message
-            $this->session->set_flashdata('success', 'Job has been deleted successfully.');
+            $this->session->set_flashdata('success', 'Lowongan berhasil dihapus.');
         } else {
             // If deletion fails, show error message
-            $this->session->set_flashdata('error', 'Failed to delete job. Please try again.');
+            $this->session->set_flashdata('error', 'Gagal menghapus lowongan. Silakan coba lagi.');
         }
 
-        redirect('admin/jobs');
+        redirect('admin/lowongan');
     }
 
-    // Applicant Management
-    public function applications() {
+    // Manajemen Pelamar
+    public function lamaran() {
         // Get search and filter parameters
         $search = $this->input->get('search');
         $status = $this->input->get('status');
         $job_id = $this->input->get('job_id');
 
         // Set up pagination
-        $config['base_url'] = base_url('admin/applications');
-        $config['total_rows'] = $this->application_model->count_applications();
+        $config['base_url'] = base_url('admin/lamaran');
+        $config['total_rows'] = $this->model_lamaran->hitung_lamaran();
         $config['per_page'] = 10;
         $config['uri_segment'] = 3;
         $config['page_query_string'] = TRUE;
@@ -229,19 +229,19 @@ class Admin extends CI_Controller {
         $page = $this->input->get('page') ? $this->input->get('page') : 0;
 
         // For now, get all applications (we'll implement filtering later)
-        $data['applications'] = $this->application_model->get_applications();
+        $data['applications'] = $this->model_lamaran->dapatkan_lamaran_semua();
 
         // Load views
-        $data['title'] = 'Application Management';
+        $data['title'] = 'Manajemen Lamaran';
         $data['pagination'] = $this->pagination->create_links();
         $this->load->view('templates/admin_header', $data);
         $this->load->view('admin/applications/index', $data);
         $this->load->view('templates/admin_footer');
     }
 
-    public function application_details($id) {
+    public function detail_lamaran($id) {
         // Get application details
-        $data['application'] = $this->application_model->get_application($id);
+        $data['application'] = $this->model_lamaran->dapatkan_lamaran($id);
 
         // If application not found, show 404
         if (!$data['application']) {
@@ -249,51 +249,50 @@ class Admin extends CI_Controller {
         }
 
         // Get applicant profile
-        $this->load->model('applicant_model');
-        $data['profile'] = $this->applicant_model->get_profile($data['application']->applicant_id);
+        $data['profile'] = $this->model_pelamar->dapatkan_profil($data['application']->applicant_id);
 
         // Get assessment results
-        $data['assessments'] = $this->assessment_model->get_applicant_assessments($id);
+        $data['assessments'] = $this->model_penilaian->dapatkan_penilaian_pelamar($id);
 
         // Load views
-        $data['title'] = 'Application Details';
+        $data['title'] = 'Detail Lamaran';
         $this->load->view('templates/admin_header', $data);
         $this->load->view('admin/applications/details', $data);
         $this->load->view('templates/admin_footer');
     }
 
-    public function update_application_status() {
+    public function perbarui_status_lamaran() {
         // Get form data
         $application_id = $this->input->post('application_id');
         $status = $this->input->post('status');
 
         // Update application status
-        $result = $this->application_model->update_status($application_id, $status);
+        $result = $this->model_lamaran->perbarui_status($application_id, $status);
 
         if ($result) {
             // Show success message
-            $this->session->set_flashdata('success', 'Application status has been updated successfully.');
+            $this->session->set_flashdata('success', 'Status lamaran berhasil diperbarui.');
         } else {
             // If update fails, show error message
-            $this->session->set_flashdata('error', 'Failed to update application status. Please try again.');
+            $this->session->set_flashdata('error', 'Gagal memperbarui status lamaran. Silakan coba lagi.');
         }
 
-        redirect('admin/application_details/' . $application_id);
+        redirect('admin/detail_lamaran/' . $application_id);
     }
 
-    // Assessment Management
-    public function assessments() {
+    // Manajemen Penilaian
+    public function penilaian() {
         // Get all assessments
-        $data['assessments'] = $this->assessment_model->get_assessments();
+        $data['assessments'] = $this->model_penilaian->dapatkan_semua_penilaian();
 
         // Get assessment types for filter
-        $data['assessment_types'] = $this->assessment_model->get_assessment_types();
+        $data['assessment_types'] = $this->model_penilaian->dapatkan_jenis_penilaian();
 
         // Get jobs for filter
-        $data['jobs'] = $this->job_model->get_all_active_jobs();
+        $data['jobs'] = $this->model_lowongan->dapatkan_lowongan_aktif(100, 0);
 
         // Set up pagination
-        $config['base_url'] = base_url('admin/assessments');
+        $config['base_url'] = base_url('admin/penilaian');
         $config['total_rows'] = count($data['assessments']);
         $config['per_page'] = 10;
         $config['uri_segment'] = 3;
@@ -332,24 +331,24 @@ class Admin extends CI_Controller {
         $this->load->view('templates/admin_footer');
     }
 
-    // Add Assessment
-    public function add_assessment() {
+    // Tambah Penilaian
+    public function tambah_penilaian() {
         // Get assessment types
-        $data['assessment_types'] = $this->assessment_model->get_assessment_types();
+        $data['assessment_types'] = $this->model_penilaian->dapatkan_jenis_penilaian();
 
         // Get jobs for dropdown
-        $data['jobs'] = $this->job_model->get_all_active_jobs();
+        $data['jobs'] = $this->model_lowongan->dapatkan_lowongan_aktif(100, 0);
 
         // Form validation rules
-        $this->form_validation->set_rules('title', 'Title', 'trim|required');
-        $this->form_validation->set_rules('assessment_type_id', 'Assessment Type', 'trim|required');
-        $this->form_validation->set_rules('description', 'Description', 'trim|required');
-        $this->form_validation->set_rules('time_limit', 'Time Limit', 'trim|numeric');
-        $this->form_validation->set_rules('passing_score', 'Passing Score', 'trim|numeric');
+        $this->form_validation->set_rules('title', 'Judul', 'trim|required');
+        $this->form_validation->set_rules('assessment_type_id', 'Jenis Penilaian', 'trim|required');
+        $this->form_validation->set_rules('description', 'Deskripsi', 'trim|required');
+        $this->form_validation->set_rules('time_limit', 'Batas Waktu', 'trim|numeric');
+        $this->form_validation->set_rules('passing_score', 'Nilai Kelulusan', 'trim|numeric');
 
         if ($this->form_validation->run() == FALSE) {
             // If validation fails, show form with errors
-            $data['title'] = 'Add New Assessment';
+            $data['title'] = 'Tambah Penilaian Baru';
             $this->load->view('templates/admin_header', $data);
             $this->load->view('admin/assessments/add', $data);
             $this->load->view('templates/admin_footer');
@@ -369,30 +368,30 @@ class Admin extends CI_Controller {
             );
 
             // Insert assessment data
-            $assessment_id = $this->assessment_model->insert_assessment($assessment_data);
+            $assessment_id = $this->model_penilaian->tambah_penilaian($assessment_data);
 
             if ($assessment_id) {
                 // If job_id is provided, assign assessment to job
                 $job_id = $this->input->post('job_id');
                 if (!empty($job_id)) {
-                    $this->assessment_model->assign_assessment_to_job($job_id, $assessment_id);
+                    $this->model_penilaian->tetapkan_penilaian_ke_lowongan($job_id, $assessment_id);
                 }
 
                 // Show success message
-                $this->session->set_flashdata('success', 'Assessment has been added successfully.');
-                redirect('admin/assessment_questions/' . $assessment_id);
+                $this->session->set_flashdata('success', 'Penilaian berhasil ditambahkan.');
+                redirect('admin/soal_penilaian/' . $assessment_id);
             } else {
                 // If insertion fails, show error message
-                $this->session->set_flashdata('error', 'Failed to add assessment. Please try again.');
-                redirect('admin/add_assessment');
+                $this->session->set_flashdata('error', 'Gagal menambahkan penilaian. Silakan coba lagi.');
+                redirect('admin/tambah_penilaian');
             }
         }
     }
 
-    // Manage Assessment Questions
-    public function assessment_questions($assessment_id) {
+    // Kelola Soal Penilaian
+    public function soal_penilaian($assessment_id) {
         // Get assessment details
-        $data['assessment'] = $this->assessment_model->get_assessment($assessment_id);
+        $data['assessment'] = $this->model_penilaian->dapatkan_penilaian($assessment_id);
 
         // If assessment not found, show 404
         if (!$data['assessment']) {
@@ -400,19 +399,19 @@ class Admin extends CI_Controller {
         }
 
         // Get assessment questions
-        $data['questions'] = $this->assessment_model->get_assessment_questions($assessment_id);
+        $data['questions'] = $this->model_penilaian->dapatkan_soal_penilaian($assessment_id);
 
         // Load views
-        $data['title'] = 'Manage Assessment Questions';
+        $data['title'] = 'Kelola Soal Penilaian';
         $this->load->view('templates/admin_header', $data);
         $this->load->view('admin/assessments/questions', $data);
         $this->load->view('templates/admin_footer');
     }
 
-    // Add Question
-    public function add_question($assessment_id) {
+    // Tambah Soal
+    public function tambah_soal($assessment_id) {
         // Get assessment details
-        $data['assessment'] = $this->assessment_model->get_assessment($assessment_id);
+        $data['assessment'] = $this->model_penilaian->dapatkan_penilaian($assessment_id);
 
         // If assessment not found, show 404
         if (!$data['assessment']) {
@@ -420,13 +419,13 @@ class Admin extends CI_Controller {
         }
 
         // Form validation rules
-        $this->form_validation->set_rules('question_text', 'Question Text', 'trim|required');
-        $this->form_validation->set_rules('question_type', 'Question Type', 'trim|required');
-        $this->form_validation->set_rules('points', 'Points', 'trim|required|numeric');
+        $this->form_validation->set_rules('question_text', 'Teks Pertanyaan', 'trim|required');
+        $this->form_validation->set_rules('question_type', 'Jenis Pertanyaan', 'trim|required');
+        $this->form_validation->set_rules('points', 'Poin', 'trim|required|numeric');
 
         if ($this->form_validation->run() == FALSE) {
             // If validation fails, show form with errors
-            $data['title'] = 'Add New Question';
+            $data['title'] = 'Tambah Soal Baru';
             $this->load->view('templates/admin_header', $data);
             $this->load->view('admin/assessments/add_question', $data);
             $this->load->view('templates/admin_footer');
@@ -441,27 +440,27 @@ class Admin extends CI_Controller {
             );
 
             // Insert question data
-            $question_id = $this->assessment_model->insert_question($question_data);
+            $question_id = $this->model_penilaian->tambah_soal($question_data);
 
             if ($question_id) {
                 // If question type is multiple choice or true/false, add options
                 if ($this->input->post('question_type') == 'multiple_choice' || $this->input->post('question_type') == 'true_false') {
-                    redirect('admin/question_options/' . $question_id);
+                    redirect('admin/opsi_soal/' . $question_id);
                 } else {
                     // Show success message
-                    $this->session->set_flashdata('success', 'Question has been added successfully.');
-                    redirect('admin/assessment_questions/' . $assessment_id);
+                    $this->session->set_flashdata('success', 'Soal berhasil ditambahkan.');
+                    redirect('admin/soal_penilaian/' . $assessment_id);
                 }
             } else {
                 // If insertion fails, show error message
-                $this->session->set_flashdata('error', 'Failed to add question. Please try again.');
-                redirect('admin/add_question/' . $assessment_id);
+                $this->session->set_flashdata('error', 'Gagal menambahkan soal. Silakan coba lagi.');
+                redirect('admin/tambah_soal/' . $assessment_id);
             }
         }
     }
 
-    // Manage Question Options
-    public function question_options($question_id) {
+    // Kelola Opsi Soal
+    public function opsi_soal($question_id) {
         // Get question details
         $this->db->select('questions.*, assessments.title as assessment_title, assessments.id as assessment_id');
         $this->db->from('questions');
@@ -476,17 +475,17 @@ class Admin extends CI_Controller {
         }
 
         // Get question options
-        $data['options'] = $this->assessment_model->get_question_options($question_id);
+        $data['options'] = $this->model_penilaian->dapatkan_opsi_soal($question_id);
 
         // Load views
-        $data['title'] = 'Manage Question Options';
+        $data['title'] = 'Kelola Opsi Soal';
         $this->load->view('templates/admin_header', $data);
         $this->load->view('admin/assessments/options', $data);
         $this->load->view('templates/admin_footer');
     }
 
-    // Save Question Options
-    public function save_question_options($question_id) {
+    // Simpan Opsi Soal
+    public function simpan_opsi_soal($question_id) {
         // Get question details
         $this->db->select('questions.*, assessments.id as assessment_id');
         $this->db->from('questions');
@@ -516,7 +515,7 @@ class Admin extends CI_Controller {
                 'is_correct' => ($correct_option == 'true') ? 1 : 0,
                 'created_at' => date('Y-m-d H:i:s')
             );
-            $this->assessment_model->insert_question_option($true_option);
+            $this->model_penilaian->tambah_opsi_soal($true_option);
 
             // Add false option
             $false_option = array(
@@ -525,7 +524,7 @@ class Admin extends CI_Controller {
                 'is_correct' => ($correct_option == 'false') ? 1 : 0,
                 'created_at' => date('Y-m-d H:i:s')
             );
-            $this->assessment_model->insert_question_option($false_option);
+            $this->model_penilaian->tambah_opsi_soal($false_option);
         } else {
             // For multiple choice questions
             $options = $this->input->post('options');
@@ -547,7 +546,7 @@ class Admin extends CI_Controller {
                             'is_correct' => ($index == $correct_option) ? 1 : 0,
                             'created_at' => date('Y-m-d H:i:s')
                         );
-                        $this->assessment_model->insert_question_option($option_data);
+                        $this->model_penilaian->tambah_opsi_soal($option_data);
                     }
                 }
             } else {
@@ -559,7 +558,7 @@ class Admin extends CI_Controller {
                             'is_correct' => ($index == $correct_option) ? 1 : 0,
                             'updated_at' => date('Y-m-d H:i:s')
                         );
-                        $this->assessment_model->update_question_option($option_id, $option_data);
+                        $this->model_penilaian->perbarui_opsi_soal($option_id, $option_data);
                     }
                 }
 
@@ -572,27 +571,27 @@ class Admin extends CI_Controller {
                             'is_correct' => ($i == $correct_option) ? 1 : 0,
                             'created_at' => date('Y-m-d H:i:s')
                         );
-                        $this->assessment_model->insert_question_option($option_data);
+                        $this->model_penilaian->tambah_opsi_soal($option_data);
                     }
                 }
             }
         }
 
         // Show success message
-        $this->session->set_flashdata('success', 'Question options have been saved successfully.');
-        redirect('admin/assessment_questions/' . $question->assessment_id);
+        $this->session->set_flashdata('success', 'Opsi soal berhasil disimpan.');
+        redirect('admin/soal_penilaian/' . $question->assessment_id);
     }
 
-    // User Management
-    public function users() {
+    // Manajemen Pengguna
+    public function pengguna() {
         // Get search and filter parameters
         $search = $this->input->get('search');
         $role = $this->input->get('role');
         $status = $this->input->get('status');
 
         // Set up pagination
-        $config['base_url'] = base_url('admin/users');
-        $config['total_rows'] = $this->user_model->count_users();
+        $config['base_url'] = base_url('admin/pengguna');
+        $config['total_rows'] = $this->model_pengguna->hitung_pengguna();
         $config['per_page'] = 10;
         $config['uri_segment'] = 3;
         $config['page_query_string'] = TRUE;
@@ -626,13 +625,13 @@ class Admin extends CI_Controller {
         $page = $this->input->get('page') ? $this->input->get('page') : 0;
 
         // For now, get all users (we'll implement filtering later)
-        $data['users'] = $this->user_model->get_users();
+        $data['users'] = $this->model_pengguna->dapatkan_pengguna_semua();
 
         // Get user statistics for charts
         $data['user_stats'] = array(
-            'admin_count' => $this->user_model->count_users_by_role('admin'),
-            'applicant_count' => $this->user_model->count_users_by_role('applicant'),
-            'recruiter_count' => $this->user_model->count_users_by_role('staff')
+            'admin_count' => $this->model_pengguna->hitung_pengguna_berdasarkan_peran('admin'),
+            'applicant_count' => $this->model_pengguna->hitung_pelamar(),
+            'recruiter_count' => $this->model_pengguna->hitung_pengguna_berdasarkan_peran('staff')
         );
 
         // Load views
@@ -643,8 +642,8 @@ class Admin extends CI_Controller {
         $this->load->view('templates/admin_footer');
     }
 
-    // Add User
-    public function add_user() {
+    // Tambah Pengguna
+    public function tambah_pengguna() {
         // Form validation rules
         $this->form_validation->set_rules('username', 'Username', 'trim|required|is_unique[users.username]');
         $this->form_validation->set_rules('email', 'Email', 'trim|required|valid_email|is_unique[users.email]');
@@ -693,39 +692,38 @@ class Admin extends CI_Controller {
                     $user_data['profile_picture'] = $upload_data['file_name'];
                 } else {
                     $this->session->set_flashdata('error', $this->upload->display_errors());
-                    redirect('admin/add_user');
+                    redirect('admin/tambah_pengguna');
                 }
             }
 
             // Insert user data
-            $user_id = $this->user_model->insert_user($user_data);
+            $user_id = $this->model_pengguna->tambah_pengguna($user_data);
 
             if ($user_id) {
                 // If user is applicant, create applicant profile
                 if ($user_data['role'] == 'applicant') {
-                    $this->load->model('applicant_model');
                     $profile_data = array(
                         'user_id' => $user_id,
                         'created_at' => date('Y-m-d H:i:s')
                     );
-                    $this->applicant_model->insert_profile($profile_data);
+                    $this->model_pelamar->tambah_profil($profile_data);
                 }
 
                 // Show success message
                 $this->session->set_flashdata('success', 'Pengguna baru berhasil ditambahkan.');
-                redirect('admin/users');
+                redirect('admin/pengguna');
             } else {
                 // If insertion fails, show error message
                 $this->session->set_flashdata('error', 'Gagal menambahkan pengguna. Silakan coba lagi.');
-                redirect('admin/add_user');
+                redirect('admin/tambah_pengguna');
             }
         }
     }
 
-    // Edit User
-    public function edit_user($id) {
+    // Edit Pengguna
+    public function edit_pengguna($id) {
         // Get user details
-        $data['user'] = $this->user_model->get_user($id);
+        $data['user'] = $this->model_pengguna->dapatkan_pengguna($id);
 
         // If user not found, show 404
         if (!$data['user']) {
@@ -785,43 +783,42 @@ class Admin extends CI_Controller {
                     $user_data['profile_picture'] = $upload_data['file_name'];
                 } else {
                     $this->session->set_flashdata('error', $this->upload->display_errors());
-                    redirect('admin/edit_user/' . $id);
+                    redirect('admin/edit_pengguna/' . $id);
                 }
             }
 
             // Update user data
-            $result = $this->user_model->update_user($id, $user_data);
+            $result = $this->model_pengguna->perbarui_pengguna($id, $user_data);
 
             if ($result) {
                 // If user role changed to applicant, create applicant profile if not exists
                 if ($user_data['role'] == 'applicant') {
-                    $this->load->model('applicant_model');
-                    $profile = $this->applicant_model->get_profile($id);
+                    $profile = $this->model_pelamar->dapatkan_profil($id);
 
                     if (!$profile) {
                         $profile_data = array(
                             'user_id' => $id,
                             'created_at' => date('Y-m-d H:i:s')
                         );
-                        $this->applicant_model->insert_profile($profile_data);
+                        $this->model_pelamar->tambah_profil($profile_data);
                     }
                 }
 
                 // Show success message
                 $this->session->set_flashdata('success', 'Informasi pengguna berhasil diperbarui.');
-                redirect('admin/users');
+                redirect('admin/pengguna');
             } else {
                 // If update fails, show error message
                 $this->session->set_flashdata('error', 'Gagal memperbarui informasi pengguna. Silakan coba lagi.');
-                redirect('admin/edit_user/' . $id);
+                redirect('admin/edit_pengguna/' . $id);
             }
         }
     }
 
-    // Delete User
-    public function delete_user($id) {
+    // Hapus Pengguna
+    public function hapus_pengguna($id) {
         // Delete user
-        $result = $this->user_model->delete_user($id);
+        $result = $this->model_pengguna->hapus_pengguna($id);
 
         if ($result) {
             // Show success message
@@ -831,12 +828,12 @@ class Admin extends CI_Controller {
             $this->session->set_flashdata('error', 'Gagal menghapus pengguna. Silakan coba lagi.');
         }
 
-        redirect('admin/users');
+        redirect('admin/pengguna');
     }
 
-    // Activate User
-    public function activate_user($id) {
-        $result = $this->user_model->update_user($id, array('status' => 'active'));
+    // Aktifkan Pengguna
+    public function aktifkan_pengguna($id) {
+        $result = $this->model_pengguna->perbarui_pengguna($id, array('status' => 'active'));
 
         if ($result) {
             $this->session->set_flashdata('success', 'Pengguna berhasil diaktifkan.');
@@ -844,12 +841,12 @@ class Admin extends CI_Controller {
             $this->session->set_flashdata('error', 'Gagal mengaktifkan pengguna. Silakan coba lagi.');
         }
 
-        redirect('admin/users');
+        redirect('admin/pengguna');
     }
 
-    // Deactivate User
-    public function deactivate_user($id) {
-        $result = $this->user_model->update_user($id, array('status' => 'inactive'));
+    // Nonaktifkan Pengguna
+    public function nonaktifkan_pengguna($id) {
+        $result = $this->model_pengguna->perbarui_pengguna($id, array('status' => 'inactive'));
 
         if ($result) {
             $this->session->set_flashdata('success', 'Pengguna berhasil dinonaktifkan.');
@@ -857,11 +854,11 @@ class Admin extends CI_Controller {
             $this->session->set_flashdata('error', 'Gagal menonaktifkan pengguna. Silakan coba lagi.');
         }
 
-        redirect('admin/users');
+        redirect('admin/pengguna');
     }
 
-    // Reset Password
-    public function reset_password($id) {
+    // Reset Kata Sandi
+    public function reset_kata_sandi($id) {
         // Generate random password
         $new_password = substr(md5(uniqid(rand(), true)), 0, 8);
 
@@ -869,11 +866,11 @@ class Admin extends CI_Controller {
         $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
 
         // Update user password
-        $result = $this->user_model->update_password($id, $hashed_password);
+        $result = $this->model_pengguna->perbarui_password($id, $hashed_password);
 
         if ($result) {
             // Get user email
-            $user = $this->user_model->get_user($id);
+            $user = $this->model_pengguna->dapatkan_pengguna($id);
 
             // Send email with new password
             $this->load->library('email');
@@ -892,13 +889,13 @@ class Admin extends CI_Controller {
             $this->session->set_flashdata('error', 'Gagal mereset password. Silakan coba lagi.');
         }
 
-        redirect('admin/users');
+        redirect('admin/pengguna');
     }
 
-    // View Applicant Profile
-    public function applicant_profile($id) {
+    // Lihat Profil Pelamar
+    public function profil_pelamar($id) {
         // Get user details
-        $data['user'] = $this->user_model->get_user($id);
+        $data['user'] = $this->model_pengguna->dapatkan_pengguna($id);
 
         // If user not found or not an applicant, show 404
         if (!$data['user'] || $data['user']->role != 'applicant') {
@@ -906,8 +903,7 @@ class Admin extends CI_Controller {
         }
 
         // Get applicant profile
-        $this->load->model('applicant_model');
-        $data['profile'] = $this->applicant_model->get_profile($id);
+        $data['profile'] = $this->model_pelamar->dapatkan_profil($id);
 
         // Load views
         $data['title'] = 'Profil Pelamar';
@@ -916,10 +912,10 @@ class Admin extends CI_Controller {
         $this->load->view('templates/admin_footer');
     }
 
-    // View Applicant Applications
-    public function applicant_applications($id) {
+    // Lihat Lamaran Pelamar
+    public function lamaran_pelamar($id) {
         // Get user details
-        $data['user'] = $this->user_model->get_user($id);
+        $data['user'] = $this->model_pengguna->dapatkan_pengguna($id);
 
         // If user not found or not an applicant, show 404
         if (!$data['user'] || $data['user']->role != 'applicant') {
@@ -927,7 +923,7 @@ class Admin extends CI_Controller {
         }
 
         // Get applicant applications
-        $data['applications'] = $this->application_model->get_applicant_applications($id);
+        $data['applications'] = $this->model_lamaran->dapatkan_lamaran_pelamar($id);
 
         // Load views
         $data['title'] = 'Lamaran Pelamar';
@@ -945,7 +941,7 @@ class Admin extends CI_Controller {
 
         // Set up pagination
         $config['base_url'] = base_url('admin/blog');
-        $config['total_rows'] = $this->blog_model->count_posts();
+        $config['total_rows'] = $this->model_blog->hitung_artikel();
         $config['per_page'] = 10;
         $config['uri_segment'] = 3;
         $config['page_query_string'] = TRUE;
@@ -979,10 +975,10 @@ class Admin extends CI_Controller {
         $page = $this->input->get('page') ? $this->input->get('page') : 0;
 
         // For now, get all posts (we'll implement filtering later)
-        $data['posts'] = $this->blog_model->get_posts();
+        $data['posts'] = $this->model_blog->dapatkan_artikel_semua();
 
         // Get blog categories
-        $data['categories'] = $this->category_model->get_blog_categories();
+        $data['categories'] = $this->model_kategori->dapatkan_kategori_blog();
 
         // Load views
         $data['title'] = 'Manajemen Blog';
@@ -992,10 +988,10 @@ class Admin extends CI_Controller {
         $this->load->view('templates/admin_footer');
     }
 
-    // Add Blog Post
-    public function add_post() {
+    // Tambah Artikel Blog
+    public function tambah_artikel() {
         // Get blog categories
-        $data['categories'] = $this->category_model->get_blog_categories();
+        $data['categories'] = $this->model_kategori->dapatkan_kategori_blog();
 
         // Form validation rules
         $this->form_validation->set_rules('title', 'Title', 'trim|required');
@@ -1027,7 +1023,7 @@ class Admin extends CI_Controller {
                     if (!mkdir($upload_path, 0777, true)) {
                         $error = "Failed to create directory: " . $upload_path;
                         $this->session->set_flashdata('error', $error);
-                        redirect('admin/add_post');
+                        redirect('admin/tambah_artikel');
                     }
                 }
 
@@ -1035,7 +1031,7 @@ class Admin extends CI_Controller {
                 if (!is_writable($upload_path)) {
                     $error = "Directory is not writable: " . $upload_path;
                     $this->session->set_flashdata('error', $error);
-                    redirect('admin/add_post');
+                    redirect('admin/tambah_artikel');
                 }
 
                 $config['upload_path'] = './uploads/blog_images/';
@@ -1051,19 +1047,19 @@ class Admin extends CI_Controller {
                 } else {
                     $error = $this->upload->display_errors();
                     $this->session->set_flashdata('error', $error);
-                    redirect('admin/add_post');
+                    redirect('admin/tambah_artikel');
                 }
             }
 
             // Insert post data
-            $post_id = $this->blog_model->insert_post($post_data);
+            $post_id = $this->model_blog->tambah_artikel($post_data);
 
             if ($post_id) {
                 // Add post categories
                 $categories = $this->input->post('categories');
                 if (!empty($categories)) {
                     foreach ($categories as $category_id) {
-                        $this->blog_model->add_post_category($post_id, $category_id);
+                        $this->model_blog->tambah_kategori_artikel($post_id, $category_id);
                     }
                 }
 
@@ -1073,15 +1069,15 @@ class Admin extends CI_Controller {
             } else {
                 // If insertion fails, show error message
                 $this->session->set_flashdata('error', 'Gagal menambahkan artikel. Silakan coba lagi.');
-                redirect('admin/add_post');
+                redirect('admin/tambah_artikel');
             }
         }
     }
 
-    // Edit Blog Post
-    public function edit_post($id) {
+    // Edit Artikel Blog
+    public function edit_artikel($id) {
         // Get post details
-        $data['post'] = $this->blog_model->get_post($id);
+        $data['post'] = $this->model_blog->dapatkan_artikel($id);
 
         // If post not found, show 404
         if (!$data['post']) {
@@ -1089,10 +1085,10 @@ class Admin extends CI_Controller {
         }
 
         // Get blog categories
-        $data['categories'] = $this->category_model->get_blog_categories();
+        $data['categories'] = $this->model_kategori->dapatkan_kategori_blog();
 
         // Get post categories
-        $data['post_categories'] = $this->blog_model->get_post_categories($id);
+        $data['post_categories'] = $this->model_blog->dapatkan_kategori_artikel($id);
         $data['selected_categories'] = array();
         foreach ($data['post_categories'] as $category) {
             $data['selected_categories'][] = $category->id;
@@ -1127,7 +1123,7 @@ class Admin extends CI_Controller {
                     if (!mkdir($upload_path, 0777, true)) {
                         $error = "Failed to create directory: " . $upload_path;
                         $this->session->set_flashdata('error', $error);
-                        redirect('admin/edit_post/' . $id);
+                        redirect('admin/edit_artikel/' . $id);
                     }
                 }
 
@@ -1135,7 +1131,7 @@ class Admin extends CI_Controller {
                 if (!is_writable($upload_path)) {
                     $error = "Directory is not writable: " . $upload_path;
                     $this->session->set_flashdata('error', $error);
-                    redirect('admin/edit_post/' . $id);
+                    redirect('admin/edit_artikel/' . $id);
                 }
 
                 $config['upload_path'] = './uploads/blog_images/';
@@ -1159,20 +1155,20 @@ class Admin extends CI_Controller {
                 } else {
                     $error = $this->upload->display_errors();
                     $this->session->set_flashdata('error', $error);
-                    redirect('admin/edit_post/' . $id);
+                    redirect('admin/edit_artikel/' . $id);
                 }
             }
 
             // Update post data
-            $result = $this->blog_model->update_post($id, $post_data);
+            $result = $this->model_blog->perbarui_artikel($id, $post_data);
 
             if ($result) {
                 // Update post categories
-                $this->blog_model->remove_all_post_categories($id);
+                $this->model_blog->hapus_semua_kategori_artikel($id);
                 $categories = $this->input->post('categories');
                 if (!empty($categories)) {
                     foreach ($categories as $category_id) {
-                        $this->blog_model->add_post_category($id, $category_id);
+                        $this->model_blog->tambah_kategori_artikel($id, $category_id);
                     }
                 }
 
@@ -1182,15 +1178,15 @@ class Admin extends CI_Controller {
             } else {
                 // If update fails, show error message
                 $this->session->set_flashdata('error', 'Gagal memperbarui artikel. Silakan coba lagi.');
-                redirect('admin/edit_post/' . $id);
+                redirect('admin/edit_artikel/' . $id);
             }
         }
     }
 
-    // Delete Blog Post
-    public function delete_post($id) {
+    // Hapus Artikel Blog
+    public function hapus_artikel($id) {
         // Get post details
-        $post = $this->blog_model->get_post($id);
+        $post = $this->model_blog->dapatkan_artikel($id);
 
         // If post not found, show 404
         if (!$post) {
@@ -1198,7 +1194,7 @@ class Admin extends CI_Controller {
         }
 
         // Delete post
-        $result = $this->blog_model->delete_post($id);
+        $result = $this->model_blog->hapus_artikel($id);
 
         if ($result) {
             // Delete featured image if exists
@@ -1219,9 +1215,9 @@ class Admin extends CI_Controller {
         redirect('admin/blog');
     }
 
-    // Publish Blog Post
-    public function publish_post($id) {
-        $result = $this->blog_model->update_post($id, array('status' => 'published'));
+    // Publikasi Artikel Blog
+    public function publikasi_artikel($id) {
+        $result = $this->model_blog->perbarui_artikel($id, array('status' => 'published'));
 
         if ($result) {
             $this->session->set_flashdata('success', 'Artikel berhasil dipublikasikan.');
@@ -1232,9 +1228,9 @@ class Admin extends CI_Controller {
         redirect('admin/blog');
     }
 
-    // Unpublish Blog Post
-    public function unpublish_post($id) {
-        $result = $this->blog_model->update_post($id, array('status' => 'draft'));
+    // Batalkan Publikasi Artikel Blog
+    public function batalkan_publikasi_artikel($id) {
+        $result = $this->model_blog->perbarui_artikel($id, array('status' => 'draft'));
 
         if ($result) {
             $this->session->set_flashdata('success', 'Artikel berhasil dijadikan draft.');
@@ -1245,8 +1241,8 @@ class Admin extends CI_Controller {
         redirect('admin/blog');
     }
 
-    // Add Blog Category
-    public function add_blog_category() {
+    // Tambah Kategori Blog
+    public function tambah_kategori_blog() {
         // Form validation rules
         $this->form_validation->set_rules('name', 'Name', 'trim|required');
         $this->form_validation->set_rules('slug', 'Slug', 'trim|required|is_unique[blog_categories.slug]');
@@ -1264,7 +1260,7 @@ class Admin extends CI_Controller {
             );
 
             // Insert category data
-            $result = $this->category_model->insert_blog_category($category_data);
+            $result = $this->model_kategori->tambah_kategori_blog($category_data);
 
             if ($result) {
                 // Show success message
@@ -1278,8 +1274,8 @@ class Admin extends CI_Controller {
         }
     }
 
-    // Edit Blog Category
-    public function edit_blog_category() {
+    // Edit Kategori Blog
+    public function edit_kategori_blog() {
         // Get category ID
         $id = $this->input->post('id');
 
@@ -1300,7 +1296,7 @@ class Admin extends CI_Controller {
             );
 
             // Update category data
-            $result = $this->category_model->update_blog_category($id, $category_data);
+            $result = $this->model_kategori->perbarui_kategori_blog($id, $category_data);
 
             if ($result) {
                 // Show success message
@@ -1314,10 +1310,10 @@ class Admin extends CI_Controller {
         }
     }
 
-    // Delete Blog Category
-    public function delete_blog_category($id) {
+    // Hapus Kategori Blog
+    public function hapus_kategori_blog($id) {
         // Delete category
-        $result = $this->category_model->delete_blog_category($id);
+        $result = $this->model_kategori->hapus_kategori_blog($id);
 
         if ($result) {
             // Show success message

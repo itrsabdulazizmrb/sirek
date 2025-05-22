@@ -28,7 +28,7 @@ class Beranda extends CI_Controller {
 
     public function lowongan() {
         // Get pagination config
-        $config['base_url'] = base_url('beranda/lowongan');
+        $config['base_url'] = base_url('lowongan');
         $config['total_rows'] = $this->model_lowongan->hitung_lowongan_aktif();
         $config['per_page'] = 10;
         $config['uri_segment'] = 3;
@@ -95,7 +95,7 @@ class Beranda extends CI_Controller {
 
     public function blog() {
         // Get pagination config
-        $config['base_url'] = base_url('beranda/blog');
+        $config['base_url'] = base_url('blog');
         $config['total_rows'] = $this->model_blog->hitung_artikel_terpublikasi();
         $config['per_page'] = 6;
         $config['uri_segment'] = 3;
@@ -176,7 +176,7 @@ class Beranda extends CI_Controller {
         // Load views
         $data['title'] = 'Tentang Kami';
         $this->load->view('templates/public_header', $data);
-        $this->load->view('public/tentang');
+        $this->load->view('public/tentang', $data);
         $this->load->view('templates/public_footer');
     }
 
@@ -212,7 +212,7 @@ class Beranda extends CI_Controller {
                 $this->session->set_flashdata('error', 'Gagal mengirim pesan. Silakan coba lagi.');
             }
 
-            redirect('beranda/kontak');
+            redirect('kontak');
         }
     }
 
@@ -221,7 +221,7 @@ class Beranda extends CI_Controller {
         $query = $this->input->get('q');
 
         if (!$query) {
-            redirect('beranda/lowongan');
+            redirect('lowongan');
         }
 
         // Search jobs

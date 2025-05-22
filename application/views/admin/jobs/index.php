@@ -65,8 +65,8 @@
                       <span class="badge badge-sm bg-gradient-<?= $job->status == 'active' ? 'success' : ($job->status == 'draft' ? 'secondary' : 'danger') ?>"><?= $job->status == 'active' ? 'Aktif' : ($job->status == 'draft' ? 'Draft' : 'Tidak Aktif') ?></span>
                     </td>
                     <td class="align-middle text-center">
-                      <?php 
-                      $applicant_count = $this->application_model->count_applications_by_job($job->id);
+                      <?php
+                      $applicant_count = $this->model_lamaran->hitung_lamaran_berdasarkan_lowongan($job->id);
                       ?>
                       <a href="<?= base_url('admin/job_applications/' . $job->id) ?>" class="text-secondary font-weight-bold text-xs">
                         <?= $applicant_count ?> Pelamar

@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Otentikasi extends CI_Controller {
+class Auth extends CI_Controller {
 
     public function __construct() {
         parent::__construct();
@@ -13,7 +13,7 @@ class Otentikasi extends CI_Controller {
 
     public function index() {
         // Redirect ke halaman login
-        redirect('otentikasi/login');
+        redirect('auth/login');
     }
 
     public function login() {
@@ -37,7 +37,7 @@ class Otentikasi extends CI_Controller {
             // Jika validasi gagal, tampilkan form login
             $data['title'] = 'Login';
             $this->load->view('templates/auth_header', $data);
-            $this->load->view('otentikasi/login');
+            $this->load->view('auth/login');
             $this->load->view('templates/auth_footer');
         } else {
             // Jika validasi berhasil, proses login
@@ -78,12 +78,12 @@ class Otentikasi extends CI_Controller {
                 } else {
                     // Jika user tidak aktif
                     $this->session->set_flashdata('error', 'Akun Anda tidak aktif. Silakan hubungi administrator.');
-                    redirect('otentikasi/login');
+                    redirect('auth/login');
                 }
             } else {
                 // Jika login gagal
                 $this->session->set_flashdata('error', 'Username atau password salah.');
-                redirect('otentikasi/login');
+                redirect('auth/login');
             }
         }
     }
@@ -112,7 +112,7 @@ class Otentikasi extends CI_Controller {
             // Jika validasi gagal, tampilkan form registrasi
             $data['title'] = 'Daftar';
             $this->load->view('templates/auth_header', $data);
-            $this->load->view('otentikasi/daftar');
+            $this->load->view('auth/daftar');
             $this->load->view('templates/auth_footer');
         } else {
             // Jika validasi berhasil, proses registrasi
@@ -135,11 +135,11 @@ class Otentikasi extends CI_Controller {
 
                 // Tampilkan pesan sukses
                 $this->session->set_flashdata('success', 'Pendaftaran berhasil. Silakan login.');
-                redirect('otentikasi/login');
+                redirect('auth/login');
             } else {
                 // Jika gagal menyimpan
                 $this->session->set_flashdata('error', 'Gagal mendaftar. Silakan coba lagi.');
-                redirect('otentikasi/daftar');
+                redirect('auth/daftar');
             }
         }
     }
@@ -152,7 +152,7 @@ class Otentikasi extends CI_Controller {
             // Jika validasi gagal, tampilkan form lupa password
             $data['title'] = 'Lupa Password';
             $this->load->view('templates/auth_header', $data);
-            $this->load->view('otentikasi/lupa_password');
+            $this->load->view('auth/lupa_password');
             $this->load->view('templates/auth_footer');
         } else {
             // Jika validasi berhasil, proses reset password
@@ -175,7 +175,7 @@ class Otentikasi extends CI_Controller {
                 $this->email->from('noreply@sirek.com', 'SIREK');
                 $this->email->to($email);
                 $this->email->subject('Reset Password');
-                $this->email->message('Klik link berikut untuk reset password Anda: ' . base_url('otentikasi/reset_password/' . $token));
+                $this->email->message('Klik link berikut untuk reset password Anda: ' . base_url('auth/reset_password/' . $token));
 
                 if ($this->email->send()) {
                     $this->session->set_flashdata('success', 'Link reset password telah dikirim ke email Anda.');
@@ -186,7 +186,7 @@ class Otentikasi extends CI_Controller {
                 $this->session->set_flashdata('error', 'Email tidak ditemukan.');
             }
 
-            redirect('otentikasi/lupa_password');
+            redirect('auth/lupa_password');
         }
     }
 
@@ -198,7 +198,7 @@ class Otentikasi extends CI_Controller {
 
         if (!$reset) {
             $this->session->set_flashdata('error', 'Token reset password tidak valid.');
-            redirect('otentikasi/login');
+            redirect('auth/login');
         }
 
         // Cek apakah token masih berlaku (24 jam)
@@ -209,7 +209,7 @@ class Otentikasi extends CI_Controller {
 
         if ($hours > 24) {
             $this->session->set_flashdata('error', 'Token reset password sudah kadaluarsa.');
-            redirect('otentikasi/login');
+            redirect('auth/login');
         }
 
         // Set aturan validasi
@@ -221,7 +221,7 @@ class Otentikasi extends CI_Controller {
             $data['title'] = 'Reset Password';
             $data['token'] = $token;
             $this->load->view('templates/auth_header', $data);
-            $this->load->view('otentikasi/reset_password', $data);
+            $this->load->view('auth/reset_password', $data);
             $this->load->view('templates/auth_footer');
         } else {
             // Jika validasi berhasil, proses reset password
@@ -238,7 +238,7 @@ class Otentikasi extends CI_Controller {
 
             // Tampilkan pesan sukses
             $this->session->set_flashdata('success', 'Password berhasil direset. Silakan login.');
-            redirect('otentikasi/login');
+            redirect('auth/login');
         }
     }
 
@@ -247,6 +247,6 @@ class Otentikasi extends CI_Controller {
         $this->session->sess_destroy();
 
         // Redirect ke halaman login
-        redirect('otentikasi/login');
+        redirect('auth/login');
     }
 }

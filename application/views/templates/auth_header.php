@@ -35,9 +35,9 @@
                   <p class="mb-0">
                     <?php if ($title == 'Login') : ?>
                       Enter your credentials to sign in
-                    <?php elseif ($title == 'Register') : ?>
+                    <?php elseif ($title == 'Daftar') : ?>
                       Enter your details to create an account
-                    <?php elseif ($title == 'Forgot Password') : ?>
+                    <?php elseif ($title == 'Lupa Password') : ?>
                       Enter your email to reset your password
                     <?php elseif ($title == 'Reset Password') : ?>
                       Enter your new password
@@ -51,14 +51,14 @@
                       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                   <?php endif; ?>
-                  
+
                   <?php if ($this->session->flashdata('error')) : ?>
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
                       <?= $this->session->flashdata('error') ?>
                       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                   <?php endif; ?>
-                  
+
                   <?php if (validation_errors()) : ?>
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
                       <?= validation_errors() ?>

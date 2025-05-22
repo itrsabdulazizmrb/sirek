@@ -5,7 +5,7 @@
 1. `Home.php` → `Beranda.php`
 2. `Applicant.php` → `Pelamar.php`
 3. `Import.php` → `Impor.php`
-4. `Auth.php` → `Otentikasi.php`
+4. `Auth.php` → `Auth.php` (tetap)
 
 ## Perubahan Nama File Model
 
@@ -41,13 +41,51 @@
 9. `submit_assessment()` → `kirim_penilaian()`
 10. `change_password()` → `ubah_password()`
 
+## Perubahan Nama Function di Controller Admin
+
+1. `index()` → `index()` (tetap)
+2. `dashboard()` → `dasbor()`
+3. `jobs()` → `lowongan()`
+4. `add_job()` → `tambah_lowongan()`
+5. `edit_job($id)` → `edit_lowongan($id)`
+6. `delete_job($id)` → `hapus_lowongan($id)`
+7. `applications()` → `lamaran()`
+8. `application_detail($id)` → `detail_lamaran($id)`
+9. `assessments()` → `penilaian()`
+10. `add_assessment()` → `tambah_penilaian()`
+11. `edit_assessment($id)` → `edit_penilaian($id)`
+12. `delete_assessment($id)` → `hapus_penilaian($id)`
+13. `assessment_questions($id)` → `soal_penilaian($id)`
+14. `add_question($assessment_id)` → `tambah_soal($assessment_id)`
+15. `edit_question($id)` → `edit_soal($id)`
+16. `delete_question($id)` → `hapus_soal($id)`
+17. `reports()` → `laporan()`
+18. `users()` → `pengguna()`
+19. `add_user()` → `tambah_pengguna()`
+20. `edit_user($id)` → `edit_pengguna($id)`
+21. `delete_user($id)` → `hapus_pengguna($id)`
+22. `activate_user($id)` → `aktifkan_pengguna($id)`
+23. `deactivate_user($id)` → `nonaktifkan_pengguna($id)`
+24. `reset_password($id)` → `reset_kata_sandi($id)`
+25. `applicant_profile($id)` → `profil_pelamar($id)`
+26. `applicant_applications($id)` → `lamaran_pelamar($id)`
+27. `blog()` → `blog()` (tetap)
+28. `add_post()` → `tambah_artikel()`
+29. `edit_post($id)` → `edit_artikel($id)`
+30. `delete_post($id)` → `hapus_artikel($id)`
+31. `publish_post($id)` → `publikasi_artikel($id)`
+32. `unpublish_post($id)` → `batalkan_publikasi_artikel($id)`
+33. `add_blog_category()` → `tambah_kategori_blog()`
+34. `edit_blog_category()` → `edit_kategori_blog()`
+35. `delete_blog_category($id)` → `hapus_kategori_blog($id)`
+
 ## Perubahan Nama Function di Controller Impor (Import)
 
 1. `index()` → `index()` (tetap)
 2. `download_template($assessment_id)` → `unduh_template($assessment_id)`
 3. `process()` → `proses()`
 
-## Perubahan Nama Function di Controller Otentikasi (Auth)
+## Perubahan Nama Function di Controller Auth
 
 1. `index()` → `index()` (tetap)
 2. `login()` → `login()` (tetap)

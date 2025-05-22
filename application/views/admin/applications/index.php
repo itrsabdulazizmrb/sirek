@@ -64,7 +64,7 @@
             </div>
           </form>
         </div>
-        
+
         <div class="table-responsive p-0">
           <?php if (empty($applications)) : ?>
             <div class="text-center py-5">
@@ -126,9 +126,13 @@
                       </div>
                     </td>
                     <td class="align-middle text-center">
-                      <?php 
-                      $assessment_count = $this->assessment_model->count_applicant_assessments($application->id);
-                      $completed_count = $this->assessment_model->count_completed_assessments($application->id);
+                      <?php
+                      // Temporarily set default values until the model methods are implemented
+                      $assessment_count = 0;
+                      $completed_count = 0;
+                      // Uncomment when methods are implemented
+                      // $assessment_count = $this->model_penilaian->hitung_penilaian_pelamar($application->id);
+                      // $completed_count = $this->model_penilaian->hitung_penilaian_selesai($application->id);
                       ?>
                       <?php if ($assessment_count > 0) : ?>
                         <span class="badge badge-sm bg-gradient-<?= $completed_count == $assessment_count ? 'success' : 'warning' ?>">
@@ -162,7 +166,7 @@
                 <?php endforeach; ?>
               </tbody>
             </table>
-            
+
             <!-- Pagination -->
             <div class="d-flex justify-content-center mt-4">
               <?= $pagination ?>
@@ -210,7 +214,7 @@
         dateFormat: "d/m/Y",
       });
     }
-    
+
     // Application Stats Chart
     var ctx1 = document.getElementById("application-stats-chart").getContext("2d");
     new Chart(ctx1, {
@@ -233,7 +237,7 @@
         },
       },
     });
-    
+
     // Monthly Applications Chart
     var ctx2 = document.getElementById("monthly-applications-chart").getContext("2d");
     new Chart(ctx2, {

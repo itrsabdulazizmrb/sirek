@@ -8,7 +8,7 @@ class Model_Penilaian extends CI_Model {
     }
 
     // Dapatkan semua penilaian
-    public function dapatkan_penilaian() {
+    public function dapatkan_semua_penilaian() {
         $this->db->select('assessments.*, assessment_types.name as type_name, users.full_name as created_by_name');
         $this->db->from('assessments');
         $this->db->join('assessment_types', 'assessment_types.id = assessments.type_id', 'left');
@@ -178,7 +178,7 @@ class Model_Penilaian extends CI_Model {
     public function hitung_skor_penilaian_pelamar($applicant_assessment_id) {
         $total_points = 0;
         $earned_points = 0;
-        
+
         // Dapatkan semua jawaban pelamar
         $this->db->select('applicant_answers.*, questions.points, question_options.is_correct');
         $this->db->from('applicant_answers');
@@ -187,20 +187,20 @@ class Model_Penilaian extends CI_Model {
         $this->db->where('applicant_answers.applicant_assessment_id', $applicant_assessment_id);
         $query = $this->db->get();
         $answers = $query->result();
-        
+
         foreach ($answers as $answer) {
             $total_points += $answer->points;
-            
+
             if ($answer->is_correct == 1) {
                 $earned_points += $answer->points;
             }
         }
-        
+
         // Perbarui skor di database
         $score = ($total_points > 0) ? round(($earned_points / $total_points) * 100) : 0;
         $this->db->where('id', $applicant_assessment_id);
         $this->db->update('applicant_assessments', array('score' => $score));
-        
+
         return $score;
     }
 

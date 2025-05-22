@@ -27,7 +27,7 @@
   <aside class="sidenav bg-white navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-4 " id="sidenav-main">
     <div class="sidenav-header">
       <i class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
-      <a class="navbar-brand m-0" href="<?= base_url('applicant/dashboard') ?>">
+      <a class="navbar-brand m-0" href="<?= base_url('pelamar/dasbor') ?>">
         <img src="<?= base_url('assets/img/logo-ct-dark.png') ?>" class="navbar-brand-img h-100" alt="main_logo">
         <span class="ms-1 font-weight-bold">SIREK Applicant</span>
       </a>
@@ -36,7 +36,7 @@
     <div class="collapse navbar-collapse w-auto" id="sidenav-collapse-main">
       <ul class="navbar-nav">
         <li class="nav-item">
-          <a class="nav-link <?= $this->uri->segment(2) == 'dashboard' ? 'active' : '' ?>" href="<?= base_url('applicant/dashboard') ?>">
+          <a class="nav-link <?= $this->uri->segment(2) == 'dasbor' ? 'active' : '' ?>" href="<?= base_url('pelamar/dasbor') ?>">
             <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
               <i class="ni ni-tv-2 text-primary text-sm opacity-10"></i>
             </div>
@@ -44,7 +44,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link <?= $this->uri->segment(2) == 'profile' ? 'active' : '' ?>" href="<?= base_url('applicant/profile') ?>">
+          <a class="nav-link <?= $this->uri->segment(2) == 'profil' ? 'active' : '' ?>" href="<?= base_url('pelamar/profil') ?>">
             <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
               <i class="ni ni-single-02 text-dark text-sm opacity-10"></i>
             </div>
@@ -52,7 +52,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link <?= $this->uri->segment(2) == 'applications' || $this->uri->segment(2) == 'application_details' ? 'active' : '' ?>" href="<?= base_url('applicant/applications') ?>">
+          <a class="nav-link <?= $this->uri->segment(2) == 'lamaran' || $this->uri->segment(2) == 'detail_lamaran' ? 'active' : '' ?>" href="<?= base_url('pelamar/lamaran') ?>">
             <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
               <i class="ni ni-single-copy-04 text-warning text-sm opacity-10"></i>
             </div>
@@ -60,7 +60,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link <?= $this->uri->segment(2) == 'assessments' || $this->uri->segment(2) == 'take_assessment' ? 'active' : '' ?>" href="<?= base_url('applicant/assessments') ?>">
+          <a class="nav-link <?= $this->uri->segment(2) == 'penilaian' || $this->uri->segment(2) == 'ikuti_penilaian' ? 'active' : '' ?>" href="<?= base_url('pelamar/penilaian') ?>">
             <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
               <i class="ni ni-ruler-pencil text-info text-sm opacity-10"></i>
             </div>
@@ -68,7 +68,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link <?= $this->uri->segment(2) == 'change_password' ? 'active' : '' ?>" href="<?= base_url('applicant/change_password') ?>">
+          <a class="nav-link <?= $this->uri->segment(2) == 'ubah_password' ? 'active' : '' ?>" href="<?= base_url('pelamar/ubah-password') ?>">
             <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
               <i class="ni ni-key-25 text-danger text-sm opacity-10"></i>
             </div>
@@ -111,7 +111,7 @@
       <div class="container-fluid py-1 px-3">
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
-            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-white" href="<?= base_url('applicant/dashboard') ?>">Applicant</a></li>
+            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-white" href="<?= base_url('pelamar/dasbor') ?>">Applicant</a></li>
             <li class="breadcrumb-item text-sm text-white active" aria-current="page"><?= $title ?></li>
           </ol>
           <h6 class="font-weight-bolder text-white mb-0"><?= $title ?></h6>
@@ -125,7 +125,7 @@
           </div>
           <ul class="navbar-nav  justify-content-end">
             <li class="nav-item d-flex align-items-center">
-              <a href="<?= base_url('applicant/profile') ?>" class="nav-link text-white font-weight-bold px-0">
+              <a href="<?= base_url('pelamar/profil') ?>" class="nav-link text-white font-weight-bold px-0">
                 <i class="fa fa-user me-sm-1"></i>
                 <span class="d-sm-inline d-none"><?= $this->session->userdata('full_name') ?></span>
               </a>
@@ -199,7 +199,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
       <?php endif; ?>
-      
+
       <?php if ($this->session->flashdata('error')) : ?>
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
           <?= $this->session->flashdata('error') ?>

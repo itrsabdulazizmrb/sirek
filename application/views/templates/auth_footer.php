@@ -3,17 +3,17 @@
                   <?php if ($title == 'Login') : ?>
                     <p class="mb-4 text-sm mx-auto">
                       Don't have an account?
-                      <a href="<?= base_url('auth/register') ?>" class="text-primary text-gradient font-weight-bold">Sign up</a>
+                      <a href="<?= base_url('auth/daftar') ?>" class="text-primary text-gradient font-weight-bold">Sign up</a>
                     </p>
                     <p class="mb-0 text-sm mx-auto">
-                      <a href="<?= base_url('auth/forgot_password') ?>" class="text-primary text-gradient font-weight-bold">Forgot password?</a>
+                      <a href="<?= base_url('auth/lupa_password') ?>" class="text-primary text-gradient font-weight-bold">Forgot password?</a>
                     </p>
-                  <?php elseif ($title == 'Register') : ?>
+                  <?php elseif ($title == 'Daftar') : ?>
                     <p class="mb-4 text-sm mx-auto">
                       Already have an account?
                       <a href="<?= base_url('auth') ?>" class="text-primary text-gradient font-weight-bold">Sign in</a>
                     </p>
-                  <?php elseif ($title == 'Forgot Password') : ?>
+                  <?php elseif ($title == 'Lupa Password') : ?>
                     <p class="mb-0 text-sm mx-auto">
                       <a href="<?= base_url('auth') ?>" class="text-primary text-gradient font-weight-bold">Back to login</a>
                     </p>
@@ -37,19 +37,19 @@
       </div>
     </section>
   </main>
-  
+
   <!--   Core JS Files   -->
   <script src="<?= base_url('assets/js/core/popper.min.js') ?>"></script>
   <script src="<?= base_url('assets/js/core/bootstrap.min.js') ?>"></script>
   <script src="<?= base_url('assets/js/plugins/perfect-scrollbar.min.js') ?>"></script>
   <script src="<?= base_url('assets/js/plugins/smooth-scrollbar.min.js') ?>"></script>
-  
+
   <!-- Github buttons -->
   <script async defer src="https://buttons.github.io/buttons.js"></script>
-  
+
   <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
   <script src="<?= base_url('assets/js/argon-dashboard.min.js?v=2.1.0') ?>"></script>
-  
+
   <!-- Custom JS -->
   <script src="<?= base_url('assets/js/custom.js') ?>"></script>
 </body>

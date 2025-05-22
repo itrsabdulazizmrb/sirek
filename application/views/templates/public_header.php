@@ -45,25 +45,25 @@
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link me-2 <?= $this->uri->segment(2) == 'jobs' ? 'active' : '' ?>" href="<?= base_url('home/jobs') ?>">
+            <a class="nav-link me-2 <?= $this->uri->segment(2) == 'lowongan' ? 'active' : '' ?>" href="<?= base_url('lowongan') ?>">
               <i class="fa fa-briefcase opacity-6 text-white me-1"></i>
               Lowongan
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link me-2 <?= $this->uri->segment(2) == 'blog' ? 'active' : '' ?>" href="<?= base_url('home/blog') ?>">
+            <a class="nav-link me-2 <?= $this->uri->segment(2) == 'blog' ? 'active' : '' ?>" href="<?= base_url('blog') ?>">
               <i class="fa fa-newspaper opacity-6 text-white me-1"></i>
               Artikel
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link me-2 <?= $this->uri->segment(2) == 'about' ? 'active' : '' ?>" href="<?= base_url('home/about') ?>">
+            <a class="nav-link me-2 <?= $this->uri->segment(2) == 'tentang' ? 'active' : '' ?>" href="<?= base_url('tentang') ?>">
               <i class="fa fa-info-circle opacity-6 text-white me-1"></i>
               Tentang Kami
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link me-2 <?= $this->uri->segment(2) == 'contact' ? 'active' : '' ?>" href="<?= base_url('home/contact') ?>">
+            <a class="nav-link me-2 <?= $this->uri->segment(2) == 'kontak' ? 'active' : '' ?>" href="<?= base_url('kontak') ?>">
               <i class="fa fa-envelope opacity-6 text-white me-1"></i>
               Kontak
             </a>
@@ -72,12 +72,12 @@
         <ul class="navbar-nav d-lg-block d-none">
           <?php if ($this->session->userdata('logged_in')) : ?>
             <li class="nav-item">
-              <a href="<?= $this->session->userdata('role') == 'applicant' ? base_url('applicant/dashboard') : base_url('admin/dashboard') ?>" class="btn btn-sm mb-0 me-1 bg-gradient-light">Dasbor</a>
+              <a href="<?= $this->session->userdata('role') == 'applicant' ? base_url('pelamar/dasbor') : base_url('admin/dasbor') ?>" class="btn btn-sm mb-0 me-1 bg-gradient-light">Dasbor</a>
             </li>
           <?php else : ?>
             <li class="nav-item">
               <a href="<?= base_url('auth') ?>" class="btn btn-sm mb-0 me-1 bg-gradient-light">Masuk</a>
-              <a href="<?= base_url('auth/register') ?>" class="btn btn-sm mb-0 me-1 bg-gradient-primary">Daftar</a>
+              <a href="<?= base_url('auth/daftar') ?>" class="btn btn-sm mb-0 me-1 bg-gradient-primary">Daftar</a>
             </li>
           <?php endif; ?>
         </ul>

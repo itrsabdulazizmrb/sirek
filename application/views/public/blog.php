@@ -16,7 +16,7 @@
   <div class="row mt-n6">
     <div class="col-md-12">
       <div class="card card-body blur shadow-blur mx-3 mx-md-4">
-        <form action="<?= base_url('home/blog') ?>" method="get">
+        <form action="<?= base_url('blog') ?>" method="get">
           <div class="row">
             <div class="col-md-10">
               <div class="input-group">
@@ -32,7 +32,7 @@
       </div>
     </div>
   </div>
-  
+
   <div class="row mt-4">
     <div class="col-lg-8">
       <div class="row">
@@ -50,7 +50,7 @@
             <div class="col-md-6 mb-4">
               <div class="card blog-card h-100">
                 <div class="card-header p-0 mx-3 mt-3 position-relative z-index-1">
-                  <a href="<?= base_url('home/blog_post/' . $post->slug) ?>" class="d-block">
+                  <a href="<?= base_url('blog/' . $post->slug) ?>" class="d-block">
                     <?php if ($post->featured_image) : ?>
                       <img src="<?= base_url('uploads/blog_images/' . $post->featured_image) ?>" class="img-fluid border-radius-lg blog-featured-image" alt="<?= $post->title ?>">
                     <?php else : ?>
@@ -59,21 +59,21 @@
                   </a>
                 </div>
                 <div class="card-body pt-3">
-                  <h5 class="mb-0"><a href="<?= base_url('home/blog_post/' . $post->slug) ?>" class="text-dark"><?= $post->title ?></a></h5>
+                  <h5 class="mb-0"><a href="<?= base_url('blog/' . $post->slug) ?>" class="text-dark"><?= $post->title ?></a></h5>
                   <p class="text-sm mt-2 mb-0">
                     <i class="fas fa-user me-1"></i> <?= $post->author_name ?>
                     <span class="mx-2">|</span>
                     <i class="fas fa-calendar me-1"></i> <?= date('d M Y', strtotime($post->created_at)) ?>
                   </p>
                   <p class="text-sm mt-3 mb-3"><?= character_limiter(strip_tags($post->content), 150) ?></p>
-                  <a href="<?= base_url('home/blog_post/' . $post->slug) ?>" class="text-primary text-sm font-weight-bold">Baca selengkapnya</a>
+                  <a href="<?= base_url('blog/' . $post->slug) ?>" class="text-primary text-sm font-weight-bold">Baca selengkapnya</a>
                 </div>
               </div>
             </div>
           <?php endforeach; ?>
         <?php endif; ?>
       </div>
-      
+
       <!-- Pagination -->
       <div class="row mt-4">
         <div class="col-md-12">
@@ -83,7 +83,7 @@
         </div>
       </div>
     </div>
-    
+
     <div class="col-lg-4">
       <!-- Categories -->
       <div class="card">
@@ -98,7 +98,7 @@
                   <div class="icon icon-shape icon-sm bg-gradient-primary shadow text-center me-2">
                     <i class="fas fa-tag text-white opacity-10"></i>
                   </div>
-                  <a href="<?= base_url('home/blog?category=' . $category->id) ?>" class="text-dark"><?= $category->name ?></a>
+                  <a href="<?= base_url('blog?category=' . $category->id) ?>" class="text-dark"><?= $category->name ?></a>
                 </div>
                 <div>
                   <span class="badge badge-sm bg-gradient-primary"><?= $this->blog_model->count_posts_by_category($category->id) ?></span>
@@ -108,16 +108,16 @@
           </ul>
         </div>
       </div>
-      
+
       <!-- Recent Posts -->
       <div class="card mt-4">
         <div class="card-header pb-0">
           <h5 class="mb-0">Artikel Terbaru</h5>
         </div>
         <div class="card-body pt-2">
-          <?php 
+          <?php
           $recent_posts = $this->blog_model->get_latest_posts(5);
-          foreach ($recent_posts as $recent_post) : 
+          foreach ($recent_posts as $recent_post) :
           ?>
             <div class="d-flex mt-3">
               <div>
@@ -126,7 +126,7 @@
                 </div>
               </div>
               <div class="ms-3">
-                <a href="<?= base_url('home/blog_post/' . $recent_post->slug) ?>" class="text-dark">
+                <a href="<?= base_url('blog/' . $recent_post->slug) ?>" class="text-dark">
                   <h6 class="mb-0 text-sm"><?= $recent_post->title ?></h6>
                 </a>
                 <p class="text-xs text-secondary mb-0"><?= date('d M Y', strtotime($recent_post->created_at)) ?></p>
@@ -136,7 +136,7 @@
           <?php endforeach; ?>
         </div>
       </div>
-      
+
       <!-- Subscribe -->
       <div class="card mt-4">
         <div class="card-header p-3 pb-0">
@@ -144,7 +144,7 @@
           <p class="text-sm mb-0">Dapatkan artikel terbaru langsung ke email Anda</p>
         </div>
         <div class="card-body p-3">
-          <form action="<?= base_url('home/subscribe') ?>" method="post">
+          <form action="<?= base_url('beranda/berlangganan') ?>" method="post">
             <div class="mb-3">
               <input type="email" class="form-control" name="email" placeholder="Email Anda" required>
             </div>
@@ -152,7 +152,7 @@
           </form>
         </div>
       </div>
-      
+
       <!-- Tags -->
       <div class="card mt-4">
         <div class="card-header pb-0">
@@ -160,16 +160,16 @@
         </div>
         <div class="card-body pt-2">
           <div class="d-flex flex-wrap">
-            <a href="<?= base_url('home/blog?tag=rekrutmen') ?>" class="badge bg-gradient-primary me-2 mb-2">Rekrutmen</a>
-            <a href="<?= base_url('home/blog?tag=karir') ?>" class="badge bg-gradient-info me-2 mb-2">Karir</a>
-            <a href="<?= base_url('home/blog?tag=wawancara') ?>" class="badge bg-gradient-success me-2 mb-2">Wawancara</a>
-            <a href="<?= base_url('home/blog?tag=cv') ?>" class="badge bg-gradient-warning me-2 mb-2">CV</a>
-            <a href="<?= base_url('home/blog?tag=tips') ?>" class="badge bg-gradient-danger me-2 mb-2">Tips</a>
-            <a href="<?= base_url('home/blog?tag=hr') ?>" class="badge bg-gradient-dark me-2 mb-2">HR</a>
-            <a href="<?= base_url('home/blog?tag=teknologi') ?>" class="badge bg-gradient-secondary me-2 mb-2">Teknologi</a>
-            <a href="<?= base_url('home/blog?tag=remote') ?>" class="badge bg-gradient-light text-dark me-2 mb-2">Remote</a>
-            <a href="<?= base_url('home/blog?tag=freelance') ?>" class="badge bg-gradient-primary me-2 mb-2">Freelance</a>
-            <a href="<?= base_url('home/blog?tag=startup') ?>" class="badge bg-gradient-info me-2 mb-2">Startup</a>
+            <a href="<?= base_url('blog?tag=rekrutmen') ?>" class="badge bg-gradient-primary me-2 mb-2">Rekrutmen</a>
+            <a href="<?= base_url('blog?tag=karir') ?>" class="badge bg-gradient-info me-2 mb-2">Karir</a>
+            <a href="<?= base_url('blog?tag=wawancara') ?>" class="badge bg-gradient-success me-2 mb-2">Wawancara</a>
+            <a href="<?= base_url('blog?tag=cv') ?>" class="badge bg-gradient-warning me-2 mb-2">CV</a>
+            <a href="<?= base_url('blog?tag=tips') ?>" class="badge bg-gradient-danger me-2 mb-2">Tips</a>
+            <a href="<?= base_url('blog?tag=hr') ?>" class="badge bg-gradient-dark me-2 mb-2">HR</a>
+            <a href="<?= base_url('blog?tag=teknologi') ?>" class="badge bg-gradient-secondary me-2 mb-2">Teknologi</a>
+            <a href="<?= base_url('blog?tag=remote') ?>" class="badge bg-gradient-light text-dark me-2 mb-2">Remote</a>
+            <a href="<?= base_url('blog?tag=freelance') ?>" class="badge bg-gradient-primary me-2 mb-2">Freelance</a>
+            <a href="<?= base_url('blog?tag=startup') ?>" class="badge bg-gradient-info me-2 mb-2">Startup</a>
           </div>
         </div>
       </div>
