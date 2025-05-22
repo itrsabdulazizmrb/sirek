@@ -4,7 +4,7 @@
       <div class="card-header pb-0">
         <div class="d-flex justify-content-between align-items-center">
           <h6>Tambah Penilaian Baru</h6>
-          <a href="<?= base_url('admin/assessments') ?>" class="btn btn-sm btn-outline-primary">
+          <a href="<?= base_url('admin/penilaian') ?>" class="btn btn-sm btn-outline-primary">
             <i class="fas fa-arrow-left me-2"></i> Kembali ke Daftar Penilaian
           </a>
         </div>
@@ -14,7 +14,7 @@
         </p>
       </div>
       <div class="card-body">
-        <?= form_open('admin/add_assessment', ['class' => 'needs-validation']) ?>
+        <?= form_open('admin/tambah_penilaian', ['class' => 'needs-validation']) ?>
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
@@ -36,7 +36,7 @@
               </div>
             </div>
           </div>
-          
+
           <div class="row">
             <div class="col-md-12">
               <div class="form-group">
@@ -47,7 +47,7 @@
               </div>
             </div>
           </div>
-          
+
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
@@ -69,7 +69,7 @@
               </div>
             </div>
           </div>
-          
+
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
@@ -86,7 +86,7 @@
               </div>
             </div>
           </div>
-          
+
           <div class="row">
             <div class="col-md-12">
               <div class="form-group">
@@ -97,7 +97,7 @@
               </div>
             </div>
           </div>
-          
+
           <div class="row">
             <div class="col-md-12">
               <div class="form-check form-switch">
@@ -106,7 +106,7 @@
               </div>
             </div>
           </div>
-          
+
           <div class="row mt-4">
             <div class="col-md-12">
               <button type="submit" class="btn btn-primary">Simpan Penilaian</button>
@@ -147,7 +147,7 @@
             </ul>
           </div>
         </div>
-        
+
         <div class="alert alert-info mt-3" role="alert">
           <h6 class="alert-heading mb-1">Tips Membuat Penilaian Efektif</h6>
           <ul class="mb-0">
@@ -159,7 +159,7 @@
             <li>Tetapkan nilai kelulusan yang sesuai dengan tingkat kesulitan</li>
           </ul>
         </div>
-        
+
         <div class="alert alert-warning mt-3" role="alert">
           <strong>Catatan:</strong> Setelah membuat penilaian, Anda perlu menambahkan soal-soal ke dalamnya melalui halaman "Kelola Soal".
         </div>
@@ -175,7 +175,7 @@
       ClassicEditor.create(document.querySelector('#description')).catch(error => {
         console.error(error);
       });
-      
+
       ClassicEditor.create(document.querySelector('#instructions')).catch(error => {
         console.error(error);
       });

@@ -629,9 +629,9 @@ class Admin extends CI_Controller {
 
         // Get user statistics for charts
         $data['user_stats'] = array(
-            'admin_count' => $this->model_pengguna->hitung_pengguna_berdasarkan_peran('admin'),
+            'admin_count' => $this->model_pengguna->hitung_pengguna_berdasarkan_role('admin'),
             'applicant_count' => $this->model_pengguna->hitung_pelamar(),
-            'recruiter_count' => $this->model_pengguna->hitung_pengguna_berdasarkan_peran('staff')
+            'recruiter_count' => $this->model_pengguna->hitung_pengguna_berdasarkan_role('staff')
         );
 
         // Load views

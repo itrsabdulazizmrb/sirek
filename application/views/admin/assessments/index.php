@@ -5,7 +5,7 @@
         <div class="d-flex justify-content-between align-items-center">
           <h6>Manajemen Penilaian</h6>
           <div>
-            <a href="<?= base_url('admin/add_assessment') ?>" class="btn btn-sm btn-primary me-2">
+            <a href="<?= base_url('admin/tambah_penilaian') ?>" class="btn btn-sm btn-primary me-2">
               <i class="fas fa-plus me-2"></i> Tambah Penilaian Baru
             </a>
             <a href="#" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#manageQuestionsModal">
@@ -297,7 +297,7 @@
     btnManageQuestions.addEventListener('click', function() {
       const assessmentId = assessmentSelect.value;
       if (assessmentId) {
-        window.location.href = '<?= base_url('admin/assessment_questions/') ?>' + assessmentId;
+        window.location.href = '<?= base_url('admin/soal_penilaian/') ?>' + assessmentId;
       }
     });
   });

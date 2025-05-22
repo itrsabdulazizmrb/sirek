@@ -4,7 +4,7 @@
       <div class="card-header pb-0">
         <div class="d-flex justify-content-between align-items-center">
           <h6>Tambah Soal Baru</h6>
-          <a href="<?= base_url('admin/assessment_questions/' . $assessment->id) ?>" class="btn btn-sm btn-outline-primary">
+          <a href="<?= base_url('admin/soal_penilaian/' . $assessment->id) ?>" class="btn btn-sm btn-outline-primary">
             <i class="fas fa-arrow-left me-2"></i> Kembali ke Daftar Soal
           </a>
         </div>
@@ -25,7 +25,7 @@
               </div>
             </div>
           </div>
-          
+
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
@@ -50,7 +50,7 @@
               </div>
             </div>
           </div>
-          
+
           <div class="row mt-4">
             <div class="col-md-12">
               <button type="submit" class="btn btn-primary">Simpan Soal</button>

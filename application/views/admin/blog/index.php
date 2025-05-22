@@ -91,7 +91,7 @@
                     </td>
                     <td>
                       <?php
-                      $post_categories = $this->blog_model->get_post_categories($post->id);
+                      $post_categories = $this->model_blog->dapatkan_kategori_artikel($post->id);
                       foreach ($post_categories as $category) :
                       ?>
                         <span class="badge badge-sm bg-gradient-info me-1"><?= $category->name ?></span>
@@ -178,7 +178,7 @@
                     </div>
                   </td>
                   <td class="align-middle text-center">
-                    <span class="text-secondary text-xs font-weight-bold"><?= $this->blog_model->count_posts_by_category($category->id) ?></span>
+                    <span class="text-secondary text-xs font-weight-bold"><?= $this->model_kategori->hitung_artikel_berdasarkan_kategori($category->id) ?></span>
                   </td>
                   <td class="align-middle">
                     <a href="javascript:;" class="text-secondary font-weight-bold text-xs" data-bs-toggle="modal" data-bs-target="#editCategoryModal" data-id="<?= $category->id ?>" data-name="<?= $category->name ?>">

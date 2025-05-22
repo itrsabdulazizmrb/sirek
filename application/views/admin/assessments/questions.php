@@ -5,7 +5,7 @@
         <div class="d-flex justify-content-between align-items-center">
           <h6>Kelola Soal Penilaian: <?= $assessment->title ?></h6>
           <div>
-            <a href="<?= base_url('admin/assessments') ?>" class="btn btn-sm btn-outline-primary me-2">
+            <a href="<?= base_url('admin/penilaian') ?>" class="btn btn-sm btn-outline-primary me-2">
               <i class="fas fa-arrow-left me-2"></i> Kembali ke Daftar Penilaian
             </a>
             <a href="<?= base_url('import/index') ?>" class="btn btn-sm btn-success me-2">

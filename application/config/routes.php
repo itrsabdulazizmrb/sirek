@@ -123,3 +123,9 @@ $route['admin/laporan'] = 'admin/laporan';
 $route['impor'] = 'impor/index';
 $route['impor/unduh-template/(:num)'] = 'impor/unduh_template/$1';
 $route['impor/proses'] = 'impor/proses';
+
+// Rute tambahan untuk penilaian (alias)
+$route['admin/assessment_questions/(:num)'] = 'admin/soal_penilaian/$1';
+$route['admin/add_assessment'] = 'admin/tambah_penilaian';
+$route['admin/assessments'] = 'admin/penilaian';
+$route['admin/add_question/(:num)'] = 'admin/tambah_soal/$1';
