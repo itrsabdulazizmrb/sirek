@@ -3,45 +3,45 @@
     <div class="card">
       <div class="card-header pb-0">
         <div class="d-flex align-items-center">
-          <p class="mb-0">Change Password</p>
-          <a href="<?= base_url('pelamar/profil') ?>" class="btn btn-primary btn-sm ms-auto">Back to Profile</a>
+          <p class="mb-0">Ubah Password</p>
+          <a href="<?= base_url('pelamar/profil') ?>" class="btn btn-primary btn-sm ms-auto">Kembali ke Profil</a>
         </div>
       </div>
       <div class="card-body">
         <?= form_open('pelamar/ubah-password', ['class' => 'needs-validation']) ?>
           <div class="form-group">
-            <label for="current_password" class="form-control-label">Current Password</label>
+            <label for="current_password" class="form-control-label">Password Saat Ini</label>
             <input type="password" name="current_password" id="current_password" class="form-control" required>
             <?= form_error('current_password', '<small class="text-danger">', '</small>') ?>
           </div>
 
           <div class="form-group mt-3">
-            <label for="new_password" class="form-control-label">New Password</label>
+            <label for="new_password" class="form-control-label">Password Baru</label>
             <input type="password" name="new_password" id="new_password" class="form-control" data-password-strength required>
-            <small class="text-muted">Password must be at least 6 characters long</small>
+            <small class="text-muted">Password harus minimal 6 karakter</small>
             <?= form_error('new_password', '<small class="text-danger">', '</small>') ?>
           </div>
 
           <div class="form-group mt-3">
-            <label for="confirm_password" class="form-control-label">Confirm New Password</label>
+            <label for="confirm_password" class="form-control-label">Konfirmasi Password Baru</label>
             <input type="password" name="confirm_password" id="confirm_password" class="form-control" required>
             <?= form_error('confirm_password', '<small class="text-danger">', '</small>') ?>
           </div>
 
           <div class="alert alert-info mt-4" role="alert">
-            <h6 class="alert-heading mb-1">Password Guidelines</h6>
+            <h6 class="alert-heading mb-1">Panduan Password</h6>
             <ul class="mb-0 ps-4">
-              <li>Use at least 8 characters</li>
-              <li>Include at least one uppercase letter</li>
-              <li>Include at least one lowercase letter</li>
-              <li>Include at least one number or special character</li>
-              <li>Avoid using personal information</li>
-              <li>Don't reuse passwords from other websites</li>
+              <li>Gunakan minimal 8 karakter</li>
+              <li>Sertakan minimal satu huruf besar</li>
+              <li>Sertakan minimal satu huruf kecil</li>
+              <li>Sertakan minimal satu angka atau karakter khusus</li>
+              <li>Hindari menggunakan informasi pribadi</li>
+              <li>Jangan gunakan ulang password dari website lain</li>
             </ul>
           </div>
 
           <div class="d-flex justify-content-end mt-4">
-            <button type="submit" class="btn btn-primary">Change Password</button>
+            <button type="submit" class="btn btn-primary">Ubah Password</button>
           </div>
         <?= form_close() ?>
       </div>
@@ -93,16 +93,16 @@
 
         if (strength < 25) {
           strengthBar.className = 'progress-bar bg-danger';
-          strengthText.textContent = 'Very Weak';
+          strengthText.textContent = 'Sangat Lemah';
         } else if (strength < 50) {
           strengthBar.className = 'progress-bar bg-warning';
-          strengthText.textContent = 'Weak';
+          strengthText.textContent = 'Lemah';
         } else if (strength < 75) {
           strengthBar.className = 'progress-bar bg-info';
-          strengthText.textContent = 'Medium';
+          strengthText.textContent = 'Sedang';
         } else {
           strengthBar.className = 'progress-bar bg-success';
-          strengthText.textContent = 'Strong';
+          strengthText.textContent = 'Kuat';
         }
       });
 

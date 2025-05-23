@@ -46,7 +46,7 @@ class Pelamar extends CI_Controller {
         // Load views
         $data['title'] = 'Dasbor Pelamar';
         $this->load->view('templates/applicant_header', $data);
-        $this->load->view('applicant/dashboard', $data);
+        $this->load->view('applicant/dasbor', $data);
         $this->load->view('templates/applicant_footer');
     }
 
@@ -82,7 +82,7 @@ class Pelamar extends CI_Controller {
             // If validation fails, show form with errors
             $data['title'] = 'Profil Saya';
             $this->load->view('templates/applicant_header', $data);
-            $this->load->view('applicant/profile', $data);
+            $this->load->view('applicant/profil', $data);
             $this->load->view('templates/applicant_footer');
         } else {
             // Get form data
@@ -247,7 +247,7 @@ class Pelamar extends CI_Controller {
         // Load views
         $data['title'] = 'Lamaran Saya';
         $this->load->view('templates/applicant_header', $data);
-        $this->load->view('applicant/applications', $data);
+        $this->load->view('applicant/lamaran', $data);
         $this->load->view('templates/applicant_footer');
     }
 
@@ -283,7 +283,7 @@ class Pelamar extends CI_Controller {
             // If validation fails, show form with errors
             $data['title'] = 'Lamar Lowongan';
             $this->load->view('templates/applicant_header', $data);
-            $this->load->view('applicant/apply', $data);
+            $this->load->view('applicant/lamar', $data);
             $this->load->view('templates/applicant_footer');
         } else {
             // Get form data
@@ -481,7 +481,7 @@ class Pelamar extends CI_Controller {
         // Load views
         $data['title'] = 'Detail Lamaran';
         $this->load->view('templates/applicant_header', $data);
-        $this->load->view('applicant/application_details', $data);
+        $this->load->view('applicant/detail_lamaran', $data);
         $this->load->view('templates/applicant_footer');
     }
 
@@ -614,7 +614,7 @@ class Pelamar extends CI_Controller {
         // Load views
         $data['title'] = 'Penilaian Saya';
         $this->load->view('templates/applicant_header', $data);
-        $this->load->view('applicant/assessments', $data);
+        $this->load->view('applicant/penilaian', $data);
         $this->load->view('templates/applicant_footer');
     }
 
@@ -643,7 +643,7 @@ class Pelamar extends CI_Controller {
         $data['title'] = 'Ikuti Penilaian';
         $data['application_id'] = $application_id;
         $this->load->view('templates/applicant_header', $data);
-        $this->load->view('applicant/take_assessment', $data);
+        $this->load->view('applicant/ikuti_penilaian', $data);
         $this->load->view('templates/applicant_footer');
     }
 
@@ -730,7 +730,7 @@ class Pelamar extends CI_Controller {
             // If validation fails, show form with errors
             $data['title'] = 'Ubah Password';
             $this->load->view('templates/applicant_header', $data);
-            $this->load->view('applicant/change_password');
+            $this->load->view('applicant/ubah_password');
             $this->load->view('templates/applicant_footer');
         } else {
             // Get form data

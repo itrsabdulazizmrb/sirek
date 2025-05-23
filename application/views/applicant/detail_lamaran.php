@@ -256,7 +256,7 @@
         <h6>Detail Lowongan</h6>
       </div>
       <div class="card-body">
-        <p class="text-sm mb-1"><strong>Tipe Pekerjaan:</strong> <?= ucfirst(str_replace('-', ' ', $job->jenis_pekerjaan)) ?></p>
+        <p class="text-sm mb-1"><strong>Jenis Pekerjaan:</strong> <?= ucfirst(str_replace('-', ' ', $job->jenis_pekerjaan)) ?></p>
         <p class="text-sm mb-1"><strong>Lokasi:</strong> <?= $job->lokasi ?></p>
         <?php if ($job->rentang_gaji) : ?>
           <p class="text-sm mb-1"><strong>Kisaran Gaji:</strong> <?= $job->rentang_gaji ?></p>

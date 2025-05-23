@@ -5,18 +5,18 @@
         <div class="row">
           <div class="col-8">
             <div class="numbers">
-              <p class="text-sm mb-0 text-uppercase font-weight-bold">Profile Completion</p>
+              <p class="text-sm mb-0 text-uppercase font-weight-bold">Kelengkapan Profil</p>
               <h5 class="font-weight-bolder"><?= $profile_completion ?>%</h5>
               <div class="progress mt-2" style="height: 6px;">
                 <div class="progress-bar bg-gradient-<?= $profile_completion < 50 ? 'danger' : ($profile_completion < 80 ? 'warning' : 'success') ?>" role="progressbar" style="width: <?= $profile_completion ?>%;" aria-valuenow="<?= $profile_completion ?>" aria-valuemin="0" aria-valuemax="100"></div>
               </div>
               <?php if ($profile_completion < 100) : ?>
                 <p class="mb-0 mt-2">
-                  <a href="<?= base_url('pelamar/profil') ?>" class="text-primary text-sm font-weight-bolder">Complete your profile</a>
+                  <a href="<?= base_url('pelamar/profil') ?>" class="text-primary text-sm font-weight-bolder">Lengkapi profil Anda</a>
                 </p>
               <?php else : ?>
                 <p class="mb-0 mt-2">
-                  <span class="text-success text-sm font-weight-bolder">Profile complete!</span>
+                  <span class="text-success text-sm font-weight-bolder">Profil lengkap!</span>
                 </p>
               <?php endif; ?>
             </div>
@@ -36,7 +36,7 @@
         <div class="row">
           <div class="col-8">
             <div class="numbers">
-              <p class="text-sm mb-0 text-uppercase font-weight-bold">My Applications</p>
+              <p class="text-sm mb-0 text-uppercase font-weight-bold">Lamaran Saya</p>
               <h5 class="font-weight-bolder"><?= count($applications) ?></h5>
               <p class="mb-0">
                 <?php
@@ -46,7 +46,7 @@
                 }
                 ?>
                 <span class="text-warning text-sm font-weight-bolder"><?= $pending ?></span>
-                pending review
+                menunggu review
               </p>
             </div>
           </div>
@@ -65,7 +65,7 @@
         <div class="row">
           <div class="col-8">
             <div class="numbers">
-              <p class="text-sm mb-0 text-uppercase font-weight-bold">Today</p>
+              <p class="text-sm mb-0 text-uppercase font-weight-bold">Hari Ini</p>
               <h5 class="font-weight-bolder"><?= date('d M Y') ?></h5>
               <p class="mb-0">
                 <span class="text-success text-sm font-weight-bolder"><?= date('l') ?></span>
@@ -87,10 +87,10 @@
   <div class="col-lg-8 mb-lg-0 mb-4">
     <div class="card">
       <div class="card-header pb-0">
-        <h6>Recommended Jobs</h6>
+        <h6>Lowongan Rekomendasi</h6>
         <p class="text-sm mb-0">
           <i class="fa fa-check text-info" aria-hidden="true"></i>
-          <span class="font-weight-bold">Jobs matching your profile</span>
+          <span class="font-weight-bold">Lowongan yang sesuai dengan profil Anda</span>
         </p>
       </div>
       <div class="card-body px-0 pt-0 pb-2">
@@ -98,17 +98,17 @@
           <table class="table align-items-center mb-0">
             <thead>
               <tr>
-                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Job</th>
-                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Location</th>
-                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Type</th>
-                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Deadline</th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Pekerjaan</th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Lokasi</th>
+                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Jenis</th>
+                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Batas Waktu</th>
                 <th class="text-secondary opacity-7"></th>
               </tr>
             </thead>
             <tbody>
               <?php if (empty($recommended_jobs)) : ?>
                 <tr>
-                  <td colspan="5" class="text-center py-4">No recommended jobs found. Complete your profile to get personalized recommendations.</td>
+                  <td colspan="5" class="text-center py-4">Tidak ada lowongan rekomendasi. Lengkapi profil Anda untuk mendapatkan rekomendasi yang dipersonalisasi.</td>
                 </tr>
               <?php else : ?>
                 <?php foreach ($recommended_jobs as $job) : ?>
@@ -134,8 +134,8 @@
                       <span class="text-secondary text-xs font-weight-bold"><?= date('d M Y', strtotime($job->deadline)) ?></span>
                     </td>
                     <td class="align-middle">
-                      <a href="<?= base_url('lowongan/detail/' . $job->id) ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="View job">
-                        View Details
+                      <a href="<?= base_url('lowongan/detail/' . $job->id) ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Lihat pekerjaan">
+                        Lihat Detail
                       </a>
                     </td>
                   </tr>
@@ -150,10 +150,10 @@
   <div class="col-lg-4">
     <div class="card h-100">
       <div class="card-header pb-0">
-        <h6>Application Status</h6>
+        <h6>Status Lamaran</h6>
         <p class="text-sm">
           <i class="fa fa-arrow-up text-success" aria-hidden="true"></i>
-          <span class="font-weight-bold">Your recent applications</span>
+          <span class="font-weight-bold">Lamaran terbaru Anda</span>
         </p>
       </div>
       <div class="card-body p-3">
@@ -164,9 +164,9 @@
                 <i class="ni ni-bell-55 text-info"></i>
               </span>
               <div class="timeline-content">
-                <h6 class="text-dark text-sm font-weight-bold mb-0">No applications yet</h6>
-                <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">Start applying for jobs to see your application status here.</p>
-                <a href="<?= base_url('lowongan') ?>" class="btn btn-sm btn-primary mt-3">Browse Jobs</a>
+                <h6 class="text-dark text-sm font-weight-bold mb-0">Belum ada lamaran</h6>
+                <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">Mulai melamar pekerjaan untuk melihat status lamaran Anda di sini.</p>
+                <a href="<?= base_url('lowongan') ?>" class="btn btn-sm btn-primary mt-3">Jelajahi Lowongan</a>
               </div>
             </div>
           <?php else : ?>
@@ -183,13 +183,13 @@
                   <h6 class="text-dark text-sm font-weight-bold mb-0"><?= $app->job_title ?></h6>
                   <p class="text-secondary font-weight-bold text-xs mt-1 mb-0"><?= date('d M Y', strtotime($app->application_date)) ?></p>
                   <span class="badge badge-sm bg-gradient-<?= $app->status == 'pending' ? 'warning' : ($app->status == 'reviewed' ? 'info' : ($app->status == 'shortlisted' ? 'success' : ($app->status == 'interviewed' ? 'primary' : ($app->status == 'offered' ? 'warning' : ($app->status == 'hired' ? 'success' : 'danger'))))) ?> mt-2"><?= ucfirst($app->status) ?></span>
-                  <a href="<?= base_url('pelamar/detail_lamaran/' . $app->id) ?>" class="btn btn-link text-primary text-sm mb-0 ps-0 ms-0 mt-2">View Details</a>
+                  <a href="<?= base_url('pelamar/detail_lamaran/' . $app->id) ?>" class="btn btn-link text-primary text-sm mb-0 ps-0 ms-0 mt-2">Lihat Detail</a>
                 </div>
               </div>
             <?php endforeach; ?>
             <?php if (count($applications) > 5) : ?>
               <div class="text-center mt-4">
-                <a href="<?= base_url('pelamar/lamaran') ?>" class="btn btn-sm btn-primary">View All Applications</a>
+                <a href="<?= base_url('pelamar/lamaran') ?>" class="btn btn-sm btn-primary">Lihat Semua Lamaran</a>
               </div>
             <?php endif; ?>
           <?php endif; ?>

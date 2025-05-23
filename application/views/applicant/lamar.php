@@ -12,7 +12,7 @@
           <div class="col-md-12">
             <h5 class="mb-3"><?= $job->judul ?></h5>
             <div class="d-flex mb-4">
-              <span class="badge badge-sm bg-gradient-<?= $job->jenis_pekerjaan == 'penuh_waktu' ? 'success' : ($job->jenis_pekerjaan == 'paruh_waktu' ? 'info' : ($job->jenis_pekerjaan == 'kontrak' ? 'warning' : 'secondary')) ?> me-2"><?= $job->jenis_pekerjaan == 'penuh_waktu' ? 'Full Time' : ($job->jenis_pekerjaan == 'paruh_waktu' ? 'Part Time' : ($job->jenis_pekerjaan == 'kontrak' ? 'Kontrak' : 'Magang')) ?></span>
+              <span class="badge badge-sm bg-gradient-<?= $job->jenis_pekerjaan == 'penuh_waktu' ? 'success' : ($job->jenis_pekerjaan == 'paruh_waktu' ? 'info' : ($job->jenis_pekerjaan == 'kontrak' ? 'warning' : 'secondary')) ?> me-2"><?= $job->jenis_pekerjaan == 'penuh_waktu' ? 'Penuh Waktu' : ($job->jenis_pekerjaan == 'paruh_waktu' ? 'Paruh Waktu' : ($job->jenis_pekerjaan == 'kontrak' ? 'Kontrak' : 'Magang')) ?></span>
               <span class="badge badge-sm bg-gradient-dark me-2"><?= $job->lokasi ?></span>
               <span class="badge badge-sm bg-gradient-danger">Batas: <?= date('d M Y', strtotime($job->batas_waktu)) ?></span>
             </div>
