@@ -81,6 +81,7 @@ $route['pelamar/penilaian'] = 'pelamar/penilaian';
 $route['pelamar/ikuti-penilaian/(:num)/(:num)'] = 'pelamar/ikuti_penilaian/$1/$2';
 $route['pelamar/detail_lamaran/(:num)'] = 'pelamar/detail_lamaran/$1';
 $route['pelamar/kirim-penilaian'] = 'pelamar/kirim_penilaian';
+$route['pelamar/perbarui_status_penilaian/(:num)/(:any)'] = 'pelamar/perbarui_status_penilaian/$1/$2';
 $route['pelamar/ubah-password'] = 'pelamar/ubah_password';
 
 // Rute untuk admin

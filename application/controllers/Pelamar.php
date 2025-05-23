@@ -458,6 +458,25 @@ class Pelamar extends CI_Controller {
         $this->load->view('templates/applicant_footer');
     }
 
+    public function perbarui_status_penilaian($applicant_assessment_id, $status) {
+        // Validasi input
+        if (!$applicant_assessment_id || !$status) {
+            $this->output->set_status_header(400);
+            echo json_encode(['status' => 'error', 'message' => 'Parameter tidak lengkap']);
+            return;
+        }
+
+        // Perbarui status penilaian
+        $result = $this->model_penilaian->perbarui_status_penilaian_pelamar($applicant_assessment_id, $status);
+
+        if ($result) {
+            echo json_encode(['status' => 'success']);
+        } else {
+            $this->output->set_status_header(500);
+            echo json_encode(['status' => 'error', 'message' => 'Gagal memperbarui status']);
+        }
+    }
+
     public function kirim_penilaian() {
         // Get form data
         $assessment_id = $this->input->post('assessment_id');

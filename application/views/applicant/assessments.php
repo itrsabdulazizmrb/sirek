@@ -2,29 +2,29 @@
   <div class="col-12">
     <div class="card mb-4">
       <div class="card-header pb-0">
-        <h6>My Assessments</h6>
+        <h6>Penilaian Saya</h6>
         <p class="text-sm mb-0">
           <i class="fa fa-info-circle text-primary" aria-hidden="true"></i>
-          <span class="font-weight-bold">Track all your assessments for job applications</span>
+          <span class="font-weight-bold">Pantau semua penilaian untuk lamaran pekerjaan Anda</span>
         </p>
       </div>
       <div class="card-body px-0 pt-0 pb-2">
         <div class="table-responsive p-0">
           <?php if (empty($assessments)) : ?>
             <div class="text-center py-5">
-              <h4 class="text-secondary">No assessments found</h4>
-              <p class="text-muted">You don't have any assessments assigned to you yet.</p>
-              <a href="<?= base_url('applicant/applications') ?>" class="btn btn-primary mt-3">View My Applications</a>
+              <h4 class="text-secondary">Tidak ada penilaian ditemukan</h4>
+              <p class="text-muted">Anda belum memiliki penilaian yang ditetapkan untuk Anda.</p>
+              <a href="<?= base_url('pelamar/lamaran') ?>" class="btn btn-primary mt-3">Lihat Lamaran Saya</a>
             </div>
           <?php else : ?>
             <table class="table align-items-center mb-0">
               <thead>
                 <tr>
-                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Assessment</th>
-                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Job</th>
-                  <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Type</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Penilaian</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Lowongan</th>
+                  <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Jenis</th>
                   <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
-                  <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Score</th>
+                  <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Nilai</th>
                   <th class="text-secondary opacity-7"></th>
                 </tr>
               </thead>
@@ -50,31 +50,31 @@
                       <span class="badge badge-sm bg-gradient-primary"><?= $assessment->type_name ?></span>
                     </td>
                     <td class="align-middle text-center text-sm">
-                      <?php if ($assessment->status == 'not_started') : ?>
-                        <span class="badge badge-sm bg-gradient-secondary">Not Started</span>
-                      <?php elseif ($assessment->status == 'in_progress') : ?>
-                        <span class="badge badge-sm bg-gradient-warning">In Progress</span>
-                      <?php elseif ($assessment->status == 'completed') : ?>
-                        <span class="badge badge-sm bg-gradient-success">Completed</span>
-                      <?php elseif ($assessment->status == 'graded') : ?>
-                        <span class="badge badge-sm bg-gradient-info">Graded</span>
+                      <?php if ($assessment->status == 'belum_mulai' || $assessment->status == 'not_started') : ?>
+                        <span class="badge badge-sm bg-gradient-secondary">Belum Dimulai</span>
+                      <?php elseif ($assessment->status == 'sedang_berlangsung' || $assessment->status == 'in_progress') : ?>
+                        <span class="badge badge-sm bg-gradient-warning">Sedang Berlangsung</span>
+                      <?php elseif ($assessment->status == 'selesai' || $assessment->status == 'completed') : ?>
+                        <span class="badge badge-sm bg-gradient-success">Selesai</span>
+                      <?php elseif ($assessment->status == 'sudah_dinilai' || $assessment->status == 'graded') : ?>
+                        <span class="badge badge-sm bg-gradient-info">Sudah Dinilai</span>
                       <?php endif; ?>
                     </td>
                     <td class="align-middle text-center">
-                      <?php if ($assessment->status == 'graded' && $assessment->score !== null) : ?>
-                        <span class="text-secondary text-xs font-weight-bold"><?= $assessment->score ?></span>
+                      <?php if (($assessment->status == 'sudah_dinilai' || $assessment->status == 'graded') && $assessment->nilai !== null) : ?>
+                        <span class="text-secondary text-xs font-weight-bold"><?= $assessment->nilai ?></span>
                       <?php else : ?>
                         <span class="text-secondary text-xs font-weight-bold">-</span>
                       <?php endif; ?>
                     </td>
                     <td class="align-middle">
-                      <?php if ($assessment->status == 'not_started' || $assessment->status == 'in_progress') : ?>
-                        <a href="<?= base_url('applicant/take_assessment/' . $assessment->assessment_id . '/' . $assessment->id) ?>" class="btn btn-sm btn-primary">
-                          <?= $assessment->status == 'not_started' ? 'Take Assessment' : 'Continue' ?>
+                      <?php if ($assessment->status == 'belum_mulai' || $assessment->status == 'not_started' || $assessment->status == 'sedang_berlangsung' || $assessment->status == 'in_progress') : ?>
+                        <a href="<?= base_url('pelamar/ikuti-penilaian/' . $assessment->assessment_id . '/' . $assessment->id) ?>" class="btn btn-sm btn-primary">
+                          <?= ($assessment->status == 'belum_mulai' || $assessment->status == 'not_started') ? 'Ikuti Penilaian' : 'Lanjutkan' ?>
                         </a>
                       <?php else : ?>
-                        <a href="<?= base_url('applicant/application_details/' . $assessment->application_id) ?>" class="text-secondary font-weight-bold text-xs">
-                          View Application
+                        <a href="<?= base_url('pelamar/detail-lamaran/' . $assessment->application_id) ?>" class="text-secondary font-weight-bold text-xs">
+                          Lihat Lamaran
                         </a>
                       <?php endif; ?>
                     </td>
@@ -93,40 +93,40 @@
   <div class="col-12">
     <div class="card">
       <div class="card-header pb-0">
-        <h6>Assessment Guide</h6>
+        <h6>Panduan Penilaian</h6>
       </div>
       <div class="card-body">
         <div class="row">
           <div class="col-md-6">
             <div class="d-flex align-items-center mb-3">
-              <span class="badge badge-sm bg-gradient-secondary me-3">Not Started</span>
-              <p class="text-xs mb-0">You have not started this assessment yet.</p>
+              <span class="badge badge-sm bg-gradient-secondary me-3">Belum Dimulai</span>
+              <p class="text-xs mb-0">Anda belum memulai penilaian ini.</p>
             </div>
             <div class="d-flex align-items-center mb-3">
-              <span class="badge badge-sm bg-gradient-warning me-3">In Progress</span>
-              <p class="text-xs mb-0">You have started but not completed this assessment.</p>
+              <span class="badge badge-sm bg-gradient-warning me-3">Sedang Berlangsung</span>
+              <p class="text-xs mb-0">Anda telah memulai tetapi belum menyelesaikan penilaian ini.</p>
             </div>
           </div>
           <div class="col-md-6">
             <div class="d-flex align-items-center mb-3">
-              <span class="badge badge-sm bg-gradient-success me-3">Completed</span>
-              <p class="text-xs mb-0">You have completed this assessment and it is awaiting grading.</p>
+              <span class="badge badge-sm bg-gradient-success me-3">Selesai</span>
+              <p class="text-xs mb-0">Anda telah menyelesaikan penilaian ini dan sedang menunggu penilaian.</p>
             </div>
             <div class="d-flex align-items-center mb-3">
-              <span class="badge badge-sm bg-gradient-info me-3">Graded</span>
-              <p class="text-xs mb-0">This assessment has been graded and your score is available.</p>
+              <span class="badge badge-sm bg-gradient-info me-3">Sudah Dinilai</span>
+              <p class="text-xs mb-0">Penilaian ini telah dinilai dan nilai Anda sudah tersedia.</p>
             </div>
           </div>
         </div>
-        
+
         <div class="alert alert-info mt-3" role="alert">
-          <h6 class="alert-heading mb-1">Assessment Tips</h6>
+          <h6 class="alert-heading mb-1">Tips Penilaian</h6>
           <ul class="mb-0 ps-4">
-            <li>Make sure you have a stable internet connection before starting an assessment.</li>
-            <li>Some assessments have time limits. Once started, you must complete them within the allocated time.</li>
-            <li>Read all questions carefully before answering.</li>
-            <li>For technical assessments, make sure you understand the requirements before coding.</li>
-            <li>For multiple-choice questions, eliminate obviously incorrect answers first.</li>
+            <li>Pastikan Anda memiliki koneksi internet yang stabil sebelum memulai penilaian.</li>
+            <li>Beberapa penilaian memiliki batas waktu. Setelah dimulai, Anda harus menyelesaikannya dalam waktu yang ditentukan.</li>
+            <li>Baca semua pertanyaan dengan seksama sebelum menjawab.</li>
+            <li>Untuk penilaian teknis, pastikan Anda memahami persyaratan sebelum mengerjakan.</li>
+            <li>Untuk pertanyaan pilihan ganda, eliminasi jawaban yang jelas-jelas salah terlebih dahulu.</li>
           </ul>
         </div>
       </div>
