@@ -30,11 +30,14 @@
       <div class="card-body">
         <?php if (empty($assessments)) : ?>
           <div class="alert alert-warning" role="alert">
-            <strong>Perhatian!</strong> Belum ada penilaian aktif yang tersedia. 
+            <strong>Perhatian!</strong> Belum ada penilaian aktif yang tersedia.
             <a href="<?= base_url('admin/tambah_penilaian') ?>" class="alert-link">Tambahkan penilaian baru</a> terlebih dahulu.
           </div>
         <?php else : ?>
           <form action="" method="post">
+            <!-- CSRF Token -->
+            <input type="hidden" name="<?= $this->security->get_csrf_token_name() ?>" value="<?= $this->security->get_csrf_hash() ?>" />
+
             <div class="table-responsive">
               <table class="table align-items-center mb-0">
                 <thead>
@@ -51,8 +54,8 @@
                     <tr>
                       <td class="align-middle text-center">
                         <div class="form-check">
-                          <input class="form-check-input" type="checkbox" name="assessment_ids[]" value="<?= $assessment->id ?>" 
-                            <?php 
+                          <input class="form-check-input" type="checkbox" name="assessment_ids[]" value="<?= $assessment->id ?>"
+                            <?php
                             // Check if assessment is already assigned
                             $is_assigned = false;
                             if (isset($application) && !empty($applicant_assessments)) {
@@ -97,7 +100,7 @@
                 </tbody>
               </table>
             </div>
-            
+
             <div class="d-flex justify-content-end mt-4">
               <button type="submit" name="submit" value="1" class="btn btn-primary">
                 <i class="fas fa-save me-2"></i> Simpan Pengaturan Penilaian

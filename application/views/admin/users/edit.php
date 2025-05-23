@@ -14,7 +14,7 @@
         </p>
       </div>
       <div class="card-body">
-        <?= form_open_multipart('admin/edit_user/' . $user->id, ['class' => 'needs-validation']) ?>
+        <?= form_open_multipart('admin/edit_pengguna/' . $user->id, ['class' => 'needs-validation']) ?>
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
@@ -89,7 +89,7 @@
           <div class="row">
             <div class="col-md-12">
               <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="is_active" name="is_active" value="1" <?= set_checkbox('is_active', '1', ($user->is_active == 1)) ?>>
+                <input class="form-check-input" type="checkbox" id="is_active" name="is_active" value="1" <?= set_checkbox('is_active', '1', ($user->status == 'active')) ?>>
                 <label class="form-check-label" for="is_active">Aktifkan Pengguna</label>
               </div>
             </div>
@@ -98,8 +98,8 @@
           <div class="row mt-4">
             <div class="col-md-12">
               <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
-              <a href="<?= base_url('admin/reset_password/' . $user->id) ?>" class="btn btn-warning">Reset Password</a>
-              <a href="<?= base_url('admin/users') ?>" class="btn btn-secondary">Batal</a>
+              <a href="<?= base_url('admin/reset_kata_sandi/' . $user->id) ?>" class="btn btn-warning">Reset Password</a>
+              <a href="<?= base_url('admin/pengguna') ?>" class="btn btn-secondary">Batal</a>
             </div>
           </div>
         <?= form_close() ?>
@@ -131,7 +131,7 @@
           <strong>IP Terakhir:</strong> <?= $user->last_ip ?? 'Tidak Tersedia' ?>
         </p>
         <p class="text-sm mb-1">
-          <strong>Status:</strong> <span class="badge badge-sm bg-gradient-<?= $user->is_active ? 'success' : 'secondary' ?>"><?= $user->is_active ? 'Aktif' : 'Tidak Aktif' ?></span>
+          <strong>Status:</strong> <span class="badge badge-sm bg-gradient-<?= ($user->status == 'active') ? 'success' : 'secondary' ?>"><?= ($user->status == 'active') ? 'Aktif' : 'Tidak Aktif' ?></span>
         </p>
       </div>
     </div>
@@ -143,14 +143,21 @@
         <div class="card-header pb-0">
           <div class="d-flex justify-content-between align-items-center">
             <h6>Lamaran Terbaru</h6>
-            <a href="<?= base_url('admin/applicant_applications/' . $user->id) ?>" class="btn btn-sm btn-primary">
+            <a href="<?= base_url('admin/lamaran_pelamar/' . $user->id) ?>" class="btn btn-sm btn-primary">
               <i class="fas fa-list me-2"></i> Lihat Semua
             </a>
           </div>
         </div>
         <div class="card-body">
           <?php
-          $applications = $this->application_model->get_applicant_applications($user->id, 5);
+          // Get instance of CI to access models
+          $CI =& get_instance();
+          // Get applications for this applicant (limited to 5)
+          $applications = $CI->model_lamaran->dapatkan_lamaran_pelamar($user->id);
+          // Limit to 5 results if there are more
+          if (count($applications) > 5) {
+            $applications = array_slice($applications, 0, 5);
+          }
           if (empty($applications)) :
           ?>
             <p class="text-center">Belum ada lamaran yang dikirimkan.</p>
@@ -195,14 +202,21 @@
         <div class="card-header pb-0">
           <div class="d-flex justify-content-between align-items-center">
             <h6>Lowongan yang Dikelola</h6>
-            <a href="<?= base_url('admin/recruiter_jobs/' . $user->id) ?>" class="btn btn-sm btn-primary">
+            <a href="<?= base_url('admin/lowongan_rekruter/' . $user->id) ?>" class="btn btn-sm btn-primary">
               <i class="fas fa-list me-2"></i> Lihat Semua
             </a>
           </div>
         </div>
         <div class="card-body">
           <?php
-          $jobs = $this->job_model->get_recruiter_jobs($user->id, 5);
+          // Get instance of CI to access models
+          $CI =& get_instance();
+          // Get jobs for this recruiter (limited to 5)
+          $jobs = $CI->model_lowongan->dapatkan_lowongan_recruiter($user->id);
+          // Limit to 5 results if there are more
+          if (count($jobs) > 5) {
+            $jobs = array_slice($jobs, 0, 5);
+          }
           if (empty($jobs)) :
           ?>
             <p class="text-center">Belum ada lowongan yang dikelola.</p>

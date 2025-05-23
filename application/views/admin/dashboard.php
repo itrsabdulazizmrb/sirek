@@ -156,12 +156,24 @@
 </div>
 
 <div class="row mt-4">
-  <div class="col-lg-8 mb-lg-0 mb-4">
+  <div class="col-lg-5 mb-lg-0 mb-4">
+    <div class="card">
+      <div class="card-header pb-0 p-3">
+        <h6 class="mb-0">Jumlah Pelamar per Posisi</h6>
+      </div>
+      <div class="card-body p-3">
+        <div class="chart">
+          <canvas id="applications-per-job-chart" class="chart-canvas" height="300"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-7 mb-lg-0 mb-4">
     <div class="card">
       <div class="card-header pb-0 p-3">
         <div class="d-flex justify-content-between">
           <h6 class="mb-2">Lamaran Terbaru</h6>
-          <a href="<?= base_url('admin/applications') ?>" class="btn btn-sm btn-primary">Lihat Semua</a>
+          <a href="<?= base_url('admin/lamaran') ?>" class="btn btn-sm btn-primary">Lihat Semua</a>
         </div>
       </div>
       <div class="table-responsive">
@@ -220,6 +232,9 @@
         <h6 class="mb-0">Kategori Lowongan</h6>
       </div>
       <div class="card-body p-3">
+        <div class="chart mb-3">
+          <canvas id="job-category-chart" class="chart-canvas" height="200"></canvas>
+        </div>
         <ul class="list-group">
           <?php foreach ($job_categories ?? [] as $category) : ?>
             <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
@@ -240,6 +255,17 @@
             </li>
           <?php endforeach; ?>
         </ul>
+      </div>
+    </div>
+
+    <div class="card mt-4">
+      <div class="card-header pb-0 p-3">
+        <h6 class="mb-0">Status Lamaran</h6>
+      </div>
+      <div class="card-body p-3">
+        <div class="chart">
+          <canvas id="application-status-chart" class="chart-canvas" height="200"></canvas>
+        </div>
       </div>
     </div>
 
@@ -278,6 +304,7 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", function() {
+    // Tren Lamaran Chart (Line Chart)
     var ctx1 = document.getElementById("chart-line").getContext("2d");
 
     var gradientStroke1 = ctx1.createLinearGradient(0, 230, 0, 50);
@@ -298,7 +325,20 @@
           backgroundColor: gradientStroke1,
           borderWidth: 3,
           fill: true,
-          data: [50, 40, 300, 220, 500, 250, 400, 230, 500, 300, 450, 380],
+          data: [
+            <?= $monthly_application_stats[1] ?? 0 ?>,
+            <?= $monthly_application_stats[2] ?? 0 ?>,
+            <?= $monthly_application_stats[3] ?? 0 ?>,
+            <?= $monthly_application_stats[4] ?? 0 ?>,
+            <?= $monthly_application_stats[5] ?? 0 ?>,
+            <?= $monthly_application_stats[6] ?? 0 ?>,
+            <?= $monthly_application_stats[7] ?? 0 ?>,
+            <?= $monthly_application_stats[8] ?? 0 ?>,
+            <?= $monthly_application_stats[9] ?? 0 ?>,
+            <?= $monthly_application_stats[10] ?? 0 ?>,
+            <?= $monthly_application_stats[11] ?? 0 ?>,
+            <?= $monthly_application_stats[12] ?? 0 ?>
+          ],
           maxBarThickness: 6
         }],
       },
@@ -326,7 +366,7 @@
             ticks: {
               display: true,
               padding: 10,
-              color: '#fbfbfb',
+              color: '#666',
               font: {
                 size: 11,
                 family: "Open Sans",
@@ -345,7 +385,7 @@
             },
             ticks: {
               display: true,
-              color: '#ccc',
+              color: '#666',
               padding: 20,
               font: {
                 size: 11,
@@ -353,6 +393,142 @@
                 style: 'normal',
                 lineHeight: 2
               },
+            }
+          },
+        },
+      },
+    });
+
+    // Kategori Lowongan Chart (Doughnut Chart)
+    var ctx2 = document.getElementById("job-category-chart").getContext("2d");
+    new Chart(ctx2, {
+      type: "doughnut",
+      data: {
+        labels: [
+          <?php foreach ($job_categories ?? [] as $category) : ?>
+            "<?= $category->name ?>",
+          <?php endforeach; ?>
+        ],
+        datasets: [{
+          label: "Lowongan",
+          backgroundColor: [
+            "#5e72e4", "#2dce89", "#f5365c", "#fb6340", "#11cdef", "#ffd600", "#8965e0", "#f3a4b5", "#172b4d", "#5603ad"
+          ],
+          data: [
+            <?php foreach ($job_categories ?? [] as $category) : ?>
+              <?= $category->job_count ?? 0 ?>,
+            <?php endforeach; ?>
+          ],
+        }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'right',
+            labels: {
+              boxWidth: 10,
+              font: {
+                size: 10
+              }
+            }
+          }
+        },
+        cutout: '60%'
+      },
+    });
+
+    // Status Lamaran Chart (Pie Chart)
+    var ctx3 = document.getElementById("application-status-chart").getContext("2d");
+    new Chart(ctx3, {
+      type: "pie",
+      data: {
+        labels: ["Pending", "Reviewed", "Shortlisted", "Interviewed", "Offered", "Hired", "Rejected"],
+        datasets: [{
+          label: "Pelamar",
+          backgroundColor: ["#fb6340", "#11cdef", "#2dce89", "#5e72e4", "#ffd600", "#2dce89", "#f5365c"],
+          data: [
+            <?= $application_status_stats['pending'] ?? 0 ?>,
+            <?= $application_status_stats['reviewed'] ?? 0 ?>,
+            <?= $application_status_stats['shortlisted'] ?? 0 ?>,
+            <?= $application_status_stats['interviewed'] ?? 0 ?>,
+            <?= $application_status_stats['offered'] ?? 0 ?>,
+            <?= $application_status_stats['hired'] ?? 0 ?>,
+            <?= $application_status_stats['rejected'] ?? 0 ?>
+          ],
+        }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'right',
+            labels: {
+              boxWidth: 10,
+              font: {
+                size: 10
+              }
+            }
+          }
+        },
+      },
+    });
+
+    // Jumlah Pelamar per Posisi Chart (Bar Chart)
+    var ctx4 = document.getElementById("applications-per-job-chart").getContext("2d");
+    new Chart(ctx4, {
+      type: "bar",
+      data: {
+        labels: [
+          <?php foreach ($applications_per_job ?? [] as $job) : ?>
+            "<?= substr($job->title, 0, 20) . (strlen($job->title) > 20 ? '...' : '') ?>",
+          <?php endforeach; ?>
+        ],
+        datasets: [{
+          label: "Jumlah Pelamar",
+          backgroundColor: "#5e72e4",
+          data: [
+            <?php foreach ($applications_per_job ?? [] as $job) : ?>
+              <?= $job->application_count ?? 0 ?>,
+            <?php endforeach; ?>
+          ],
+        }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false,
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            grid: {
+              drawBorder: false,
+              display: true,
+              drawOnChartArea: true,
+              drawTicks: false,
+              borderDash: [5, 5]
+            },
+            ticks: {
+              precision: 0
+            }
+          },
+          x: {
+            grid: {
+              drawBorder: false,
+              display: false,
+              drawOnChartArea: false,
+              drawTicks: false
+            },
+            ticks: {
+              font: {
+                size: 10
+              }
             }
           },
         },

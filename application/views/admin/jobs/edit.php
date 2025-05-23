@@ -36,7 +36,7 @@
               </div>
             </div>
           </div>
-          
+
           <div class="row">
             <div class="col-md-12">
               <div class="form-group">
@@ -47,7 +47,7 @@
               </div>
             </div>
           </div>
-          
+
           <div class="row">
             <div class="col-md-12">
               <div class="form-group">
@@ -58,7 +58,7 @@
               </div>
             </div>
           </div>
-          
+
           <div class="row">
             <div class="col-md-12">
               <div class="form-group">
@@ -69,7 +69,7 @@
               </div>
             </div>
           </div>
-          
+
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
@@ -92,7 +92,7 @@
               </div>
             </div>
           </div>
-          
+
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
@@ -109,7 +109,7 @@
               </div>
             </div>
           </div>
-          
+
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
@@ -129,7 +129,7 @@
               </div>
             </div>
           </div>
-          
+
           <div class="row">
             <div class="col-md-12">
               <div class="form-check form-switch">
@@ -138,7 +138,7 @@
               </div>
             </div>
           </div>
-          
+
           <div class="row mt-4">
             <div class="col-md-12">
               <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
@@ -170,9 +170,15 @@
         <h6>Pelamar Terbaru</h6>
       </div>
       <div class="card-body p-3">
-        <?php 
-        $recent_applications = $this->application_model->get_recent_job_applications($job->id, 5);
-        if (empty($recent_applications)) : 
+        <?php
+        // Get recent applications for this job (limited to 5)
+        $CI =& get_instance();
+        $recent_applications = $CI->model_lamaran->dapatkan_lamaran_lowongan($job->id);
+        // Limit to 5 results if there are more
+        if (count($recent_applications) > 5) {
+            $recent_applications = array_slice($recent_applications, 0, 5);
+        }
+        if (empty($recent_applications)) :
         ?>
           <p class="text-center">Belum ada pelamar untuk lowongan ini.</p>
         <?php else : ?>
@@ -232,16 +238,16 @@
       ClassicEditor.create(document.querySelector('#description')).catch(error => {
         console.error(error);
       });
-      
+
       ClassicEditor.create(document.querySelector('#requirements')).catch(error => {
         console.error(error);
       });
-      
+
       ClassicEditor.create(document.querySelector('#responsibilities')).catch(error => {
         console.error(error);
       });
     }
-    
+
     // Application Stats Chart
     var ctx = document.getElementById("application-stats-chart").getContext("2d");
     new Chart(ctx, {

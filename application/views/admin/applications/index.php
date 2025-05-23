@@ -14,7 +14,7 @@
       </div>
       <div class="card-body p-0">
 
-        <div class="table-responsive p-0">
+        <div class="table-responsive p-0" style="min-height: 500px; overflow-y: auto;">
           <?php if (empty($applications)) : ?>
             <div class="text-center py-5">
               <h4 class="text-secondary">Tidak ada lamaran yang ditemukan</h4>
@@ -59,27 +59,40 @@
                     </td>
                     <td class="align-middle text-center">
                       <div class="dropdown">
-                        <button class="btn btn-sm bg-gradient-<?= $application->status == 'pending' ? 'warning' : ($application->status == 'reviewed' ? 'info' : ($application->status == 'shortlisted' ? 'success' : ($application->status == 'interviewed' ? 'primary' : ($application->status == 'offered' ? 'warning' : ($application->status == 'hired' ? 'success' : 'danger'))))) ?> dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                          <?= ucfirst($application->status) ?>
+                        <button class="btn btn-sm bg-gradient-<?=
+                          $application->status == 'pending' ? 'secondary' :
+                          ($application->status == 'reviewed' ? 'warning' :
+                          ($application->status == 'seleksi' ? 'info' :
+                          ($application->status == 'wawancara' || $application->status == 'interview' ? 'primary' :
+                          ($application->status == 'diterima' ? 'success' :
+                          ($application->status == 'ditolak' ? 'danger' : 'info')))))
+                        ?> dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                          <?=
+                          $application->status == 'pending' ? 'Pending' :
+                          ($application->status == 'reviewed' ? 'Direview' :
+                          ($application->status == 'seleksi' ? 'Seleksi' :
+                          ($application->status == 'wawancara' ? 'Wawancara' :
+                          ($application->status == 'interview' ? 'Wawancara' :
+                          ($application->status == 'diterima' ? 'Diterima' :
+                          ($application->status == 'ditolak' ? 'Ditolak' : $application->status))))))
+                          ?>
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                          <li><a class="dropdown-item" href="<?= base_url('admin/updateStatusPelamar/' . $application->id . '/pending') ?>">Pending</a></li>
-                          <li><a class="dropdown-item" href="<?= base_url('admin/updateStatusPelamar/' . $application->id . '/reviewed') ?>">Direview</a></li>
-                          <li><a class="dropdown-item" href="<?= base_url('admin/updateStatusPelamar/' . $application->id . '/interview') ?>">Interview</a></li>
-                          <li><a class="dropdown-item" href="<?= base_url('admin/updateStatusPelamar/' . $application->id . '/diterima') ?>">Diterima</a></li>
+                          <li><a class="dropdown-item status-update" href="javascript:void(0)" data-id="<?= $application->id ?>" data-status="pending" data-name="<?= $application->applicant_name ?>">Pending</a></li>
+                          <li><a class="dropdown-item status-update" href="javascript:void(0)" data-id="<?= $application->id ?>" data-status="reviewed" data-name="<?= $application->applicant_name ?>">Direview</a></li>
+                          <li><a class="dropdown-item status-update" href="javascript:void(0)" data-id="<?= $application->id ?>" data-status="seleksi" data-name="<?= $application->applicant_name ?>">Seleksi</a></li>
+                          <li><a class="dropdown-item status-update" href="javascript:void(0)" data-id="<?= $application->id ?>" data-status="wawancara" data-name="<?= $application->applicant_name ?>">Wawancara</a></li>
+                          <li><a class="dropdown-item status-update" href="javascript:void(0)" data-id="<?= $application->id ?>" data-status="diterima" data-name="<?= $application->applicant_name ?>">Diterima</a></li>
                           <li><hr class="dropdown-divider"></li>
-                          <li><a class="dropdown-item text-danger" href="<?= base_url('admin/updateStatusPelamar/' . $application->id . '/ditolak') ?>">Ditolak</a></li>
+                          <li><a class="dropdown-item text-danger status-update" href="javascript:void(0)" data-id="<?= $application->id ?>" data-status="ditolak" data-name="<?= $application->applicant_name ?>">Ditolak</a></li>
                         </ul>
                       </div>
                     </td>
                     <td class="align-middle text-center">
                       <?php
-                      // Temporarily set default values until the model methods are implemented
-                      $assessment_count = 0;
-                      $completed_count = 0;
-                      // Uncomment when methods are implemented
-                      // $assessment_count = $this->model_penilaian->hitung_penilaian_pelamar($application->id);
-                      // $completed_count = $this->model_penilaian->hitung_penilaian_selesai($application->id);
+                      // Get assessment counts
+                      $assessment_count = $this->model_penilaian->hitung_penilaian_pelamar($application->id);
+                      $completed_count = $this->model_penilaian->hitung_penilaian_selesai($application->id);
                       ?>
                       <?php if ($assessment_count > 0) : ?>
                         <span class="badge badge-sm bg-gradient-<?= $completed_count == $assessment_count ? 'success' : 'warning' ?>">
@@ -95,14 +108,14 @@
                           <i class="fas fa-ellipsis-v"></i>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end px-2 py-3" aria-labelledby="dropdownMenuButton">
-                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/detailPelamar/' . $application->id) ?>"><i class="fas fa-eye me-2"></i> Lihat Detail</a></li>
+                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/detail_lamaran/' . $application->id) ?>"><i class="fas fa-eye me-2"></i> Lihat Detail</a></li>
                           <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/assign_assessment/' . $application->job_id . '/' . $application->id) ?>"><i class="fas fa-tasks me-2"></i> Atur Penilaian</a></li>
-                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/editPelamar/' . $application->id) ?>"><i class="fas fa-edit me-2"></i> Edit</a></li>
+                          <!-- <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/editPelamar/' . $application->id) ?>"><i class="fas fa-edit me-2"></i> Edit</a></li> -->
                           <li>
                             <hr class="dropdown-divider">
                           </li>
                           <li>
-                            <a class="dropdown-item border-radius-md text-danger" href="<?= base_url('admin/deletePelamar/' . $application->id) ?>" onclick="return confirm('Apakah Anda yakin ingin menghapus lamaran ini?');">
+                            <a class="dropdown-item border-radius-md text-danger btn-delete" href="javascript:void(0)" data-id="<?= $application->id ?>" data-name="<?= $application->applicant_name ?>">
                               <i class="fas fa-trash me-2"></i> Hapus
                             </a>
                           </li>
@@ -161,14 +174,24 @@
 
     // Application Stats Chart
     var ctx1 = document.getElementById("application-stats-chart").getContext("2d");
+
+    // Kelompokkan status ke dalam 5 kategori yang diminta
+    var pendingCount = <?= $application_status_stats['pending'] ?? 0 ?>;
+    var direviewCount = <?= $application_status_stats['reviewed'] ?? 0 ?>;
+    var seleksiCount = <?= $application_status_stats['seleksi'] ?? 0 ?> + <?= $application_status_stats['shortlisted'] ?? 0 ?> + <?= $application_status_stats['offered'] ?? 0 ?> + <?= $application_status_stats['ditolak'] ?? 0 ?> + <?= $application_status_stats['rejected'] ?? 0 ?>;
+    var wawancaraCount = <?= $application_status_stats['wawancara'] ?? 0 ?> + <?= $application_status_stats['interviewed'] ?? 0 ?> + <?= $application_status_stats['interview'] ?? 0 ?>;
+    var diterimaCount = <?= $application_status_stats['hired'] ?? 0 ?> + <?= $application_status_stats['diterima'] ?? 0 ?>;
+    var ditolakCount = <?= $application_status_stats['ditolak'] ?? 0 ?>;
+
     new Chart(ctx1, {
       type: "pie",
       data: {
-        labels: ["Pending", "Reviewed", "Shortlisted", "Interviewed", "Offered", "Hired", "Rejected"],
+        labels: ["Pending", "Direview", "Seleksi", "Wawancara", "Diterima", "Ditolak"],
         datasets: [{
           label: "Pelamar",
-          backgroundColor: ["#fb6340", "#11cdef", "#2dce89", "#5e72e4", "#ffd600", "#2dce89", "#f5365c"],
-          data: [15, 10, 8, 5, 3, 2, 7],
+          backgroundColor: ["#8593B0", "#ffd600", "#11cdef", "#5e72e4", "#2dce89", "#DC5035"],
+          data: [pendingCount, direviewCount, seleksiCount, wawancaraCount, diterimaCount, ditolakCount],
+          borderWidth: 0
         }],
       },
       options: {
@@ -177,6 +200,60 @@
         plugins: {
           legend: {
             position: 'right',
+            labels: {
+              padding: 15,
+              boxWidth: 12,
+              font: {
+                size: 11
+              }
+            }
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                var label = context.label || '';
+                var value = context.raw || 0;
+                var total = context.dataset.data.reduce((a, b) => a + b, 0);
+                var percentage = Math.round((value / total) * 100);
+                return label + ': ' + value + ' pelamar (' + percentage + '%)';
+              },
+              title: function(context) {
+                var status = context[0].label;
+                var statusDesc = '';
+
+                switch(status) {
+                  case 'Pending':
+                    statusDesc = 'Lamaran baru yang belum diproses';
+                    break;
+                  case 'Direview':
+                    statusDesc = 'Lamaran sedang dalam proses review';
+                    break;
+                  case 'Seleksi':
+                    statusDesc = 'Pelamar dalam tahap seleksi';
+                    break;
+                  case 'Wawancara':
+                    statusDesc = 'Pelamar dalam tahap wawancara';
+                    break;
+                  case 'Diterima':
+                    statusDesc = 'Pelamar telah diterima';
+                    break;
+                  case 'Ditolak':
+                  statusDesc = 'Pelamar telah ditolak';
+                  break;
+                }
+
+                return 'Status: ' + status + '\n' + statusDesc;
+              }
+            },
+            padding: 10,
+            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+            titleFont: {
+              size: 13,
+              weight: 'bold'
+            },
+            bodyFont: {
+              size: 12
+            }
           }
         },
       },
@@ -184,6 +261,12 @@
 
     // Monthly Applications Chart
     var ctx2 = document.getElementById("monthly-applications-chart").getContext("2d");
+
+    var gradientStroke = ctx2.createLinearGradient(0, 230, 0, 50);
+    gradientStroke.addColorStop(1, 'rgba(94, 114, 228, 0.3)');
+    gradientStroke.addColorStop(0.2, 'rgba(94, 114, 228, 0.15)');
+    gradientStroke.addColorStop(0, 'rgba(94, 114, 228, 0)');
+
     new Chart(ctx2, {
       type: "line",
       data: {
@@ -192,12 +275,26 @@
           label: "Lamaran",
           tension: 0.4,
           borderWidth: 0,
-          pointRadius: 0,
+          pointRadius: 2,
+          pointBackgroundColor: "#5e72e4",
           borderColor: "#5e72e4",
-          backgroundColor: "rgba(94, 114, 228, 0.3)",
+          backgroundColor: gradientStroke,
           borderWidth: 3,
           fill: true,
-          data: [50, 40, 300, 220, 500, 250, 400, 230, 500, 300, 450, 380],
+          data: [
+            <?= $monthly_application_stats[1] ?? 0 ?>,
+            <?= $monthly_application_stats[2] ?? 0 ?>,
+            <?= $monthly_application_stats[3] ?? 0 ?>,
+            <?= $monthly_application_stats[4] ?? 0 ?>,
+            <?= $monthly_application_stats[5] ?? 0 ?>,
+            <?= $monthly_application_stats[6] ?? 0 ?>,
+            <?= $monthly_application_stats[7] ?? 0 ?>,
+            <?= $monthly_application_stats[8] ?? 0 ?>,
+            <?= $monthly_application_stats[9] ?? 0 ?>,
+            <?= $monthly_application_stats[10] ?? 0 ?>,
+            <?= $monthly_application_stats[11] ?? 0 ?>,
+            <?= $monthly_application_stats[12] ?? 0 ?>
+          ],
           maxBarThickness: 6
         }],
       },
@@ -207,6 +304,15 @@
         plugins: {
           legend: {
             display: false,
+          },
+          tooltip: {
+            callbacks: {
+              title: function(context) {
+                var index = context[0].dataIndex;
+                var labels = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+                return labels[index];
+              }
+            }
           }
         },
         interaction: {
@@ -215,10 +321,115 @@
         },
         scales: {
           y: {
-            beginAtZero: true
+            beginAtZero: true,
+            grid: {
+              drawBorder: false,
+              display: true,
+              drawOnChartArea: true,
+              drawTicks: false,
+              borderDash: [5, 5]
+            },
+            ticks: {
+              precision: 0
+            }
+          },
+          x: {
+            grid: {
+              drawBorder: false,
+              display: false,
+              drawOnChartArea: false,
+              drawTicks: false
+            }
           }
         },
       },
+    });
+
+    // Handle status update with SweetAlert2
+    const statusUpdateLinks = document.querySelectorAll('.status-update');
+    statusUpdateLinks.forEach(function(link) {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+
+        const applicationId = this.getAttribute('data-id');
+        const status = this.getAttribute('data-status');
+        const applicantName = this.getAttribute('data-name');
+
+        // Determine status text and color based on status value
+        let statusText = '';
+        let confirmButtonColor = '#3085d6';
+
+        switch(status) {
+          case 'pending':
+            statusText = 'Pending';
+            confirmButtonColor = '#fb6340'; // warning
+            break;
+          case 'reviewed':
+            statusText = 'Direview';
+            confirmButtonColor = '#11cdef'; // info
+            break;
+          case 'seleksi':
+            statusText = 'Seleksi';
+            confirmButtonColor = '#ffd600'; // yellow
+            break;
+          case 'wawancara':
+            statusText = 'Wawancara';
+            confirmButtonColor = '#5e72e4'; // primary
+            break;
+          case 'diterima':
+            statusText = 'Diterima';
+            confirmButtonColor = '#2dce89'; // success
+            break;
+          case 'ditolak':
+            statusText = 'Ditolak';
+            confirmButtonColor = '#f5365c'; // danger
+            break;
+          default:
+            statusText = status.charAt(0).toUpperCase() + status.slice(1);
+            confirmButtonColor = '#11cdef'; // info sebagai default
+        }
+
+        Swal.fire({
+          title: 'Konfirmasi Perubahan Status',
+          text: `Apakah Anda yakin ingin mengubah status lamaran ${applicantName} menjadi "${statusText}"?`,
+          icon: status === 'ditolak' ? 'warning' : 'question',
+          showCancelButton: true,
+          confirmButtonColor: confirmButtonColor,
+          cancelButtonColor: '#6c757d',
+          confirmButtonText: 'Ya, Ubah Status',
+          cancelButtonText: 'Batal'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = `<?= base_url('admin/updateStatusPelamar/') ?>${applicationId}/${status}`;
+          }
+        });
+      });
+    });
+
+    // Handle delete with SweetAlert2
+    const deleteButtons = document.querySelectorAll('.btn-delete');
+    deleteButtons.forEach(function(button) {
+      button.addEventListener('click', function(e) {
+        e.preventDefault();
+
+        const applicationId = this.getAttribute('data-id');
+        const applicantName = this.getAttribute('data-name');
+
+        Swal.fire({
+          title: 'Konfirmasi Hapus',
+          text: `Apakah Anda yakin ingin menghapus lamaran dari ${applicantName}? Tindakan ini tidak dapat dibatalkan.`,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#f5365c',
+          cancelButtonColor: '#3085d6',
+          confirmButtonText: 'Ya, Hapus!',
+          cancelButtonText: 'Batal'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = `<?= base_url('admin/deletePelamar/') ?>${applicationId}`;
+          }
+        });
+      });
     });
   });
 </script>

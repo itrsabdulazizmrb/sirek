@@ -114,9 +114,10 @@ class Model_Penilaian extends CI_Model {
 
     // Dapatkan penilaian pelamar
     public function dapatkan_penilaian_pelamar($application_id) {
-        $this->db->select('applicant_assessments.*, assessments.title as assessment_title, assessments.description, assessments.passing_score');
+        $this->db->select('applicant_assessments.*, assessments.title as assessment_title, assessments.description, assessments.passing_score, assessment_types.name as type_name');
         $this->db->from('applicant_assessments');
         $this->db->join('assessments', 'assessments.id = applicant_assessments.assessment_id', 'left');
+        $this->db->join('assessment_types', 'assessment_types.id = assessments.type_id', 'left');
         $this->db->where('applicant_assessments.application_id', $application_id);
         $query = $this->db->get();
         return $query->result();
@@ -124,9 +125,10 @@ class Model_Penilaian extends CI_Model {
 
     // Dapatkan penilaian pelamar spesifik
     public function dapatkan_penilaian_pelamar_spesifik($application_id, $assessment_id) {
-        $this->db->select('applicant_assessments.*, assessments.title as assessment_title, assessments.description, assessments.passing_score');
+        $this->db->select('applicant_assessments.*, assessments.title as assessment_title, assessments.description, assessments.passing_score, assessment_types.name as type_name');
         $this->db->from('applicant_assessments');
         $this->db->join('assessments', 'assessments.id = applicant_assessments.assessment_id', 'left');
+        $this->db->join('assessment_types', 'assessment_types.id = assessments.type_id', 'left');
         $this->db->where('applicant_assessments.application_id', $application_id);
         $this->db->where('applicant_assessments.assessment_id', $assessment_id);
         $query = $this->db->get();
@@ -135,9 +137,10 @@ class Model_Penilaian extends CI_Model {
 
     // Dapatkan semua penilaian pelamar
     public function dapatkan_semua_penilaian_pelamar($user_id) {
-        $this->db->select('applicant_assessments.*, assessments.title as assessment_title, assessments.description, assessments.passing_score, job_applications.job_id, job_postings.title as job_title');
+        $this->db->select('applicant_assessments.*, assessments.title as assessment_title, assessments.description, assessments.passing_score, job_applications.job_id, job_postings.title as job_title, assessment_types.name as type_name');
         $this->db->from('applicant_assessments');
         $this->db->join('assessments', 'assessments.id = applicant_assessments.assessment_id', 'left');
+        $this->db->join('assessment_types', 'assessment_types.id = assessments.type_id', 'left');
         $this->db->join('job_applications', 'job_applications.id = applicant_assessments.application_id', 'left');
         $this->db->join('job_postings', 'job_postings.id = job_applications.job_id', 'left');
         $this->db->where('applicant_assessments.applicant_id', $user_id);
@@ -290,5 +293,50 @@ class Model_Penilaian extends CI_Model {
         $this->db->where('assessment_id', $assessment_id);
         $query = $this->db->get('applicant_assessments');
         return ($query->num_rows() > 0);
+    }
+
+    // Hitung jumlah penilaian yang ditetapkan ke pelamar
+    public function hitung_penilaian_pelamar($application_id) {
+        $this->db->where('application_id', $application_id);
+        return $this->db->count_all_results('applicant_assessments');
+    }
+
+    // Hitung jumlah penilaian yang telah diselesaikan oleh pelamar
+    public function hitung_penilaian_selesai($application_id) {
+        $this->db->where('application_id', $application_id);
+        $this->db->where('status', 'completed');
+        return $this->db->count_all_results('applicant_assessments');
+    }
+
+    // Hitung total penilaian
+    public function hitung_penilaian() {
+        return $this->db->count_all('assessments');
+    }
+
+    // Hitung penilaian yang telah diselesaikan
+    public function hitung_penilaian_selesai_semua() {
+        $this->db->where('status', 'completed');
+        return $this->db->count_all_results('applicant_assessments');
+    }
+
+    // Dapatkan statistik penilaian berdasarkan bulan
+    public function dapatkan_statistik_penilaian_bulanan($year) {
+        $this->db->select('MONTH(created_at) as month, COUNT(*) as count');
+        $this->db->from('applicant_assessments');
+        $this->db->where('YEAR(created_at)', $year);
+        $this->db->group_by('MONTH(created_at)');
+        $query = $this->db->get();
+        return $query->result();
+    }
+
+    // Dapatkan statistik skor penilaian
+    public function dapatkan_statistik_skor_penilaian() {
+        $this->db->select('FLOOR(score/10)*10 as score_range, COUNT(*) as count');
+        $this->db->from('applicant_assessments');
+        $this->db->where('status', 'completed');
+        $this->db->group_by('FLOOR(score/10)');
+        $this->db->order_by('score_range', 'ASC');
+        $query = $this->db->get();
+        return $query->result();
     }
 }

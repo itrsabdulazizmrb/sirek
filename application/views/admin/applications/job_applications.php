@@ -60,15 +60,15 @@
                     </td>
                     <td class="align-middle text-center text-sm">
                       <div class="dropdown">
-                        <a href="#" class="badge badge-sm bg-gradient-<?= $application->status == 'pending' ? 'warning' : ($application->status == 'shortlisted' ? 'info' : ($application->status == 'interviewed' ? 'primary' : ($application->status == 'hired' ? 'success' : 'danger'))) ?> dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                          <?= $application->status == 'pending' ? 'Menunggu' : ($application->status == 'shortlisted' ? 'Shortlisted' : ($application->status == 'interviewed' ? 'Interviewed' : ($application->status == 'hired' ? 'Diterima' : 'Ditolak'))) ?>
+                        <a href="#" class="badge badge-sm bg-gradient-<?= $application->status == 'pending' ? 'warning' : ($application->status == 'reviewed' ? 'info' : ($application->status == 'interview' ? 'primary' : ($application->status == 'diterima' ? 'success' : 'danger'))) ?> dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                          <?= $application->status == 'pending' ? 'Pending' : ($application->status == 'reviewed' ? 'Direview' : ($application->status == 'interview' ? 'Interview' : ($application->status == 'diterima' ? 'Diterima' : 'Ditolak'))) ?>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end px-2 py-3" aria-labelledby="dropdownMenuButton">
-                          <li><a class="dropdown-item" href="<?= base_url('admin/update_application_status/' . $application->id . '/pending') ?>">Menunggu</a></li>
-                          <li><a class="dropdown-item" href="<?= base_url('admin/update_application_status/' . $application->id . '/shortlisted') ?>">Shortlisted</a></li>
-                          <li><a class="dropdown-item" href="<?= base_url('admin/update_application_status/' . $application->id . '/interviewed') ?>">Interviewed</a></li>
-                          <li><a class="dropdown-item text-success" href="<?= base_url('admin/update_application_status/' . $application->id . '/hired') ?>">Diterima</a></li>
-                          <li><a class="dropdown-item text-danger" href="<?= base_url('admin/update_application_status/' . $application->id . '/rejected') ?>">Ditolak</a></li>
+                          <li><a class="dropdown-item" href="<?= base_url('admin/update_application_status/' . $application->id . '/pending') ?>">Pending</a></li>
+                          <li><a class="dropdown-item" href="<?= base_url('admin/update_application_status/' . $application->id . '/reviewed') ?>">Direview</a></li>
+                          <li><a class="dropdown-item" href="<?= base_url('admin/update_application_status/' . $application->id . '/interview') ?>">Interview</a></li>
+                          <li><a class="dropdown-item text-success" href="<?= base_url('admin/update_application_status/' . $application->id . '/diterima') ?>">Diterima</a></li>
+                          <li><a class="dropdown-item text-danger" href="<?= base_url('admin/update_application_status/' . $application->id . '/ditolak') ?>">Ditolak</a></li>
                         </ul>
                       </div>
                     </td>

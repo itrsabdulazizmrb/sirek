@@ -18,6 +18,7 @@ class Admin extends CI_Controller {
         $this->load->model('model_penilaian');
         $this->load->model('model_blog');
         $this->load->model('model_kategori');
+        $this->load->model('model_pelamar');
 
         // Load libraries
         $this->load->library('pagination');
@@ -37,9 +38,42 @@ class Admin extends CI_Controller {
         $data['new_applications'] = $this->model_lamaran->hitung_lamaran_baru();
         $data['total_users'] = $this->model_pengguna->hitung_pengguna();
         $data['total_applicants'] = $this->model_pengguna->hitung_pelamar();
+        $data['total_assessments'] = $this->model_penilaian->hitung_penilaian();
+        $data['completed_assessments'] = $this->model_penilaian->hitung_penilaian_selesai_semua();
 
         // Get recent applications
         $data['recent_applications'] = $this->model_lamaran->dapatkan_lamaran_terbaru(5);
+
+        // Get job categories with count for chart
+        $data['job_categories'] = $this->model_kategori->dapatkan_kategori_lowongan_dengan_jumlah();
+
+        // Get monthly application statistics for current year
+        $current_year = date('Y');
+        $monthly_stats = $this->model_lamaran->dapatkan_statistik_lamaran_bulanan($current_year);
+
+        // Initialize array with 0 for all months
+        $monthly_data = array_fill(1, 12, 0);
+
+        // Fill in actual data
+        foreach ($monthly_stats as $stat) {
+            $monthly_data[$stat->month] = $stat->count;
+        }
+
+        $data['monthly_application_stats'] = $monthly_data;
+
+        // Get application status statistics
+        $data['application_status_stats'] = [
+            'pending' => $this->model_lamaran->hitung_lamaran_berdasarkan_status('pending'),
+            'reviewed' => $this->model_lamaran->hitung_lamaran_berdasarkan_status('reviewed'),
+            'shortlisted' => $this->model_lamaran->hitung_lamaran_berdasarkan_status('shortlisted'),
+            'interviewed' => $this->model_lamaran->hitung_lamaran_berdasarkan_status('interviewed'),
+            'offered' => $this->model_lamaran->hitung_lamaran_berdasarkan_status('offered'),
+            'hired' => $this->model_lamaran->hitung_lamaran_berdasarkan_status('hired'),
+            'rejected' => $this->model_lamaran->hitung_lamaran_berdasarkan_status('rejected')
+        ];
+
+        // Get applications per job position
+        $data['applications_per_job'] = $this->model_lamaran->dapatkan_jumlah_lamaran_per_lowongan();
 
         // Load views
         $data['title'] = 'Dasbor Admin';
@@ -191,6 +225,39 @@ class Admin extends CI_Controller {
         // Get all applications
         $data['applications'] = $this->model_lamaran->dapatkan_lamaran_semua();
 
+        // Get application status statistics for all possible statuses
+        $data['application_status_stats'] = [
+            // Status dasar dalam bahasa Inggris
+            'pending' => $this->model_lamaran->hitung_lamaran_berdasarkan_status('pending'),
+            'reviewed' => $this->model_lamaran->hitung_lamaran_berdasarkan_status('reviewed'),
+            'shortlisted' => $this->model_lamaran->hitung_lamaran_berdasarkan_status('shortlisted'),
+            'interviewed' => $this->model_lamaran->hitung_lamaran_berdasarkan_status('interviewed'),
+            'offered' => $this->model_lamaran->hitung_lamaran_berdasarkan_status('offered'),
+            'hired' => $this->model_lamaran->hitung_lamaran_berdasarkan_status('hired'),
+            'rejected' => $this->model_lamaran->hitung_lamaran_berdasarkan_status('rejected'),
+
+            // Status dalam bahasa Indonesia
+            'interview' => $this->model_lamaran->hitung_lamaran_berdasarkan_status('interview'),
+            'diterima' => $this->model_lamaran->hitung_lamaran_berdasarkan_status('diterima'),
+            'ditolak' => $this->model_lamaran->hitung_lamaran_berdasarkan_status('ditolak'),
+            'seleksi' => $this->model_lamaran->hitung_lamaran_berdasarkan_status('seleksi'),
+            'wawancara' => $this->model_lamaran->hitung_lamaran_berdasarkan_status('wawancara')
+        ];
+
+        // Get monthly application statistics for current year
+        $current_year = date('Y');
+        $monthly_stats = $this->model_lamaran->dapatkan_statistik_lamaran_bulanan($current_year);
+
+        // Initialize array with 0 for all months
+        $monthly_data = array_fill(1, 12, 0);
+
+        // Fill in actual data
+        foreach ($monthly_stats as $stat) {
+            $monthly_data[$stat->month] = $stat->count;
+        }
+
+        $data['monthly_application_stats'] = $monthly_data;
+
         // Load views
         $data['title'] = 'Manajemen Lamaran';
         $this->load->view('templates/admin_header', $data);
@@ -209,6 +276,12 @@ class Admin extends CI_Controller {
 
         // Get applicant profile
         $data['profile'] = $this->model_pelamar->dapatkan_profil($data['application']->applicant_id);
+
+        // Get applicant data (for the view)
+        $data['applicant'] = $this->model_pengguna->dapatkan_pengguna($data['application']->applicant_id);
+
+        // Get job details
+        $data['job'] = $this->model_lowongan->dapatkan_lowongan($data['application']->job_id);
 
         // Get assessment results
         $data['assessments'] = $this->model_penilaian->dapatkan_penilaian_pelamar($id);
@@ -237,6 +310,214 @@ class Admin extends CI_Controller {
         }
 
         redirect('admin/detail_lamaran/' . $application_id);
+    }
+
+    // Update status pelamar via URL
+    public function updateStatusPelamar($id, $status) {
+        // Update application status
+        $result = $this->model_lamaran->perbarui_status($id, $status);
+
+        if ($result) {
+            // Show success message
+            $this->session->set_flashdata('success', 'Status lamaran berhasil diperbarui menjadi ' . ucfirst($status) . '.');
+        } else {
+            // If update fails, show error message
+            $this->session->set_flashdata('error', 'Gagal memperbarui status lamaran. Silakan coba lagi.');
+        }
+
+        redirect('admin/lamaran');
+    }
+
+    // Perbarui status lamaran dengan notifikasi
+    public function update_application_status($id, $status) {
+        // Load fonnte helper
+        $this->load->helper('fonnte');
+
+        // Get notify parameter
+        $notify = $this->input->get('notify') === '1';
+
+        // Get application details
+        $application = $this->model_lamaran->dapatkan_lamaran($id);
+
+        // If application not found, show 404
+        if (!$application) {
+            show_404();
+        }
+
+        // Get job details
+        $job = $this->model_lowongan->dapatkan_lowongan($application->job_id);
+
+        // Get applicant details
+        $applicant = $this->model_pengguna->dapatkan_pengguna($application->applicant_id);
+
+        // Update application status
+        $data = [
+            'status' => $status,
+            'updated_at' => date('Y-m-d H:i:s')
+        ];
+
+        $result = $this->model_lamaran->perbarui_lamaran($id, $data);
+
+        if ($result) {
+            // If notification is requested and applicant has a phone number
+            if ($notify && !empty($applicant->phone)) {
+                // Get message based on status with complete information
+                $message = dapatkan_pesan_status_lamaran($status, $job->title, $applicant->full_name);
+
+                // Send WhatsApp notification
+                $whatsapp_result = kirim_whatsapp($applicant->phone, $message);
+
+                if ($whatsapp_result['success']) {
+                    $this->session->set_flashdata('success', 'Status lamaran berhasil diperbarui menjadi ' . ucfirst($status) . ' dan notifikasi WhatsApp telah dikirim.');
+                } else {
+                    $this->session->set_flashdata('success', 'Status lamaran berhasil diperbarui menjadi ' . ucfirst($status) . ', tetapi gagal mengirim notifikasi WhatsApp.');
+                    $this->session->set_flashdata('error', 'Pesan error: ' . ($whatsapp_result['error'] ?? $whatsapp_result['message'] ?? 'Unknown error'));
+                }
+            } else {
+                $this->session->set_flashdata('success', 'Status lamaran berhasil diperbarui menjadi ' . ucfirst($status) . '.');
+            }
+        } else {
+            // If update fails, show error message
+            $this->session->set_flashdata('error', 'Gagal memperbarui status lamaran. Silakan coba lagi.');
+        }
+
+        redirect('admin/detail_lamaran/' . $id);
+    }
+
+    // Add application note
+    public function add_application_note($id) {
+        // Get note from form
+        $note = $this->input->post('note');
+
+        // Update application with note
+        $result = $this->model_lamaran->tambah_catatan_admin($id, $note);
+
+        if ($result) {
+            // Show success message
+            $this->session->set_flashdata('success', 'Catatan berhasil ditambahkan.');
+        } else {
+            // If update fails, show error message
+            $this->session->set_flashdata('error', 'Gagal menambahkan catatan. Silakan coba lagi.');
+        }
+
+        redirect('admin/detail_lamaran/' . $id);
+    }
+
+    // Edit pelamar
+    public function editPelamar($id) {
+        // Get application details
+        $data['application'] = $this->model_lamaran->dapatkan_lamaran($id);
+
+        // If application not found, show 404
+        if (!$data['application']) {
+            show_404();
+        }
+
+        // Get job list for dropdown
+        $data['jobs'] = $this->model_lowongan->dapatkan_lowongan_aktif_semua();
+
+        // Get applicant profile
+        $data['profile'] = $this->model_pelamar->dapatkan_profil($data['application']->applicant_id);
+
+        // Form validation rules
+        $this->form_validation->set_rules('job_id', 'Lowongan', 'required');
+        $this->form_validation->set_rules('status', 'Status', 'required');
+
+        if ($this->form_validation->run() == FALSE) {
+            // Load views
+            $data['title'] = 'Edit Lamaran';
+            $this->load->view('templates/admin_header', $data);
+            $this->load->view('admin/applications/edit', $data);
+            $this->load->view('templates/admin_footer');
+        } else {
+            // Get form data
+            $application_data = array(
+                'job_id' => $this->input->post('job_id'),
+                'status' => $this->input->post('status'),
+                'updated_at' => date('Y-m-d H:i:s')
+            );
+
+            // Update application data
+            $result = $this->model_lamaran->perbarui_lamaran($id, $application_data);
+
+            if ($result) {
+                // Show success message
+                $this->session->set_flashdata('success', 'Lamaran berhasil diperbarui.');
+                redirect('admin/lamaran');
+            } else {
+                // If update fails, show error message
+                $this->session->set_flashdata('error', 'Gagal memperbarui lamaran. Silakan coba lagi.');
+                redirect('admin/editPelamar/' . $id);
+            }
+        }
+    }
+
+    // Delete pelamar
+    public function deletePelamar($id) {
+        // Delete application
+        $result = $this->model_lamaran->hapus_lamaran($id);
+
+        if ($result) {
+            // Show success message
+            $this->session->set_flashdata('success', 'Lamaran berhasil dihapus.');
+        } else {
+            // If deletion fails, show error message
+            $this->session->set_flashdata('error', 'Gagal menghapus lamaran. Silakan coba lagi.');
+        }
+
+        redirect('admin/lamaran');
+    }
+
+    // Download resume
+    public function downloadResume($id) {
+        // Get application details
+        $application = $this->model_lamaran->dapatkan_lamaran($id);
+
+        // If application not found or resume not found, show 404
+        if (!$application || !$application->resume) {
+            show_404();
+        }
+
+        // Set file path
+        $file_path = './uploads/resumes/' . $application->resume;
+
+        // Check if file exists
+        if (!file_exists($file_path)) {
+            $this->session->set_flashdata('error', 'File resume tidak ditemukan.');
+            redirect('admin/detail_lamaran/' . $id);
+        }
+
+        // Get file info
+        $file_info = pathinfo($file_path);
+        $file_name = $application->applicant_name . '_Resume.' . $file_info['extension'];
+
+        // Force download
+        header('Content-Type: application/octet-stream');
+        header('Content-Disposition: attachment; filename="' . $file_name . '"');
+        header('Content-Length: ' . filesize($file_path));
+        readfile($file_path);
+        exit;
+    }
+
+    // Print pelamar
+    public function printPelamar($id) {
+        // Get application details
+        $data['application'] = $this->model_lamaran->dapatkan_lamaran($id);
+
+        // If application not found, show 404
+        if (!$data['application']) {
+            show_404();
+        }
+
+        // Get applicant profile
+        $data['profile'] = $this->model_pelamar->dapatkan_profil($data['application']->applicant_id);
+
+        // Get job details
+        $data['job'] = $this->model_lowongan->dapatkan_lowongan($data['application']->job_id);
+
+        // Load print view
+        $data['title'] = 'Cetak Lamaran';
+        $this->load->view('admin/applications/print', $data);
     }
 
     // Lihat Lamaran Berdasarkan Lowongan
@@ -446,6 +727,22 @@ class Admin extends CI_Controller {
         redirect('admin/penilaian');
     }
 
+    // Migrasi Status Lamaran
+    public function migrasi_status_lamaran() {
+        // Jalankan migrasi status
+        $result = $this->model_lamaran->migrasi_status_lamaran();
+
+        if ($result) {
+            // Show success message
+            $this->session->set_flashdata('success', 'Status lamaran berhasil dimigrasi ke format baru.');
+        } else {
+            // If migration fails, show error message
+            $this->session->set_flashdata('error', 'Gagal migrasi status lamaran. Silakan coba lagi.');
+        }
+
+        redirect('admin/lamaran');
+    }
+
     // Atur Penilaian untuk Lowongan
     public function assign_assessment($job_id, $application_id = null) {
         // Get job details
@@ -489,8 +786,7 @@ class Admin extends CI_Controller {
                                 'application_id' => $application_id,
                                 'assessment_id' => $assessment_id,
                                 'status' => 'not_started',
-                                'assigned_at' => date('Y-m-d H:i:s'),
-                                'assigned_by' => $this->session->userdata('user_id')
+                                'created_at' => date('Y-m-d H:i:s')
                             );
                             $this->model_penilaian->tambah_penilaian_pelamar($applicant_assessment_data);
                         }
@@ -1004,7 +1300,27 @@ class Admin extends CI_Controller {
         // Load views
         $data['title'] = 'Profil Pelamar';
         $this->load->view('templates/admin_header', $data);
-        $this->load->view('admin/users/applicant_profile', $data);
+        $this->load->view('admin/users/profilPelamar', $data);
+        $this->load->view('templates/admin_footer');
+    }
+
+    // Lihat Profil Pelamar (alias untuk URL dengan camelCase)
+    public function profilPelamar($id) {
+        // Get user details
+        $data['user'] = $this->model_pengguna->dapatkan_pengguna($id);
+
+        // If user not found or not an applicant, show 404
+        if (!$data['user'] || $data['user']->role != 'applicant') {
+            show_404();
+        }
+
+        // Get applicant profile
+        $data['profile'] = $this->model_pelamar->dapatkan_profil($id);
+
+        // Load views
+        $data['title'] = 'Profil Pelamar';
+        $this->load->view('templates/admin_header', $data);
+        $this->load->view('admin/users/profilPelamar', $data);
         $this->load->view('templates/admin_footer');
     }
 
@@ -1025,6 +1341,156 @@ class Admin extends CI_Controller {
         $data['title'] = 'Lamaran Pelamar';
         $this->load->view('templates/admin_header', $data);
         $this->load->view('admin/users/applicant_applications', $data);
+        $this->load->view('templates/admin_footer');
+    }
+
+    // Export Lamaran Pelamar ke Excel
+    public function export_applicant_applications($id) {
+        // Load helper
+        $this->load->helper('phpspreadsheet');
+
+        // Get user details
+        $user = $this->model_pengguna->dapatkan_pengguna($id);
+
+        // If user not found or not an applicant, show 404
+        if (!$user || $user->role != 'applicant') {
+            show_404();
+        }
+
+        // Get applicant applications
+        $applications = $this->model_lamaran->dapatkan_lamaran_pelamar($id);
+
+        // Check if PhpSpreadsheet is available
+        if (!load_phpspreadsheet()) {
+            $this->session->set_flashdata('error', 'PhpSpreadsheet library tidak tersedia. Silakan hubungi administrator.');
+            redirect('admin/lamaran_pelamar/' . $id);
+        }
+
+        // Create a new Spreadsheet object
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // Set spreadsheet metadata
+        $spreadsheet->getProperties()
+            ->setCreator('Sistem Rekrutmen')
+            ->setLastModifiedBy('Admin')
+            ->setTitle('Daftar Lamaran ' . $user->full_name)
+            ->setSubject('Daftar Lamaran Pelamar')
+            ->setDescription('Daftar lamaran yang diajukan oleh ' . $user->full_name);
+
+        // Set column headers
+        $sheet->setCellValue('A1', 'No');
+        $sheet->setCellValue('B1', 'Lowongan');
+        $sheet->setCellValue('C1', 'Tipe Pekerjaan');
+        $sheet->setCellValue('D1', 'Lokasi');
+        $sheet->setCellValue('E1', 'Tanggal Lamaran');
+        $sheet->setCellValue('F1', 'Status');
+        $sheet->setCellValue('G1', 'Penilaian');
+
+        // Style the header row
+        $headerStyle = [
+            'font' => [
+                'bold' => true,
+                'color' => ['rgb' => 'FFFFFF'],
+            ],
+            'fill' => [
+                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                'startColor' => ['rgb' => '4E73DF'],
+            ],
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+            ],
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                ],
+            ],
+        ];
+
+        $sheet->getStyle('A1:G1')->applyFromArray($headerStyle);
+
+        // Set column widths
+        $sheet->getColumnDimension('A')->setWidth(5);
+        $sheet->getColumnDimension('B')->setWidth(40);
+        $sheet->getColumnDimension('C')->setWidth(15);
+        $sheet->getColumnDimension('D')->setWidth(20);
+        $sheet->getColumnDimension('E')->setWidth(20);
+        $sheet->getColumnDimension('F')->setWidth(15);
+        $sheet->getColumnDimension('G')->setWidth(15);
+
+        // Add data rows
+        $row = 2;
+        $no = 1;
+
+        foreach ($applications as $application) {
+            // Get assessment counts
+            $assessment_count = $this->model_penilaian->hitung_penilaian_pelamar($application->id);
+            $completed_count = $this->model_penilaian->hitung_penilaian_selesai($application->id);
+
+            // Format job type
+            $job_type = $application->job_type == 'full_time' ? 'Full Time' :
+                       ($application->job_type == 'part_time' ? 'Part Time' :
+                       ($application->job_type == 'contract' ? 'Kontrak' : $application->job_type));
+
+            // Format assessment status
+            $assessment_status = ($assessment_count > 0) ?
+                                $completed_count . '/' . $assessment_count . ' Selesai' :
+                                'Tidak Ada';
+
+            // Add data to sheet
+            $sheet->setCellValue('A' . $row, $no);
+            $sheet->setCellValue('B' . $row, $application->job_title);
+            $sheet->setCellValue('C' . $row, $job_type);
+            $sheet->setCellValue('D' . $row, $application->location);
+            $sheet->setCellValue('E' . $row, date('d M Y', strtotime($application->application_date)));
+            $sheet->setCellValue('F' . $row, ucfirst($application->status));
+            $sheet->setCellValue('G' . $row, $assessment_status);
+
+            // Style for data rows
+            $rowStyle = [
+                'borders' => [
+                    'allBorders' => [
+                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    ],
+                ],
+            ];
+
+            $sheet->getStyle('A' . $row . ':G' . $row)->applyFromArray($rowStyle);
+
+            $row++;
+            $no++;
+        }
+
+        // Set title above the table
+        $sheet->insertNewRowBefore(1, 2);
+        $sheet->mergeCells('A1:G1');
+        $sheet->setCellValue('A1', 'DAFTAR LAMARAN ' . strtoupper($user->full_name));
+        $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(14);
+        $sheet->getStyle('A1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+
+        // Download the file
+        $filename = 'Lamaran_' . str_replace(' ', '_', $user->full_name) . '_' . date('Y-m-d') . '.xlsx';
+        download_excel_file($spreadsheet, $filename);
+    }
+
+    // Lihat Lowongan Rekruter
+    public function lowongan_rekruter($id) {
+        // Get user details
+        $data['user'] = $this->model_pengguna->dapatkan_pengguna($id);
+
+        // If user not found or not a recruiter, show 404
+        if (!$data['user'] || ($data['user']->role != 'recruiter' && $data['user']->role != 'staff')) {
+            show_404();
+        }
+
+        // Get recruiter jobs
+        $data['jobs'] = $this->model_lowongan->dapatkan_lowongan_recruiter($id);
+
+        // Load views
+        $data['title'] = 'Lowongan yang Dikelola';
+        $this->load->view('templates/admin_header', $data);
+        $this->load->view('admin/users/recruiter_jobs', $data);
         $this->load->view('templates/admin_footer');
     }
 

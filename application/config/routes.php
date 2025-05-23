@@ -138,3 +138,11 @@ $route['admin/add_job'] = 'admin/tambah_lowongan';
 $route['admin/edit_job/(:num)'] = 'admin/edit_lowongan/$1';
 $route['admin/delete_job/(:num)'] = 'admin/hapus_lowongan/$1';
 $route['admin/job_applications/(:num)'] = 'admin/lamaran_lowongan/$1';
+
+// Rute tambahan untuk pelamar (alias)
+$route['admin/profilPelamar/(:num)'] = 'admin/profilPelamar/$1';
+$route['admin/recruiter_jobs/(:num)'] = 'admin/lowongan_rekruter/$1';
+
+// Rute tambahan untuk pengguna (alias)
+$route['admin/edit_user/(:num)'] = 'admin/edit_pengguna/$1';
+$route['admin/users'] = 'admin/pengguna';

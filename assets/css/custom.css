@@ -145,26 +145,18 @@ body {
 }
 
 .status-reviewed {
-  color: #5e72e4;
-}
-
-.status-shortlisted {
-  color: #2dce89;
-}
-
-.status-interviewed {
   color: #11cdef;
 }
 
-.status-offered {
-  color: #fb6340;
+.status-interview {
+  color: #5e72e4;
 }
 
-.status-hired {
+.status-diterima {
   color: #2dce89;
 }
 
-.status-rejected {
+.status-ditolak {
   color: #f5365c;
 }
 

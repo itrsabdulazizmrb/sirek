@@ -94,11 +94,11 @@ class Model_Lowongan extends CI_Model {
         $this->db->where('job_postings.id !=', $id);
         $this->db->where('job_postings.status', 'active');
         $this->db->where('job_postings.deadline >=', date('Y-m-d'));
-        
+
         if ($category_id) {
             $this->db->where('job_postings.category_id', $category_id);
         }
-        
+
         $this->db->order_by('job_postings.id', 'DESC');
         $this->db->limit($limit);
         $query = $this->db->get();
@@ -111,18 +111,18 @@ class Model_Lowongan extends CI_Model {
         $this->db->where('user_id', $user_id);
         $query = $this->db->get('applicant_profiles');
         $profile = $query->row();
-        
+
         // Jika profil ditemukan dan memiliki skills
         if ($profile && $profile->skills) {
             $skills = explode(',', $profile->skills);
             $skills_array = array_map('trim', $skills);
-            
+
             $this->db->select('job_postings.*, job_categories.name as category_name');
             $this->db->from('job_postings');
             $this->db->join('job_categories', 'job_categories.id = job_postings.category_id', 'left');
             $this->db->where('job_postings.status', 'active');
             $this->db->where('job_postings.deadline >=', date('Y-m-d'));
-            
+
             // Cari lowongan yang sesuai dengan skills
             $this->db->group_start();
             foreach ($skills_array as $skill) {
@@ -130,14 +130,14 @@ class Model_Lowongan extends CI_Model {
                 $this->db->or_like('job_postings.description', $skill);
             }
             $this->db->group_end();
-            
+
             // Cek apakah sudah melamar
             $this->db->where_not_in('job_postings.id', function($query) use ($user_id) {
                 $query->select('job_id')
                       ->from('job_applications')
                       ->where('applicant_id', $user_id);
             });
-            
+
             $this->db->order_by('job_postings.id', 'DESC');
             $this->db->limit($limit);
             $query = $this->db->get();
@@ -171,6 +171,17 @@ class Model_Lowongan extends CI_Model {
         $this->db->or_like('job_postings.location', $keyword);
         $this->db->or_like('job_categories.name', $keyword);
         $this->db->group_end();
+        $this->db->order_by('job_postings.id', 'DESC');
+        $query = $this->db->get();
+        return $query->result();
+    }
+
+    // Dapatkan lowongan berdasarkan recruiter
+    public function dapatkan_lowongan_recruiter($user_id) {
+        $this->db->select('job_postings.*, job_categories.name as category_name');
+        $this->db->from('job_postings');
+        $this->db->join('job_categories', 'job_categories.id = job_postings.category_id', 'left');
+        $this->db->where('job_postings.created_by', $user_id);
         $this->db->order_by('job_postings.id', 'DESC');
         $query = $this->db->get();
         return $query->result();
