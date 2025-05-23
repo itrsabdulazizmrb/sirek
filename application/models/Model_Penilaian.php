@@ -143,7 +143,7 @@ class Model_Penilaian extends CI_Model {
         $this->db->join('jenis_penilaian', 'jenis_penilaian.id = penilaian.id_jenis', 'left');
         $this->db->join('lamaran_pekerjaan', 'lamaran_pekerjaan.id = penilaian_pelamar.id_lamaran', 'left');
         $this->db->join('lowongan_pekerjaan', 'lowongan_pekerjaan.id = lamaran_pekerjaan.id_pekerjaan', 'left');
-        $this->db->where('penilaian_pelamar.id_pelamar', $user_id);
+        $this->db->where('lamaran_pekerjaan.id_pelamar', $user_id);
         $this->db->order_by('penilaian_pelamar.id', 'DESC');
         $query = $this->db->get();
         return $query->result();
