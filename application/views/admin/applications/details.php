@@ -4,7 +4,7 @@
       <div class="card-header pb-0">
         <div class="d-flex justify-content-between align-items-center">
           <h6>Detail Lamaran</h6>
-          <a href="<?= base_url('admin/applications') ?>" class="btn btn-sm btn-outline-primary">
+          <a href="<?= base_url('admin/lamaran') ?>" class="btn btn-sm btn-outline-primary">
             <i class="fas fa-arrow-left me-2"></i> Kembali ke Daftar Lamaran
           </a>
         </div>
@@ -18,9 +18,9 @@
           <div class="col-md-12">
             <h5 class="mb-3"><?= $application->job_title ?></h5>
             <div class="d-flex mb-4">
-              <span class="badge badge-sm bg-gradient-<?= isset($job->job_type) ? ($job->job_type == 'full-time' ? 'success' : ($job->job_type == 'part-time' ? 'info' : ($job->job_type == 'contract' ? 'warning' : 'secondary'))) : 'secondary' ?> me-2"><?= isset($job->job_type) ? ($job->job_type == 'full-time' ? 'Full Time' : ($job->job_type == 'part-time' ? 'Part Time' : ($job->job_type == 'contract' ? 'Kontrak' : 'Magang'))) : 'Tidak tersedia' ?></span>
-              <span class="text-sm me-3"><i class="ni ni-pin-3 me-1"></i> <?= isset($job->location) ? $job->location : 'Tidak tersedia' ?></span>
-              <span class="text-sm"><i class="ni ni-calendar-grid-58 me-1"></i> Dilamar pada <?= date('d M Y', strtotime($application->application_date)) ?></span>
+              <span class="badge badge-sm bg-gradient-<?= isset($job->jenis_pekerjaan) ? ($job->jenis_pekerjaan == 'full-time' ? 'success' : ($job->jenis_pekerjaan == 'part-time' ? 'info' : ($job->jenis_pekerjaan == 'contract' ? 'warning' : 'secondary'))) : 'secondary' ?> me-2"><?= isset($job->jenis_pekerjaan) ? ($job->jenis_pekerjaan == 'full-time' ? 'Full Time' : ($job->jenis_pekerjaan == 'part-time' ? 'Part Time' : ($job->jenis_pekerjaan == 'contract' ? 'Kontrak' : 'Magang'))) : 'Tidak tersedia' ?></span>
+              <span class="text-sm me-3"><i class="ni ni-pin-3 me-1"></i> <?= isset($job->lokasi) ? $job->lokasi : 'Tidak tersedia' ?></span>
+              <span class="text-sm"><i class="ni ni-calendar-grid-58 me-1"></i> Dilamar pada <?= date('d M Y', strtotime($application->tanggal_lamaran)) ?></span>
             </div>
           </div>
         </div>
@@ -34,7 +34,7 @@
                 </span>
                 <div class="timeline-content">
                   <h6 class="text-dark text-sm font-weight-bold mb-0">Lamaran Dikirim</h6>
-                  <p class="text-secondary font-weight-bold text-xs mt-1 mb-0"><?= date('d M Y H:i', strtotime($application->application_date)) ?></p>
+                  <p class="text-secondary font-weight-bold text-xs mt-1 mb-0"><?= date('d M Y H:i', strtotime($application->tanggal_lamaran)) ?></p>
                 </div>
               </div>
 
@@ -45,7 +45,7 @@
                   </span>
                   <div class="timeline-content">
                     <h6 class="text-dark text-sm font-weight-bold mb-0">Lamaran Ditinjau</h6>
-                    <p class="text-secondary font-weight-bold text-xs mt-1 mb-0"><?= date('d M Y', strtotime($application->updated_at)) ?></p>
+                    <p class="text-secondary font-weight-bold text-xs mt-1 mb-0"><?= isset($application->diperbarui_pada) ? date('d M Y', strtotime($application->diperbarui_pada)) : date('d M Y', strtotime($application->tanggal_lamaran)) ?></p>
                   </div>
                 </div>
               <?php endif; ?>
@@ -57,7 +57,7 @@
                   </span>
                   <div class="timeline-content">
                     <h6 class="text-dark text-sm font-weight-bold mb-0">Interview</h6>
-                    <p class="text-secondary font-weight-bold text-xs mt-1 mb-0"><?= date('d M Y', strtotime($application->updated_at)) ?></p>
+                    <p class="text-secondary font-weight-bold text-xs mt-1 mb-0"><?= isset($application->diperbarui_pada) ? date('d M Y', strtotime($application->diperbarui_pada)) : date('d M Y', strtotime($application->tanggal_lamaran)) ?></p>
                   </div>
                 </div>
               <?php endif; ?>
@@ -69,7 +69,7 @@
                   </span>
                   <div class="timeline-content">
                     <h6 class="text-dark text-sm font-weight-bold mb-0">Diterima</h6>
-                    <p class="text-secondary font-weight-bold text-xs mt-1 mb-0"><?= date('d M Y', strtotime($application->updated_at)) ?></p>
+                    <p class="text-secondary font-weight-bold text-xs mt-1 mb-0"><?= isset($application->diperbarui_pada) ? date('d M Y', strtotime($application->diperbarui_pada)) : date('d M Y', strtotime($application->tanggal_lamaran)) ?></p>
                   </div>
                 </div>
               <?php endif; ?>
@@ -81,7 +81,7 @@
                   </span>
                   <div class="timeline-content">
                     <h6 class="text-dark text-sm font-weight-bold mb-0">Lamaran Ditolak</h6>
-                    <p class="text-secondary font-weight-bold text-xs mt-1 mb-0"><?= date('d M Y', strtotime($application->updated_at)) ?></p>
+                    <p class="text-secondary font-weight-bold text-xs mt-1 mb-0"><?= isset($application->diperbarui_pada) ? date('d M Y', strtotime($application->diperbarui_pada)) : date('d M Y', strtotime($application->tanggal_lamaran)) ?></p>
                   </div>
                 </div>
               <?php endif; ?>
@@ -95,7 +95,7 @@
           <div class="col-md-12">
             <h6 class="mb-3">Surat Lamaran</h6>
             <div class="p-3 bg-light rounded">
-              <?= nl2br($application->cover_letter) ?>
+              <?= nl2br($application->surat_lamaran ?? 'Tidak ada surat lamaran.') ?>
             </div>
           </div>
         </div>
@@ -175,7 +175,7 @@
             <h6 class="mb-3">Catatan Admin</h6>
             <?= form_open('admin/add_application_note/' . $application->id) ?>
               <div class="form-group">
-                <textarea class="form-control" name="note" rows="3" placeholder="Tambahkan catatan tentang pelamar ini..."><?= isset($application->admin_notes) ? $application->admin_notes : '' ?></textarea>
+                <textarea class="form-control" name="note" rows="3" placeholder="Tambahkan catatan tentang pelamar ini..."><?= isset($application->catatan_admin) ? $application->catatan_admin : '' ?></textarea>
               </div>
               <button type="submit" class="btn btn-primary btn-sm mt-3">Simpan Catatan</button>
             <?= form_close() ?>
@@ -189,7 +189,7 @@
       <div class="card-header pb-0">
         <div class="d-flex justify-content-between align-items-center">
           <h6>Penilaian</h6>
-          <a href="<?= base_url('admin/assign_assessment/' . $application->job_id . '/' . $application->id) ?>" class="btn btn-sm btn-primary">
+          <a href="<?= base_url('admin/assign_assessment/' . $application->id_pekerjaan . '/' . $application->id) ?>" class="btn btn-sm btn-primary">
             <i class="fas fa-plus me-2"></i> Tambah Penilaian
           </a>
         </div>
@@ -271,12 +271,12 @@
       </div>
       <div class="card-body">
         <div class="text-center mb-4">
-          <?php if ($applicant->profile_picture) : ?>
-            <img src="<?= base_url('uploads/profile_pictures/' . $applicant->profile_picture) ?>" class="img-fluid rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
+          <?php if ($applicant->foto_profil) : ?>
+            <img src="<?= base_url('uploads/profile_pictures/' . $applicant->foto_profil) ?>" class="img-fluid rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
           <?php else : ?>
             <img src="<?= base_url('assets/img/team-2.jpg') ?>" class="img-fluid rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
           <?php endif; ?>
-          <h5 class="mt-3 mb-0"><?= $applicant->full_name ?></h5>
+          <h5 class="mt-3 mb-0"><?= $applicant->nama_lengkap ?></h5>
           <p class="text-sm text-secondary mb-0"><?= $applicant->email ?></p>
         </div>
 
@@ -285,7 +285,7 @@
             <i class="fas fa-phone opacity-10"></i>
           </div>
           <div class="ms-3">
-            <p class="text-sm mb-0">Telepon: <span class="font-weight-bold"><?= $applicant->phone ?? 'Tidak tersedia' ?></span></p>
+            <p class="text-sm mb-0">Telepon: <span class="font-weight-bold"><?= $applicant->telepon ?? 'Tidak tersedia' ?></span></p>
           </div>
         </div>
 
@@ -294,7 +294,7 @@
             <i class="fas fa-map-marker-alt opacity-10"></i>
           </div>
           <div class="ms-3">
-            <p class="text-sm mb-0">Alamat: <span class="font-weight-bold"><?= $applicant->address ?? 'Tidak tersedia' ?></span></p>
+            <p class="text-sm mb-0">Alamat: <span class="font-weight-bold"><?= $applicant->alamat ?? 'Tidak tersedia' ?></span></p>
           </div>
         </div>
 
@@ -303,7 +303,7 @@
             <i class="fas fa-calendar opacity-10"></i>
           </div>
           <div class="ms-3">
-            <p class="text-sm mb-0">Tanggal Lahir: <span class="font-weight-bold"><?= $profile->date_of_birth ? date('d M Y', strtotime($profile->date_of_birth)) : 'Tidak tersedia' ?></span></p>
+            <p class="text-sm mb-0">Tanggal Lahir: <span class="font-weight-bold"><?= $profile->tanggal_lahir ? date('d M Y', strtotime($profile->tanggal_lahir)) : 'Tidak tersedia' ?></span></p>
           </div>
         </div>
 
@@ -312,7 +312,7 @@
             <i class="fas fa-venus-mars opacity-10"></i>
           </div>
           <div class="ms-3">
-            <p class="text-sm mb-0">Jenis Kelamin: <span class="font-weight-bold"><?= $profile->gender ? ucfirst($profile->gender) : 'Tidak tersedia' ?></span></p>
+            <p class="text-sm mb-0">Jenis Kelamin: <span class="font-weight-bold"><?= $profile->jenis_kelamin ? ucfirst($profile->jenis_kelamin) : 'Tidak tersedia' ?></span></p>
           </div>
         </div>
 
@@ -358,14 +358,14 @@
         <h6>Detail Lowongan</h6>
       </div>
       <div class="card-body">
-        <p class="text-sm mb-1"><strong>Judul:</strong> <?= $job->title ?></p>
-        <p class="text-sm mb-1"><strong>Tipe:</strong> <?= $job->job_type == 'full-time' ? 'Full Time' : ($job->job_type == 'part-time' ? 'Part Time' : ($job->job_type == 'contract' ? 'Kontrak' : 'Magang')) ?></p>
-        <p class="text-sm mb-1"><strong>Lokasi:</strong> <?= $job->location ?></p>
-        <p class="text-sm mb-1"><strong>Kategori:</strong> <?= $job->category_name ?></p>
-        <?php if ($job->salary_range) : ?>
-          <p class="text-sm mb-1"><strong>Kisaran Gaji:</strong> <?= $job->salary_range ?></p>
+        <p class="text-sm mb-1"><strong>Judul:</strong> <?= $job->judul ?? 'Tidak tersedia' ?></p>
+        <p class="text-sm mb-1"><strong>Tipe:</strong> <?= isset($job->jenis_pekerjaan) ? ($job->jenis_pekerjaan == 'full-time' ? 'Full Time' : ($job->jenis_pekerjaan == 'part-time' ? 'Part Time' : ($job->jenis_pekerjaan == 'contract' ? 'Kontrak' : 'Magang'))) : 'Tidak tersedia' ?></p>
+        <p class="text-sm mb-1"><strong>Lokasi:</strong> <?= $job->lokasi ?? 'Tidak tersedia' ?></p>
+        <p class="text-sm mb-1"><strong>Kategori:</strong> <?= $job->nama_kategori ?? 'Tidak tersedia' ?></p>
+        <?php if (isset($job->kisaran_gaji) && $job->kisaran_gaji) : ?>
+          <p class="text-sm mb-1"><strong>Kisaran Gaji:</strong> <?= $job->kisaran_gaji ?></p>
         <?php endif; ?>
-        <p class="text-sm mb-3"><strong>Batas Waktu:</strong> <?= date('d M Y', strtotime($job->deadline)) ?></p>
+        <p class="text-sm mb-3"><strong>Batas Waktu:</strong> <?= isset($job->batas_waktu) ? date('d M Y', strtotime($job->batas_waktu)) : 'Tidak tersedia' ?></p>
 
         <div class="d-flex justify-content-center">
           <a href="<?= base_url('admin/edit_lowongan/' . $job->id) ?>" class="btn btn-sm btn-outline-primary">Lihat Detail Lowongan</a>

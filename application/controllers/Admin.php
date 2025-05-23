@@ -341,13 +341,13 @@ class Admin extends CI_Controller {
         }
 
         // Get applicant profile
-        $data['profile'] = $this->model_pelamar->dapatkan_profil($data['application']->applicant_id);
+        $data['profile'] = $this->model_pelamar->dapatkan_profil($data['application']->id_pelamar);
 
         // Get applicant data (for the view)
-        $data['applicant'] = $this->model_pengguna->dapatkan_pengguna($data['application']->applicant_id);
+        $data['applicant'] = $this->model_pengguna->dapatkan_pengguna($data['application']->id_pelamar);
 
         // Get job details
-        $data['job'] = $this->model_lowongan->dapatkan_lowongan($data['application']->job_id);
+        $data['job'] = $this->model_lowongan->dapatkan_lowongan($data['application']->id_pekerjaan);
 
         // Get assessment results
         $data['assessments'] = $this->model_penilaian->dapatkan_penilaian_pelamar($id);
@@ -414,10 +414,10 @@ class Admin extends CI_Controller {
         }
 
         // Get job details
-        $job = $this->model_lowongan->dapatkan_lowongan($application->job_id);
+        $job = $this->model_lowongan->dapatkan_lowongan($application->id_pekerjaan);
 
         // Get applicant details
-        $applicant = $this->model_pengguna->dapatkan_pengguna($application->applicant_id);
+        $applicant = $this->model_pengguna->dapatkan_pengguna($application->id_pelamar);
 
         // Update application status
         $data = [
@@ -486,7 +486,7 @@ class Admin extends CI_Controller {
         $data['jobs'] = $this->model_lowongan->dapatkan_lowongan_aktif_semua();
 
         // Get applicant profile
-        $data['profile'] = $this->model_pelamar->dapatkan_profil($data['application']->applicant_id);
+        $data['profile'] = $this->model_pelamar->dapatkan_profil($data['application']->id_pelamar);
 
         // Form validation rules
         $this->form_validation->set_rules('job_id', 'Lowongan', 'required');
@@ -818,10 +818,10 @@ class Admin extends CI_Controller {
         }
 
         // Get applicant profile
-        $data['profile'] = $this->model_pelamar->dapatkan_profil($data['application']->applicant_id);
+        $data['profile'] = $this->model_pelamar->dapatkan_profil($data['application']->id_pelamar);
 
         // Get job details
-        $data['job'] = $this->model_lowongan->dapatkan_lowongan($data['application']->job_id);
+        $data['job'] = $this->model_lowongan->dapatkan_lowongan($data['application']->id_pekerjaan);
 
         // Load print view
         $data['title'] = 'Cetak Lamaran';
@@ -1746,12 +1746,15 @@ class Admin extends CI_Controller {
         $data['user'] = $this->model_pengguna->dapatkan_pengguna($id);
 
         // If user not found or not an applicant, show 404
-        if (!$data['user'] || $data['user']->role != 'applicant') {
+        if (!$data['user'] || $data['user']->role != 'pelamar') {
             show_404();
         }
 
         // Get applicant profile
         $data['profile'] = $this->model_pelamar->dapatkan_profil($id);
+
+        // Get applicant documents
+        $data['documents'] = $this->model_dokumen->dapatkan_dokumen_pelamar($id);
 
         // Load views
         $data['title'] = 'Profil Pelamar';
@@ -1766,7 +1769,7 @@ class Admin extends CI_Controller {
         $data['user'] = $this->model_pengguna->dapatkan_pengguna($id);
 
         // If user not found or not an applicant, show 404
-        if (!$data['user'] || $data['user']->role != 'applicant') {
+        if (!$data['user'] || $data['user']->role != 'pelamar') {
             show_404();
         }
 

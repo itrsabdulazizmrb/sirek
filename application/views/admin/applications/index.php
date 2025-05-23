@@ -55,21 +55,21 @@
                       <p class="text-xs text-secondary mb-0"><?= date('d M Y', strtotime($application->deadline)) ?></p>
                     </td>
                     <td class="align-middle text-center">
-                      <span class="text-secondary text-xs font-weight-bold"><?= date('d M Y', strtotime($application->application_date)) ?></span>
+                      <span class="text-secondary text-xs font-weight-bold"><?= date('d M Y', strtotime($application->tanggal_lamaran)) ?></span>
                     </td>
                     <td class="align-middle text-center">
                       <div class="dropdown">
                         <button class="btn btn-sm bg-gradient-<?=
-                          $application->status == 'pending' ? 'secondary' :
-                          ($application->status == 'reviewed' ? 'warning' :
+                          $application->status == 'menunggu' ? 'secondary' :
+                          ($application->status == ' direview' ? 'warning' :
                           ($application->status == 'seleksi' ? 'info' :
                           ($application->status == 'wawancara' || $application->status == 'interview' ? 'primary' :
                           ($application->status == 'diterima' ? 'success' :
                           ($application->status == 'ditolak' ? 'danger' : 'info')))))
                         ?> dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                           <?=
-                          $application->status == 'pending' ? 'Pending' :
-                          ($application->status == 'reviewed' ? 'Direview' :
+                          $application->status == 'menunggu' ? 'Menunggu' :
+                          ($application->status == 'direview' ? 'Direview' :
                           ($application->status == 'seleksi' ? 'Seleksi' :
                           ($application->status == 'wawancara' ? 'Wawancara' :
                           ($application->status == 'interview' ? 'Wawancara' :
@@ -78,7 +78,7 @@
                           ?>
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                          <li><a class="dropdown-item status-update" href="javascript:void(0)" data-id="<?= $application->id ?>" data-status="pending" data-name="<?= $application->applicant_name ?>">Pending</a></li>
+                          <li><a class="dropdown-item status-update" href="javascript:void(0)" data-id="<?= $application->id ?>" data-status="menunggu" data-name="<?= $application->applicant_name ?>">Menunggu</a></li>
                           <li><a class="dropdown-item status-update" href="javascript:void(0)" data-id="<?= $application->id ?>" data-status="reviewed" data-name="<?= $application->applicant_name ?>">Direview</a></li>
                           <li><a class="dropdown-item status-update" href="javascript:void(0)" data-id="<?= $application->id ?>" data-status="seleksi" data-name="<?= $application->applicant_name ?>">Seleksi</a></li>
                           <li><a class="dropdown-item status-update" href="javascript:void(0)" data-id="<?= $application->id ?>" data-status="wawancara" data-name="<?= $application->applicant_name ?>">Wawancara</a></li>
@@ -109,7 +109,7 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end px-2 py-3" aria-labelledby="dropdownMenuButton">
                           <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/detail_lamaran/' . $application->id) ?>"><i class="fas fa-eye me-2"></i> Lihat Detail</a></li>
-                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/assign_assessment/' . $application->job_id . '/' . $application->id) ?>"><i class="fas fa-tasks me-2"></i> Atur Penilaian</a></li>
+                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/assign_assessment/' . $application->id_pekerjaan . '/' . $application->id) ?>"><i class="fas fa-tasks me-2"></i> Atur Penilaian</a></li>
                           <!-- <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/editPelamar/' . $application->id) ?>"><i class="fas fa-edit me-2"></i> Edit</a></li> -->
                           <li>
                             <hr class="dropdown-divider">
@@ -176,8 +176,8 @@
     var ctx1 = document.getElementById("application-stats-chart").getContext("2d");
 
     // Kelompokkan status ke dalam 5 kategori yang diminta
-    var pendingCount = <?= $application_status_stats['pending'] ?? 0 ?>;
-    var direviewCount = <?= $application_status_stats['reviewed'] ?? 0 ?>;
+    var menungguCount = <?= $application_status_stats['menunggu'] ?? 0 ?>;
+    var direviewCount = <?= $application_status_stats['direview'] ?? 0 ?>;
     var seleksiCount = <?= $application_status_stats['seleksi'] ?? 0 ?> + <?= $application_status_stats['shortlisted'] ?? 0 ?> + <?= $application_status_stats['offered'] ?? 0 ?> + <?= $application_status_stats['ditolak'] ?? 0 ?> + <?= $application_status_stats['rejected'] ?? 0 ?>;
     var wawancaraCount = <?= $application_status_stats['wawancara'] ?? 0 ?> + <?= $application_status_stats['interviewed'] ?? 0 ?> + <?= $application_status_stats['interview'] ?? 0 ?>;
     var diterimaCount = <?= $application_status_stats['hired'] ?? 0 ?> + <?= $application_status_stats['diterima'] ?? 0 ?>;
@@ -186,11 +186,11 @@
     new Chart(ctx1, {
       type: "pie",
       data: {
-        labels: ["Pending", "Direview", "Seleksi", "Wawancara", "Diterima", "Ditolak"],
+        labels: ["Menunggu", "Direview", "Seleksi", "Wawancara", "Diterima", "Ditolak"],
         datasets: [{
           label: "Pelamar",
           backgroundColor: ["#8593B0", "#ffd600", "#11cdef", "#5e72e4", "#2dce89", "#DC5035"],
-          data: [pendingCount, direviewCount, seleksiCount, wawancaraCount, diterimaCount, ditolakCount],
+          data: [menungguCount, direviewCount, seleksiCount, wawancaraCount, diterimaCount, ditolakCount],
           borderWidth: 0
         }],
       },
@@ -222,7 +222,7 @@
                 var statusDesc = '';
 
                 switch(status) {
-                  case 'Pending':
+                  case 'Menunggu':
                     statusDesc = 'Lamaran baru yang belum diproses';
                     break;
                   case 'Direview':
@@ -360,8 +360,8 @@
         let confirmButtonColor = '#3085d6';
 
         switch(status) {
-          case 'pending':
-            statusText = 'Pending';
+          case 'menunggu':
+            statusText = 'Menunggu';
             confirmButtonColor = '#fb6340'; // warning
             break;
           case 'reviewed':
