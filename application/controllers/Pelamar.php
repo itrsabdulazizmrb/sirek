@@ -103,10 +103,10 @@ class Pelamar extends CI_Controller {
                 'url_portofolio' => $this->input->post('portfolio_url')
             );
 
-            // Handle resume upload
-            if ($_FILES['resume']['name']) {
+            // Handle CV upload
+            if (!empty($_FILES['resume']['name'])) {
                 // Make sure the directory exists and is writable
-                $upload_path = FCPATH . 'uploads/resumes/';
+                $upload_path = FCPATH . 'uploads/cv/';
                 if (!is_dir($upload_path)) {
                     mkdir($upload_path, 0777, true);
                 }
@@ -114,7 +114,8 @@ class Pelamar extends CI_Controller {
                 $config['upload_path'] = $upload_path;
                 $config['allowed_types'] = 'pdf|doc|docx';
                 $config['max_size'] = 2048; // 2MB
-                $config['file_name'] = 'resume_' . $user_id . '_' . time();
+                $config['file_name'] = 'cv_' . $user_id . '_' . time();
+                $config['encrypt_name'] = FALSE;
 
                 $this->upload->initialize($config);
 
@@ -140,7 +141,7 @@ class Pelamar extends CI_Controller {
                         $this->model_dokumen->tambah_dokumen_pelamar($document_data);
                     }
                 } else {
-                    $this->session->set_flashdata('error', $this->upload->display_errors());
+                    $this->session->set_flashdata('error', 'Gagal mengunggah CV: ' . $this->upload->display_errors());
                     redirect('pelamar/profil');
                 }
             }
@@ -293,10 +294,10 @@ class Pelamar extends CI_Controller {
                 'surat_lamaran' => $this->input->post('cover_letter')
             );
 
-            // Handle resume upload (for backward compatibility)
+            // Handle CV upload (for backward compatibility)
             if ($_FILES['resume']['name']) {
                 // Make sure the directory exists and is writable
-                $upload_path = FCPATH . 'uploads/resumes/';
+                $upload_path = FCPATH . 'uploads/cv/';
                 if (!is_dir($upload_path)) {
                     mkdir($upload_path, 0777, true);
                 }
@@ -304,7 +305,7 @@ class Pelamar extends CI_Controller {
                 $config['upload_path'] = $upload_path;
                 $config['allowed_types'] = 'pdf|doc|docx';
                 $config['max_size'] = 2048; // 2MB
-                $config['file_name'] = 'resume_' . $user_id . '_' . time();
+                $config['file_name'] = 'cv_' . $user_id . '_' . time();
 
                 $this->upload->initialize($config);
 
@@ -312,7 +313,7 @@ class Pelamar extends CI_Controller {
                     $upload_data = $this->upload->data();
                     $application_data['cv'] = $upload_data['file_name'];
                 } else {
-                    $this->session->set_flashdata('error', $this->upload->display_errors());
+                    $this->session->set_flashdata('error', 'Gagal mengunggah CV: ' . $this->upload->display_errors());
                     redirect('pelamar/lamar/' . $job_id);
                 }
             } else if ($data['profile']->cv) {
@@ -543,7 +544,7 @@ class Pelamar extends CI_Controller {
         // Set file path
         $file_path = '';
         if ($document->jenis_dokumen == 'cv') {
-            $file_path = './uploads/resumes/' . $document->nama_file;
+            $file_path = './uploads/cv/' . $document->nama_file;
         } else {
             $file_path = './uploads/documents/' . $document->nama_file;
         }

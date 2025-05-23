@@ -108,7 +108,7 @@
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
-                <label for="resume" class="form-control-label">Resume/CV</label>
+                <label for="resume" class="form-control-label">CV</label>
                 <input type="file" name="resume" id="resume" class="form-control" accept=".pdf,.doc,.docx">
                 <small class="text-muted">Ukuran maksimal: 2MB. Format yang diizinkan: PDF, DOC, DOCX</small>
               </div>
@@ -116,9 +116,9 @@
             <div class="col-md-6">
               <?php if ($profile->cv) : ?>
                 <div class="form-group">
-                  <label class="form-control-label">Resume Saat Ini</label>
+                  <label class="form-control-label">CV Saat Ini</label>
                   <p class="mb-0"><?= $profile->cv ?></p>
-                  <a href="<?= base_url('uploads/resumes/' . $profile->cv) ?>" class="btn btn-sm btn-outline-primary mt-2" target="_blank">Lihat Resume</a>
+                  <a href="<?= base_url('uploads/cv/' . $profile->cv) ?>" class="btn btn-sm btn-outline-primary mt-2" target="_blank">Lihat CV</a>
                 </div>
               <?php endif; ?>
             </div>
@@ -160,9 +160,9 @@
             </div>
           </div>
           <?php } ?>
-          
+
           <hr class="horizontal dark">
-         
+
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">

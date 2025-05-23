@@ -83,11 +83,11 @@
         <div class="row">
           <div class="col-md-6">
             <div class="form-group">
-              <label class="form-control-label">Resume/CV</label>
+              <label class="form-control-label">CV</label>
               <?php if (isset($profile->cv) && $profile->cv) : ?>
                 <p class="form-control-static">
-                  <a href="<?= base_url('uploads/resumes/' . $profile->cv) ?>" target="_blank" class="btn btn-sm btn-outline-primary">
-                    <i class="fas fa-file-pdf me-2"></i> Lihat Resume
+                  <a href="<?= base_url('uploads/cv/' . $profile->cv) ?>" target="_blank" class="btn btn-sm btn-outline-primary">
+                    <i class="fas fa-file-pdf me-2"></i> Lihat CV
                   </a>
                 </p>
               <?php else : ?>

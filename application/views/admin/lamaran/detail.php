@@ -154,13 +154,13 @@
                   </tbody>
                 </table>
               </div>
-            <?php elseif ($application->resume) : ?>
-              <!-- Legacy support for old applications with just a resume -->
-              <a href="<?= base_url('uploads/resumes/' . $application->resume) ?>" class="btn btn-outline-primary btn-sm" target="_blank">
-                <i class="ni ni-single-copy-04 me-2"></i> Lihat Resume
+            <?php elseif ($application->cv) : ?>
+              <!-- Legacy support for old applications with just a CV -->
+              <a href="<?= base_url('uploads/cv/' . $application->cv) ?>" class="btn btn-outline-primary btn-sm" target="_blank">
+                <i class="ni ni-single-copy-04 me-2"></i> Lihat CV
               </a>
-              <a href="<?= base_url('admin/unduh_resume/' . $application->id) ?>" class="btn btn-outline-info btn-sm">
-                <i class="ni ni-cloud-download-95 me-2"></i> Unduh Resume
+              <a href="<?= base_url('admin/unduhCV/' . $application->id) ?>" class="btn btn-outline-info btn-sm">
+                <i class="ni ni-cloud-download-95 me-2"></i> Unduh CV
               </a>
             <?php else : ?>
               <p class="text-muted">Tidak ada dokumen yang dilampirkan.</p>

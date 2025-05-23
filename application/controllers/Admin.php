@@ -552,28 +552,28 @@ class Admin extends CI_Controller {
         return $this->deletePelamar($id);
     }
 
-    // Download resume
-    public function downloadResume($id) {
+    // Download CV
+    public function downloadCV($id) {
         // Get application details
         $application = $this->model_lamaran->dapatkan_lamaran($id);
 
-        // If application not found or resume not found, show 404
-        if (!$application || !$application->resume) {
+        // If application not found or CV not found, show 404
+        if (!$application || !$application->cv) {
             show_404();
         }
 
         // Set file path
-        $file_path = './uploads/resumes/' . $application->resume;
+        $file_path = './uploads/cv/' . $application->cv;
 
         // Check if file exists
         if (!file_exists($file_path)) {
-            $this->session->set_flashdata('error', 'File resume tidak ditemukan.');
+            $this->session->set_flashdata('error', 'File CV tidak ditemukan.');
             redirect('admin/detail_lamaran/' . $id);
         }
 
         // Get file info
         $file_info = pathinfo($file_path);
-        $file_name = $application->applicant_name . '_Resume.' . $file_info['extension'];
+        $file_name = $application->applicant_name . '_CV.' . $file_info['extension'];
 
         // Force download
         header('Content-Type: application/octet-stream');
@@ -583,14 +583,24 @@ class Admin extends CI_Controller {
         exit;
     }
 
-    // Alias untuk downloadResume dengan nama Indonesia
-    public function unduhResume($id) {
-        return $this->downloadResume($id);
+    // Legacy support - alias untuk downloadCV
+    public function downloadResume($id) {
+        return $this->downloadCV($id);
     }
 
-    // Alias untuk unduh_resume dengan nama Indonesia
+    // Alias untuk downloadCV dengan nama Indonesia
+    public function unduhCV($id) {
+        return $this->downloadCV($id);
+    }
+
+    // Legacy support - alias untuk unduhCV
+    public function unduhResume($id) {
+        return $this->downloadCV($id);
+    }
+
+    // Legacy support - alias untuk unduhCV
     public function unduh_resume($id) {
-        return $this->downloadResume($id);
+        return $this->downloadCV($id);
     }
 
     // ===== MANAJEMEN DOKUMEN LOWONGAN =====

@@ -105,7 +105,7 @@
                     <i class="ni ni-single-copy-04 text-primary me-2"></i>
                     <span><?= $profile->cv ?></span>
                   </div>
-                  <a href="<?= base_url('uploads/resumes/' . $profile->cv) ?>" class="btn btn-sm btn-outline-primary ms-auto" target="_blank">Lihat</a>
+                  <a href="<?= base_url('uploads/cv/' . $profile->cv) ?>" class="btn btn-sm btn-outline-primary ms-auto" target="_blank">Lihat</a>
                 </div>
                 <div class="form-check mb-3">
                   <input class="form-check-input" type="checkbox" id="use_existing_cv_<?= $req->id ?>" name="use_existing_cv_<?= $req->id ?>" value="1" checked>

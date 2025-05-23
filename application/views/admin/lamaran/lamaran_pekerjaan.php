@@ -94,7 +94,7 @@
                         <ul class="dropdown-menu dropdown-menu-end px-2 py-3" aria-labelledby="dropdownMenuButton">
                           <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/detail_lamaran/' . $application->id) ?>"><i class="fas fa-eye me-2"></i> Lihat Detail</a></li>
                           <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/atur_penilaian/' . $application->job_id . '/' . $application->id) ?>"><i class="fas fa-tasks me-2"></i> Atur Penilaian</a></li>
-                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/unduh_resume/' . $application->id) ?>"><i class="fas fa-download me-2"></i> Unduh Resume</a></li>
+                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/unduhCV/' . $application->id) ?>"><i class="fas fa-download me-2"></i> Unduh CV</a></li>
                           <li>
                             <hr class="dropdown-divider">
                           </li>

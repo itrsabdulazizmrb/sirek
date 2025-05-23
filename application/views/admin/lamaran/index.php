@@ -119,7 +119,7 @@
                               <i class="fas fa-trash me-2"></i> Hapus
                             </a>
                           </li>
-                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/unduhResume/' . $application->id) ?>"><i class="fas fa-download me-2"></i> Unduh Resume</a></li>
+                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/unduhCV/' . $application->id) ?>"><i class="fas fa-download me-2"></i> Unduh CV</a></li>
                           <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/cetakPelamar/' . $application->id) ?>"><i class="fas fa-print me-2"></i> Cetak Lamaran</a></li>
                         </ul>
                       </div>
