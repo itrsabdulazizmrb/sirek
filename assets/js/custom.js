@@ -89,15 +89,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  // Confirm delete actions
-  const deleteButtons = document.querySelectorAll('.btn-delete');
-  deleteButtons.forEach(function(button) {
-    button.addEventListener('click', function(e) {
-      if (!confirm('Are you sure you want to delete this item? This action cannot be undone.')) {
-        e.preventDefault();
-      }
-    });
-  });
+  // Confirm delete actions handled in sweetalert-init.js
 
   // Job search filter
   const jobFilterForm = document.getElementById('job-filter-form');
@@ -140,8 +132,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
       if (timeRemaining <= 0) {
         clearInterval(timerInterval);
-        alert('Time is up! Your assessment will be submitted automatically.');
-        document.getElementById('assessment-form').submit();
+        Swal.fire({
+          icon: 'warning',
+          title: 'Waktu Habis!',
+          text: 'Penilaian Anda akan dikirimkan secara otomatis.',
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true
+        }).then(() => {
+          document.getElementById('assessment-form').submit();
+        });
       }
     }, 1000);
   }

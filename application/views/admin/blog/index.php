@@ -1,56 +1,21 @@
 <div class="row">
   <div class="col-12">
-    <div class="card mb-4">
+    <div class="card shadow-sm mb-4">
       <div class="card-header pb-0">
         <div class="d-flex justify-content-between align-items-center">
-          <h6>Manajemen Blog</h6>
+          <div>
+            <h6 class="mb-1">Manajemen Blog</h6>
+            <p class="text-sm mb-0">
+              <i class="fa fa-info-circle text-primary" aria-hidden="true"></i>
+              <span class="font-weight-bold">Kelola semua artikel blog di sini</span>
+            </p>
+          </div>
           <a href="<?= base_url('admin/tambah_artikel') ?>" class="btn btn-sm btn-primary">
             <i class="fas fa-plus me-2"></i> Tambah Artikel Baru
           </a>
         </div>
-        <p class="text-sm mb-0">
-          <i class="fa fa-info-circle text-primary" aria-hidden="true"></i>
-          <span class="font-weight-bold">Kelola semua artikel blog di sini</span>
-        </p>
       </div>
-      <div class="card-body px-0 pt-0 pb-2">
-        <!-- Filter -->
-        <div class="px-4 py-3">
-          <form action="<?= base_url('admin/blog') ?>" method="get" class="row g-3">
-            <div class="col-md-4">
-              <div class="form-group">
-                <label for="category" class="form-label">Kategori</label>
-                <select class="form-control" id="category" name="category">
-                  <option value="">Semua Kategori</option>
-                  <?php foreach ($categories as $category) : ?>
-                    <option value="<?= $category->id ?>" <?= $this->input->get('category') == $category->id ? 'selected' : '' ?>><?= $category->name ?></option>
-                  <?php endforeach; ?>
-                </select>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="form-group">
-                <label for="status" class="form-label">Status</label>
-                <select class="form-control" id="status" name="status">
-                  <option value="">Semua Status</option>
-                  <option value="published" <?= $this->input->get('status') == 'published' ? 'selected' : '' ?>>Dipublikasikan</option>
-                  <option value="draft" <?= $this->input->get('status') == 'draft' ? 'selected' : '' ?>>Draft</option>
-                </select>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="form-group">
-                <label for="search" class="form-label">Cari</label>
-                <div class="input-group">
-                  <input type="text" class="form-control" id="search" name="search" placeholder="Judul artikel..." value="<?= $this->input->get('search') ?>">
-                  <button class="btn btn-primary" type="submit">
-                    <i class="fas fa-search"></i>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </form>
-        </div>
+      <div class="card-body p-0">
 
         <div class="table-responsive p-0">
           <?php if (empty($posts)) : ?>
@@ -112,19 +77,19 @@
                           <i class="fas fa-ellipsis-v"></i>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end px-2 py-3" aria-labelledby="dropdownMenuButton">
-                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('home/blog_post/' . $post->slug) ?>" target="_blank">Lihat</a></li>
-                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/edit_artikel/' . $post->id) ?>">Edit</a></li>
+                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('home/blog_post/' . $post->slug) ?>" target="_blank"><i class="fas fa-eye me-2"></i> Lihat</a></li>
+                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/edit_artikel/' . $post->id) ?>"><i class="fas fa-edit me-2"></i> Edit</a></li>
                           <?php if ($post->status == 'draft') : ?>
-                            <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/publikasi_artikel/' . $post->id) ?>">Publikasikan</a></li>
+                            <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/publikasi_artikel/' . $post->id) ?>"><i class="fas fa-globe me-2"></i> Publikasikan</a></li>
                           <?php else : ?>
-                            <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/batalkan_publikasi_artikel/' . $post->id) ?>">Jadikan Draft</a></li>
+                            <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/batalkan_publikasi_artikel/' . $post->id) ?>"><i class="fas fa-file me-2"></i> Jadikan Draft</a></li>
                           <?php endif; ?>
                           <li>
                             <hr class="dropdown-divider">
                           </li>
                           <li>
                             <a class="dropdown-item border-radius-md text-danger btn-delete" href="<?= base_url('admin/hapus_artikel/' . $post->id) ?>" onclick="return confirm('Apakah Anda yakin ingin menghapus artikel ini?');">
-                              Hapus
+                              <i class="fas fa-trash me-2"></i> Hapus
                             </a>
                           </li>
                         </ul>
@@ -143,16 +108,16 @@
 
 <div class="row mt-4">
   <div class="col-md-6">
-    <div class="card">
-      <div class="card-header pb-0">
+    <div class="card shadow-sm">
+      <div class="card-header">
         <div class="d-flex justify-content-between align-items-center">
-          <h6>Kategori Blog</h6>
+          <h6 class="mb-0">Kategori Blog</h6>
           <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
             <i class="fas fa-plus me-2"></i> Tambah Kategori
           </button>
         </div>
       </div>
-      <div class="card-body">
+      <div class="card-body p-0">
         <div class="table-responsive">
           <table class="table align-items-center mb-0 datatable">
             <thead>
@@ -193,11 +158,11 @@
   </div>
 
   <div class="col-md-6">
-    <div class="card">
-      <div class="card-header pb-0">
-        <h6>Statistik Blog</h6>
+    <div class="card shadow-sm">
+      <div class="card-header">
+        <h6 class="mb-0">Statistik Blog</h6>
       </div>
-      <div class="card-body p-3">
+      <div class="card-body">
         <div class="chart">
           <canvas id="blog-stats-chart" class="chart-canvas" height="300"></canvas>
         </div>
@@ -209,15 +174,15 @@
 <!-- Add Category Modal -->
 <div class="modal fade" id="addCategoryModal" tabindex="-1" role="dialog" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
+    <div class="modal-content shadow-sm">
       <div class="modal-header">
         <h5 class="modal-title" id="addCategoryModalLabel">Tambah Kategori Baru</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <?= form_open('admin/tambah_kategori_blog') ?>
         <div class="modal-body">
-          <div class="form-group">
-            <label for="category_name" class="form-control-label">Nama Kategori</label>
+          <div class="form-group mb-3">
+            <label for="category_name" class="form-label">Nama Kategori</label>
             <input type="text" class="form-control" id="category_name" name="name" required>
           </div>
         </div>
@@ -233,7 +198,7 @@
 <!-- Edit Category Modal -->
 <div class="modal fade" id="editCategoryModal" tabindex="-1" role="dialog" aria-labelledby="editCategoryModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
+    <div class="modal-content shadow-sm">
       <div class="modal-header">
         <h5 class="modal-title" id="editCategoryModalLabel">Edit Kategori</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -241,8 +206,8 @@
       <?= form_open('admin/edit_kategori_blog') ?>
         <div class="modal-body">
           <input type="hidden" id="edit_category_id" name="id">
-          <div class="form-group">
-            <label for="edit_category_name" class="form-control-label">Nama Kategori</label>
+          <div class="form-group mb-3">
+            <label for="edit_category_name" class="form-label">Nama Kategori</label>
             <input type="text" class="form-control" id="edit_category_name" name="name" required>
           </div>
         </div>

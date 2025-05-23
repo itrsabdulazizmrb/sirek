@@ -1,56 +1,21 @@
 <div class="row">
   <div class="col-12">
-    <div class="card mb-4">
+    <div class="card shadow-sm mb-4">
       <div class="card-header pb-0">
         <div class="d-flex justify-content-between align-items-center">
-          <h6>Manajemen Pengguna</h6>
+          <div>
+            <h6 class="mb-1">Manajemen Pengguna</h6>
+            <p class="text-sm mb-0">
+              <i class="fa fa-info-circle text-primary" aria-hidden="true"></i>
+              <span class="font-weight-bold">Kelola semua pengguna di sini</span>
+            </p>
+          </div>
           <a href="<?= base_url('admin/tambah_pengguna') ?>" class="btn btn-sm btn-primary">
             <i class="fas fa-plus me-2"></i> Tambah Pengguna Baru
           </a>
         </div>
-        <p class="text-sm mb-0">
-          <i class="fa fa-info-circle text-primary" aria-hidden="true"></i>
-          <span class="font-weight-bold">Kelola semua pengguna di sini</span>
-        </p>
       </div>
-      <div class="card-body px-0 pt-0 pb-2">
-        <!-- Filter -->
-        <div class="px-4 py-3">
-          <form action="<?= base_url('admin/pengguna') ?>" method="get" class="row g-3">
-            <div class="col-md-4">
-              <div class="form-group">
-                <label for="role" class="form-label">Peran</label>
-                <select class="form-control" id="role" name="role">
-                  <option value="">Semua Peran</option>
-                  <option value="admin" <?= $this->input->get('role') == 'admin' ? 'selected' : '' ?>>Admin</option>
-                  <option value="applicant" <?= $this->input->get('role') == 'applicant' ? 'selected' : '' ?>>Pelamar</option>
-                  <option value="recruiter" <?= $this->input->get('role') == 'recruiter' ? 'selected' : '' ?>>Rekruter</option>
-                </select>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="form-group">
-                <label for="status" class="form-label">Status</label>
-                <select class="form-control" id="status" name="status">
-                  <option value="">Semua Status</option>
-                  <option value="active" <?= $this->input->get('status') == 'active' ? 'selected' : '' ?>>Aktif</option>
-                  <option value="inactive" <?= $this->input->get('status') == 'inactive' ? 'selected' : '' ?>>Tidak Aktif</option>
-                </select>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="form-group">
-                <label for="search" class="form-label">Cari</label>
-                <div class="input-group">
-                  <input type="text" class="form-control" id="search" name="search" placeholder="Nama atau email..." value="<?= $this->input->get('search') ?>">
-                  <button class="btn btn-primary" type="submit">
-                    <i class="fas fa-search"></i>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </form>
-        </div>
+      <div class="card-body p-0">
 
         <div class="table-responsive p-0">
           <?php if (empty($users)) : ?>
@@ -108,23 +73,23 @@
                           <i class="fas fa-ellipsis-v"></i>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end px-2 py-3" aria-labelledby="dropdownMenuButton">
-                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/edit_pengguna/' . $user->id) ?>">Edit</a></li>
+                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/edit_pengguna/' . $user->id) ?>"><i class="fas fa-edit me-2"></i> Edit</a></li>
                           <?php if ($user->role == 'applicant') : ?>
-                            <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/profil_pelamar/' . $user->id) ?>">Lihat Profil</a></li>
-                            <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/lamaran_pelamar/' . $user->id) ?>">Lihat Lamaran</a></li>
+                            <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/profil_pelamar/' . $user->id) ?>"><i class="fas fa-user me-2"></i> Lihat Profil</a></li>
+                            <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/lamaran_pelamar/' . $user->id) ?>"><i class="fas fa-file-alt me-2"></i> Lihat Lamaran</a></li>
                           <?php endif; ?>
                           <?php if ($user->status == 'active') : ?>
-                            <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/nonaktifkan_pengguna/' . $user->id) ?>">Nonaktifkan</a></li>
+                            <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/nonaktifkan_pengguna/' . $user->id) ?>"><i class="fas fa-user-slash me-2"></i> Nonaktifkan</a></li>
                           <?php else : ?>
-                            <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/aktifkan_pengguna/' . $user->id) ?>">Aktifkan</a></li>
+                            <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/aktifkan_pengguna/' . $user->id) ?>"><i class="fas fa-user-check me-2"></i> Aktifkan</a></li>
                           <?php endif; ?>
-                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/reset_kata_sandi/' . $user->id) ?>">Reset Password</a></li>
+                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/reset_kata_sandi/' . $user->id) ?>"><i class="fas fa-key me-2"></i> Reset Password</a></li>
                           <li>
                             <hr class="dropdown-divider">
                           </li>
                           <li>
-                            <a class="dropdown-item border-radius-md text-danger btn-delete" href="<?= base_url('admin/hapus_pengguna/' . $user->id) ?>" onclick="return confirm('Apakah Anda yakin ingin menghapus pengguna ini? Tindakan ini tidak dapat dibatalkan.');">
-                              Hapus
+                            <a class="dropdown-item border-radius-md text-danger btn-delete" href="<?= base_url('admin/hapus_pengguna/' . $user->id) ?>" data-confirm-message="Apakah Anda yakin ingin menghapus pengguna ini? Tindakan ini tidak dapat dibatalkan.">
+                              <i class="fas fa-trash me-2"></i> Hapus
                             </a>
                           </li>
                         </ul>

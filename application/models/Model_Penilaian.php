@@ -255,4 +255,40 @@ class Model_Penilaian extends CI_Model {
         $this->db->where('status', 'completed');
         return $this->db->count_all_results('applicant_assessments');
     }
+
+    // Dapatkan penilaian aktif
+    public function dapatkan_penilaian_aktif() {
+        $this->db->select('assessments.*, assessment_types.name as type_name');
+        $this->db->from('assessments');
+        $this->db->join('assessment_types', 'assessment_types.id = assessments.type_id', 'left');
+        $this->db->where('assessments.is_active', 1);
+        $this->db->order_by('assessments.title', 'ASC');
+        $query = $this->db->get();
+        return $query->result();
+    }
+
+    // Dapatkan penilaian untuk lowongan tertentu
+    public function dapatkan_penilaian_lowongan($job_id) {
+        $this->db->select('job_assessments.*, assessments.title as assessment_title, assessment_types.name as type_name');
+        $this->db->from('job_assessments');
+        $this->db->join('assessments', 'assessments.id = job_assessments.assessment_id', 'left');
+        $this->db->join('assessment_types', 'assessment_types.id = assessments.type_id', 'left');
+        $this->db->where('job_assessments.job_id', $job_id);
+        $query = $this->db->get();
+        return $query->result();
+    }
+
+    // Hapus semua penilaian dari lowongan
+    public function hapus_semua_penilaian_lowongan($job_id) {
+        $this->db->where('job_id', $job_id);
+        return $this->db->delete('job_assessments');
+    }
+
+    // Cek apakah penilaian sudah ditetapkan ke pelamar
+    public function cek_penilaian_sudah_ditetapkan($application_id, $assessment_id) {
+        $this->db->where('application_id', $application_id);
+        $this->db->where('assessment_id', $assessment_id);
+        $query = $this->db->get('applicant_assessments');
+        return ($query->num_rows() > 0);
+    }
 }

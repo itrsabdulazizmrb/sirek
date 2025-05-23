@@ -21,7 +21,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
           </div>
         <?php endif; ?>
-        
+
         <?php if ($this->session->flashdata('error')) : ?>
           <div class="alert alert-danger alert-dismissible fade show" role="alert">
             <span class="alert-icon"><i class="fas fa-exclamation-circle"></i></span>
@@ -29,7 +29,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
           </div>
         <?php endif; ?>
-        
+
         <div class="row">
           <div class="col-md-6">
             <div class="card">
@@ -38,7 +38,7 @@
               </div>
               <div class="card-body">
                 <p class="text-sm">Download template Excel untuk mengisi soal pilihan ganda.</p>
-                
+
                 <div class="form-group">
                   <label for="assessment_template" class="form-control-label">Pilih Penilaian (Opsional)</label>
                   <select class="form-control" id="assessment_template">
@@ -49,7 +49,7 @@
                   </select>
                   <small class="text-muted">Pilih penilaian untuk menyertakan informasi penilaian pada template</small>
                 </div>
-                
+
                 <div class="mt-3">
                   <button type="button" id="download_template" class="btn btn-primary">
                     <i class="fas fa-download me-2"></i> Download Template
@@ -58,7 +58,7 @@
               </div>
             </div>
           </div>
-          
+
           <div class="col-md-6">
             <div class="card">
               <div class="card-header pb-0">
@@ -76,13 +76,13 @@
                     </select>
                     <small class="text-muted">Pilih penilaian yang akan ditambahkan soal</small>
                   </div>
-                  
+
                   <div class="form-group mt-3">
                     <label for="excel_file" class="form-control-label">File Excel <span class="text-danger">*</span></label>
                     <input type="file" class="form-control" id="excel_file" name="excel_file" accept=".xlsx, .xls" required>
                     <small class="text-muted">Upload file Excel yang sudah diisi dengan soal (format .xlsx atau .xls)</small>
                   </div>
-                  
+
                   <div class="mt-3">
                     <button type="submit" class="btn btn-success">
                       <i class="fas fa-file-import me-2"></i> Import Soal
@@ -93,7 +93,7 @@
             </div>
           </div>
         </div>
-        
+
         <div class="row mt-4">
           <div class="col-md-12">
             <div class="card">
@@ -123,7 +123,7 @@
                     </ul>
                   </div>
                 </div>
-                
+
                 <div class="alert alert-info mt-3" role="alert">
                   <h6 class="alert-heading mb-1">Catatan Penting</h6>
                   <p class="mb-0">Fitur import ini hanya mendukung soal pilihan ganda dengan 4 opsi jawaban. Untuk jenis soal lain, silakan tambahkan secara manual melalui menu Kelola Soal.</p>
@@ -143,39 +143,54 @@
     document.getElementById('download_template').addEventListener('click', function() {
       var assessmentId = document.getElementById('assessment_template').value;
       var url = '<?= base_url('import/download_template') ?>';
-      
+
       if (assessmentId) {
         url += '/' + assessmentId;
       }
-      
+
       window.location.href = url;
     });
-    
+
     // Form validation
     document.getElementById('import_form').addEventListener('submit', function(e) {
       var assessmentId = document.getElementById('assessment_id').value;
       var excelFile = document.getElementById('excel_file').value;
-      
+
       if (!assessmentId) {
         e.preventDefault();
-        alert('Pilih penilaian terlebih dahulu');
+        Swal.fire({
+          icon: 'warning',
+          title: 'Perhatian',
+          text: 'Pilih penilaian terlebih dahulu',
+          confirmButtonText: 'OK'
+        });
         return false;
       }
-      
+
       if (!excelFile) {
         e.preventDefault();
-        alert('Pilih file Excel terlebih dahulu');
+        Swal.fire({
+          icon: 'warning',
+          title: 'Perhatian',
+          text: 'Pilih file Excel terlebih dahulu',
+          confirmButtonText: 'OK'
+        });
         return false;
       }
-      
+
       // Validasi ekstensi file
       var allowedExtensions = /(\.xlsx|\.xls)$/i;
       if (!allowedExtensions.exec(excelFile)) {
         e.preventDefault();
-        alert('File harus berformat Excel (.xlsx atau .xls)');
+        Swal.fire({
+          icon: 'error',
+          title: 'Format File Salah',
+          text: 'File harus berformat Excel (.xlsx atau .xls)',
+          confirmButtonText: 'OK'
+        });
         return false;
       }
-      
+
       return true;
     });
   });

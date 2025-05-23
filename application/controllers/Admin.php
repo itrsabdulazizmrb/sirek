@@ -188,14 +188,6 @@ class Admin extends CI_Controller {
 
     // Manajemen Pelamar
     public function lamaran() {
-        // Get search and filter parameters
-        $search = $this->input->get('search');
-        $status = $this->input->get('status');
-        $job_id = $this->input->get('job_id');
-
-        // Get all jobs for filter dropdown
-        $data['jobs'] = $this->model_lowongan->dapatkan_lowongan_semua();
-
         // Get all applications
         $data['applications'] = $this->model_lamaran->dapatkan_lamaran_semua();
 
@@ -454,6 +446,85 @@ class Admin extends CI_Controller {
         redirect('admin/penilaian');
     }
 
+    // Atur Penilaian untuk Lowongan
+    public function assign_assessment($job_id, $application_id = null) {
+        // Get job details
+        $data['job'] = $this->model_lowongan->dapatkan_lowongan($job_id);
+
+        // If job not found, show 404
+        if (!$data['job']) {
+            show_404();
+        }
+
+        // Get all active assessments
+        $data['assessments'] = $this->model_penilaian->dapatkan_penilaian_aktif();
+
+        // Get assessments already assigned to this job
+        $data['assigned_assessments'] = $this->model_penilaian->dapatkan_penilaian_lowongan($job_id);
+
+        // If application_id is provided, get application details
+        if ($application_id) {
+            $data['application'] = $this->model_lamaran->dapatkan_lamaran($application_id);
+
+            // If application not found, show 404
+            if (!$data['application']) {
+                show_404();
+            }
+
+            // Get assessments already assigned to this applicant
+            $data['applicant_assessments'] = $this->model_penilaian->dapatkan_penilaian_pelamar($application_id);
+        }
+
+        // Form submission handling
+        if ($this->input->post('submit')) {
+            $assessment_ids = $this->input->post('assessment_ids');
+
+            if ($application_id) {
+                // Assign assessments to specific applicant
+                if (!empty($assessment_ids)) {
+                    foreach ($assessment_ids as $assessment_id) {
+                        // Check if already assigned
+                        if (!$this->model_penilaian->cek_penilaian_sudah_ditetapkan($application_id, $assessment_id)) {
+                            $applicant_assessment_data = array(
+                                'application_id' => $application_id,
+                                'assessment_id' => $assessment_id,
+                                'status' => 'not_started',
+                                'assigned_at' => date('Y-m-d H:i:s'),
+                                'assigned_by' => $this->session->userdata('user_id')
+                            );
+                            $this->model_penilaian->tambah_penilaian_pelamar($applicant_assessment_data);
+                        }
+                    }
+                    $this->session->set_flashdata('success', 'Penilaian berhasil ditetapkan kepada pelamar.');
+                    redirect('admin/detail_lamaran/' . $application_id);
+                } else {
+                    $this->session->set_flashdata('error', 'Silakan pilih minimal satu penilaian.');
+                }
+            } else {
+                // Assign assessments to job
+                // First, remove all current assignments
+                $this->model_penilaian->hapus_semua_penilaian_lowongan($job_id);
+
+                // Then add new assignments
+                if (!empty($assessment_ids)) {
+                    foreach ($assessment_ids as $assessment_id) {
+                        $this->model_penilaian->tetapkan_penilaian_ke_lowongan($job_id, $assessment_id);
+                    }
+                    $this->session->set_flashdata('success', 'Penilaian berhasil ditetapkan untuk lowongan ini.');
+                    redirect('admin/lowongan');
+                } else {
+                    $this->session->set_flashdata('error', 'Silakan pilih minimal satu penilaian.');
+                }
+            }
+        }
+
+        // Load views
+        $data['title'] = 'Atur Penilaian';
+        $this->load->view('templates/admin_header', $data);
+        $this->load->view('admin/assessments/assign', $data);
+        $this->load->view('templates/admin_footer');
+    }
+
     // Kelola Soal Penilaian
     public function soal_penilaian($assessment_id) {
         // Get assessment details
@@ -650,47 +721,7 @@ class Admin extends CI_Controller {
 
     // Manajemen Pengguna
     public function pengguna() {
-        // Get search and filter parameters
-        $search = $this->input->get('search');
-        $role = $this->input->get('role');
-        $status = $this->input->get('status');
-
-        // Set up pagination
-        $config['base_url'] = base_url('admin/pengguna');
-        $config['total_rows'] = $this->model_pengguna->hitung_pengguna();
-        $config['per_page'] = 10;
-        $config['uri_segment'] = 3;
-        $config['page_query_string'] = TRUE;
-        $config['query_string_segment'] = 'page';
-
-        // Pagination styling
-        $config['full_tag_open'] = '<ul class="pagination">';
-        $config['full_tag_close'] = '</ul>';
-        $config['first_link'] = 'Pertama';
-        $config['last_link'] = 'Terakhir';
-        $config['first_tag_open'] = '<li class="page-item">';
-        $config['first_tag_close'] = '</li>';
-        $config['prev_link'] = '&laquo';
-        $config['prev_tag_open'] = '<li class="page-item">';
-        $config['prev_tag_close'] = '</li>';
-        $config['next_link'] = '&raquo';
-        $config['next_tag_open'] = '<li class="page-item">';
-        $config['next_tag_close'] = '</li>';
-        $config['last_tag_open'] = '<li class="page-item">';
-        $config['last_tag_close'] = '</li>';
-        $config['cur_tag_open'] = '<li class="page-item active"><a class="page-link" href="#">';
-        $config['cur_tag_close'] = '</a></li>';
-        $config['num_tag_open'] = '<li class="page-item">';
-        $config['num_tag_close'] = '</li>';
-        $config['attributes'] = array('class' => 'page-link');
-
-        // Initialize pagination
-        $this->pagination->initialize($config);
-
-        // Get users for current page
-        $page = $this->input->get('page') ? $this->input->get('page') : 0;
-
-        // For now, get all users (we'll implement filtering later)
+        // Get all users
         $data['users'] = $this->model_pengguna->dapatkan_pengguna_semua();
 
         // Get user statistics for charts
@@ -702,7 +733,6 @@ class Admin extends CI_Controller {
 
         // Load views
         $data['title'] = 'Manajemen Pengguna';
-        $data['pagination'] = $this->pagination->create_links();
         $this->load->view('templates/admin_header', $data);
         $this->load->view('admin/users/index', $data);
         $this->load->view('templates/admin_footer');
@@ -1000,47 +1030,7 @@ class Admin extends CI_Controller {
 
     // Blog Management
     public function blog() {
-        // Get search and filter parameters
-        $search = $this->input->get('search');
-        $category = $this->input->get('category');
-        $status = $this->input->get('status');
-
-        // Set up pagination
-        $config['base_url'] = base_url('admin/blog');
-        $config['total_rows'] = $this->model_blog->hitung_artikel();
-        $config['per_page'] = 10;
-        $config['uri_segment'] = 3;
-        $config['page_query_string'] = TRUE;
-        $config['query_string_segment'] = 'page';
-
-        // Pagination styling
-        $config['full_tag_open'] = '<ul class="pagination">';
-        $config['full_tag_close'] = '</ul>';
-        $config['first_link'] = 'Pertama';
-        $config['last_link'] = 'Terakhir';
-        $config['first_tag_open'] = '<li class="page-item">';
-        $config['first_tag_close'] = '</li>';
-        $config['prev_link'] = '&laquo';
-        $config['prev_tag_open'] = '<li class="page-item">';
-        $config['prev_tag_close'] = '</li>';
-        $config['next_link'] = '&raquo';
-        $config['next_tag_open'] = '<li class="page-item">';
-        $config['next_tag_close'] = '</li>';
-        $config['last_tag_open'] = '<li class="page-item">';
-        $config['last_tag_close'] = '</li>';
-        $config['cur_tag_open'] = '<li class="page-item active"><a class="page-link" href="#">';
-        $config['cur_tag_close'] = '</a></li>';
-        $config['num_tag_open'] = '<li class="page-item">';
-        $config['num_tag_close'] = '</li>';
-        $config['attributes'] = array('class' => 'page-link');
-
-        // Initialize pagination
-        $this->pagination->initialize($config);
-
-        // Get posts for current page
-        $page = $this->input->get('page') ? $this->input->get('page') : 0;
-
-        // For now, get all posts (we'll implement filtering later)
+        // Get all posts
         $data['posts'] = $this->model_blog->dapatkan_artikel_semua();
 
         // Get blog categories
@@ -1048,7 +1038,6 @@ class Admin extends CI_Controller {
 
         // Load views
         $data['title'] = 'Manajemen Blog';
-        $data['pagination'] = $this->pagination->create_links();
         $this->load->view('templates/admin_header', $data);
         $this->load->view('admin/blog/index', $data);
         $this->load->view('templates/admin_footer');

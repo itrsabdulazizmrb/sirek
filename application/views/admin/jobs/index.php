@@ -1,20 +1,22 @@
 <div class="row">
   <div class="col-12">
-    <div class="card mb-4">
+    <div class="card shadow-sm mb-4">
       <div class="card-header pb-0">
         <div class="d-flex justify-content-between align-items-center">
-          <h6>Manajemen Lowongan Pekerjaan</h6>
+          <div>
+            <h6 class="mb-1">Manajemen Lowongan Pekerjaan</h6>
+            <p class="text-sm mb-0">
+              <i class="fa fa-info-circle text-primary" aria-hidden="true"></i>
+              <span class="font-weight-bold">Kelola semua lowongan pekerjaan di sini</span>
+            </p>
+          </div>
           <a href="<?= base_url('admin/add_job') ?>" class="btn btn-sm btn-primary">
             <i class="fas fa-plus me-2"></i> Tambah Lowongan Baru
           </a>
         </div>
-        <p class="text-sm mb-0">
-          <i class="fa fa-info-circle text-primary" aria-hidden="true"></i>
-          <span class="font-weight-bold">Kelola semua lowongan pekerjaan di sini</span>
-        </p>
       </div>
-      <div class="card-body px-0 pt-0 pb-2">
-        <div class="table-responsive p-0">
+      <div class="card-body p-0">
+        <div class="table-responsive p-0" style="min-height: 500px; overflow-y: auto;">
           <?php if (empty($jobs)) : ?>
             <div class="text-center py-5">
               <h4 class="text-secondary">Tidak ada lowongan yang ditemukan</h4>
@@ -74,20 +76,20 @@
                     </td>
                     <td class="align-middle">
                       <div class="dropdown">
-                        <a href="#" class="text-secondary font-weight-bold text-xs" data-bs-toggle="dropdown" aria-expanded="false">
-                          <i class="fas fa-ellipsis-v"></i>
-                        </a>
+                        <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                          Aksi<i class="fas fa-ellipsis-v"></i>
+                        </button>
                         <ul class="dropdown-menu dropdown-menu-end px-2 py-3" aria-labelledby="dropdownMenuButton">
-                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('home/job_details/' . $job->id) ?>" target="_blank">Lihat</a></li>
-                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/edit_job/' . $job->id) ?>">Edit</a></li>
-                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/job_applications/' . $job->id) ?>">Lihat Pelamar</a></li>
-                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/assign_assessment/' . $job->id) ?>">Atur Penilaian</a></li>
+                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('beranda/detail_lowongan/' . $job->id) ?>" target="_blank"><i class="fas fa-eye me-2"></i> Lihat</a></li>
+                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/edit_lowongan/' . $job->id) ?>"><i class="fas fa-edit me-2"></i> Edit</a></li>
+                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/lamaran_lowongan/' . $job->id) ?>"><i class="fas fa-users me-2"></i> Lihat Pelamar</a></li>
+                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/assign_assessment/' . $job->id) ?>"><i class="fas fa-tasks me-2"></i> Atur Penilaian</a></li>
                           <li>
                             <hr class="dropdown-divider">
                           </li>
                           <li>
-                            <a class="dropdown-item border-radius-md text-danger btn-delete" href="<?= base_url('admin/delete_job/' . $job->id) ?>" onclick="return confirm('Apakah Anda yakin ingin menghapus lowongan ini?');">
-                              Hapus
+                            <a class="dropdown-item border-radius-md text-danger btn-delete" href="<?= base_url('admin/hapus_lowongan/' . $job->id) ?>" data-confirm-message="Apakah Anda yakin ingin menghapus lowongan ini?">
+                              <i class="fas fa-trash me-2"></i> Hapus
                             </a>
                           </li>
                         </ul>
@@ -106,11 +108,11 @@
 
 <div class="row mt-4">
   <div class="col-md-6">
-    <div class="card">
-      <div class="card-header pb-0">
-        <h6>Statistik Lowongan</h6>
+    <div class="card shadow-sm">
+      <div class="card-header">
+        <h6 class="mb-0">Statistik Lowongan</h6>
       </div>
-      <div class="card-body p-3">
+      <div class="card-body">
         <div class="chart">
           <canvas id="job-stats-chart" class="chart-canvas" height="300"></canvas>
         </div>
@@ -118,11 +120,11 @@
     </div>
   </div>
   <div class="col-md-6">
-    <div class="card">
-      <div class="card-header pb-0">
-        <h6>Lowongan Berdasarkan Kategori</h6>
+    <div class="card shadow-sm">
+      <div class="card-header">
+        <h6 class="mb-0">Lowongan Berdasarkan Kategori</h6>
       </div>
-      <div class="card-body p-3">
+      <div class="card-body">
         <div class="chart">
           <canvas id="job-category-chart" class="chart-canvas" height="300"></canvas>
         </div>
@@ -185,3 +187,7 @@
     });
   });
 </script>
+
+
+
+

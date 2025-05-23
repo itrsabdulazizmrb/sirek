@@ -1,67 +1,18 @@
 <div class="row">
   <div class="col-12">
-    <div class="card mb-4">
+    <div class="card shadow-sm mb-4">
       <div class="card-header pb-0">
         <div class="d-flex justify-content-between align-items-center">
-          <h6>Manajemen Lamaran</h6>
           <div>
-            <!-- Removed export button as it will be handled by DataTables -->
+            <h6 class="mb-1">Manajemen Lamaran</h6>
+            <p class="text-sm mb-0">
+              <i class="fa fa-info-circle text-primary" aria-hidden="true"></i>
+              <span class="font-weight-bold">Kelola semua lamaran pekerjaan di sini</span>
+            </p>
           </div>
         </div>
-        <p class="text-sm mb-0">
-          <i class="fa fa-info-circle text-primary" aria-hidden="true"></i>
-          <span class="font-weight-bold">Kelola semua lamaran pekerjaan di sini</span>
-        </p>
       </div>
-      <div class="card-body px-0 pt-0 pb-2">
-        <!-- Filter -->
-        <div class="px-4 py-3">
-          <form action="<?= base_url('admin/applications') ?>" method="get" class="row g-3">
-            <div class="col-md-3">
-              <div class="form-group">
-                <label for="job_id" class="form-label">Lowongan</label>
-                <select class="form-control" id="job_id" name="job_id">
-                  <option value="">Semua Lowongan</option>
-                  <?php foreach ($jobs as $job) : ?>
-                    <option value="<?= $job->id ?>" <?= $this->input->get('job_id') == $job->id ? 'selected' : '' ?>><?= $job->title ?></option>
-                  <?php endforeach; ?>
-                </select>
-              </div>
-            </div>
-            <div class="col-md-3">
-              <div class="form-group">
-                <label for="status" class="form-label">Status</label>
-                <select class="form-control" id="status" name="status">
-                  <option value="">Semua Status</option>
-                  <option value="pending" <?= $this->input->get('status') == 'pending' ? 'selected' : '' ?>>Pending</option>
-                  <option value="reviewed" <?= $this->input->get('status') == 'reviewed' ? 'selected' : '' ?>>Reviewed</option>
-                  <option value="shortlisted" <?= $this->input->get('status') == 'shortlisted' ? 'selected' : '' ?>>Shortlisted</option>
-                  <option value="interviewed" <?= $this->input->get('status') == 'interviewed' ? 'selected' : '' ?>>Interviewed</option>
-                  <option value="offered" <?= $this->input->get('status') == 'offered' ? 'selected' : '' ?>>Offered</option>
-                  <option value="hired" <?= $this->input->get('status') == 'hired' ? 'selected' : '' ?>>Hired</option>
-                  <option value="rejected" <?= $this->input->get('status') == 'rejected' ? 'selected' : '' ?>>Rejected</option>
-                </select>
-              </div>
-            </div>
-            <div class="col-md-3">
-              <div class="form-group">
-                <label for="date_range" class="form-label">Rentang Tanggal</label>
-                <input type="text" class="form-control" id="date_range" name="date_range" placeholder="DD/MM/YYYY - DD/MM/YYYY" value="<?= $this->input->get('date_range') ?>">
-              </div>
-            </div>
-            <div class="col-md-3">
-              <div class="form-group">
-                <label for="search" class="form-label">Cari</label>
-                <div class="input-group">
-                  <input type="text" class="form-control" id="search" name="search" placeholder="Nama atau email..." value="<?= $this->input->get('search') ?>">
-                  <button class="btn btn-primary" type="submit">
-                    <i class="fas fa-search"></i>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </form>
-        </div>
+      <div class="card-body p-0">
 
         <div class="table-responsive p-0">
           <?php if (empty($applications)) : ?>
@@ -112,14 +63,12 @@
                           <?= ucfirst($application->status) ?>
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                          <li><a class="dropdown-item" href="<?= base_url('admin/update_application_status/' . $application->id . '/pending') ?>">Pending</a></li>
-                          <li><a class="dropdown-item" href="<?= base_url('admin/update_application_status/' . $application->id . '/reviewed') ?>">Reviewed</a></li>
-                          <li><a class="dropdown-item" href="<?= base_url('admin/update_application_status/' . $application->id . '/shortlisted') ?>">Shortlisted</a></li>
-                          <li><a class="dropdown-item" href="<?= base_url('admin/update_application_status/' . $application->id . '/interviewed') ?>">Interviewed</a></li>
-                          <li><a class="dropdown-item" href="<?= base_url('admin/update_application_status/' . $application->id . '/offered') ?>">Offered</a></li>
-                          <li><a class="dropdown-item" href="<?= base_url('admin/update_application_status/' . $application->id . '/hired') ?>">Hired</a></li>
+                          <li><a class="dropdown-item" href="<?= base_url('admin/updateStatusPelamar/' . $application->id . '/pending') ?>">Pending</a></li>
+                          <li><a class="dropdown-item" href="<?= base_url('admin/updateStatusPelamar/' . $application->id . '/reviewed') ?>">Direview</a></li>
+                          <li><a class="dropdown-item" href="<?= base_url('admin/updateStatusPelamar/' . $application->id . '/interview') ?>">Interview</a></li>
+                          <li><a class="dropdown-item" href="<?= base_url('admin/updateStatusPelamar/' . $application->id . '/diterima') ?>">Diterima</a></li>
                           <li><hr class="dropdown-divider"></li>
-                          <li><a class="dropdown-item text-danger" href="<?= base_url('admin/update_application_status/' . $application->id . '/rejected') ?>">Rejected</a></li>
+                          <li><a class="dropdown-item text-danger" href="<?= base_url('admin/updateStatusPelamar/' . $application->id . '/ditolak') ?>">Ditolak</a></li>
                         </ul>
                       </div>
                     </td>
@@ -146,17 +95,19 @@
                           <i class="fas fa-ellipsis-v"></i>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end px-2 py-3" aria-labelledby="dropdownMenuButton">
-                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/application_details/' . $application->id) ?>">Lihat Detail</a></li>
-                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/assign_assessment/' . $application->job_id . '/' . $application->id) ?>">Atur Penilaian</a></li>
-                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/download_resume/' . $application->id) ?>">Download Resume</a></li>
+                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/detailPelamar/' . $application->id) ?>"><i class="fas fa-eye me-2"></i> Lihat Detail</a></li>
+                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/assign_assessment/' . $application->job_id . '/' . $application->id) ?>"><i class="fas fa-tasks me-2"></i> Atur Penilaian</a></li>
+                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/editPelamar/' . $application->id) ?>"><i class="fas fa-edit me-2"></i> Edit</a></li>
                           <li>
                             <hr class="dropdown-divider">
                           </li>
                           <li>
-                            <a class="dropdown-item border-radius-md text-danger btn-delete" href="<?= base_url('admin/delete_application/' . $application->id) ?>" onclick="return confirm('Apakah Anda yakin ingin menghapus lamaran ini?');">
-                              Hapus
+                            <a class="dropdown-item border-radius-md text-danger" href="<?= base_url('admin/deletePelamar/' . $application->id) ?>" onclick="return confirm('Apakah Anda yakin ingin menghapus lamaran ini?');">
+                              <i class="fas fa-trash me-2"></i> Hapus
                             </a>
                           </li>
+                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/downloadResume/' . $application->id) ?>"><i class="fas fa-download me-2"></i> Download Resume</a></li>
+                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/printPelamar/' . $application->id) ?>"><i class="fas fa-print me-2"></i> Cetak Lamaran</a></li>
                         </ul>
                       </div>
                     </td>

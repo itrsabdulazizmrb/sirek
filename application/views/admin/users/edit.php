@@ -31,7 +31,7 @@
               </div>
             </div>
           </div>
-          
+
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
@@ -53,7 +53,7 @@
               </div>
             </div>
           </div>
-          
+
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
@@ -75,7 +75,7 @@
               </div>
             </div>
           </div>
-          
+
           <div class="row">
             <div class="col-md-12">
               <div class="form-group">
@@ -85,7 +85,7 @@
               </div>
             </div>
           </div>
-          
+
           <div class="row">
             <div class="col-md-12">
               <div class="form-check form-switch">
@@ -94,7 +94,7 @@
               </div>
             </div>
           </div>
-          
+
           <div class="row mt-4">
             <div class="col-md-12">
               <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
@@ -136,7 +136,7 @@
       </div>
     </div>
   </div>
-  
+
   <?php if ($user->role == 'applicant') : ?>
     <div class="col-md-6">
       <div class="card">
@@ -149,9 +149,9 @@
           </div>
         </div>
         <div class="card-body">
-          <?php 
+          <?php
           $applications = $this->application_model->get_applicant_applications($user->id, 5);
-          if (empty($applications)) : 
+          if (empty($applications)) :
           ?>
             <p class="text-center">Belum ada lamaran yang dikirimkan.</p>
           <?php else : ?>
@@ -201,9 +201,9 @@
           </div>
         </div>
         <div class="card-body">
-          <?php 
+          <?php
           $jobs = $this->job_model->get_recruiter_jobs($user->id, 5);
-          if (empty($jobs)) : 
+          if (empty($jobs)) :
           ?>
             <p class="text-center">Belum ada lowongan yang dikelola.</p>
           <?php else : ?>
@@ -249,12 +249,25 @@
     // Confirm before changing role
     const roleSelect = document.getElementById('role');
     const originalRole = '<?= $user->role ?>';
-    
+
     roleSelect.addEventListener('change', function() {
       if (this.value !== originalRole) {
-        if (!confirm('Mengubah peran pengguna dapat memengaruhi akses dan data mereka. Apakah Anda yakin ingin melanjutkan?')) {
-          this.value = originalRole;
-        }
+        const selectElement = this;
+
+        Swal.fire({
+          title: 'Konfirmasi Perubahan Peran',
+          text: 'Mengubah peran pengguna dapat memengaruhi akses dan data mereka. Apakah Anda yakin ingin melanjutkan?',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Ya, Ubah Peran',
+          cancelButtonText: 'Batal'
+        }).then((result) => {
+          if (!result.isConfirmed) {
+            selectElement.value = originalRole;
+          }
+        });
       }
     });
   });

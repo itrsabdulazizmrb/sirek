@@ -50,8 +50,14 @@
   <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
   <script src="<?= base_url('assets/js/argon-dashboard.min.js?v=2.1.0') ?>"></script>
 
+  <!-- SweetAlert2 JS -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
+
   <!-- Custom JS -->
   <script src="<?= base_url('assets/js/custom.js') ?>"></script>
+
+  <!-- SweetAlert2 Initialization -->
+  <script src="<?= base_url('assets/js/sweetalert-init.js') ?>"></script>
 </body>
 
 </html>

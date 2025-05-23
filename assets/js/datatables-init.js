@@ -1,6 +1,6 @@
 /**
  * DataTables initialization script
- * This script initializes DataTables with export functionality for all tables with class 'datatable'
+ * This script initializes DataTables with export functionality for all tables with class 'table'
  */
 document.addEventListener('DOMContentLoaded', function() {
   // Indonesian language for DataTables
@@ -41,80 +41,175 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   };
 
-  // Initialize all tables with class 'datatable'
+  // Initialize all tables with class 'table'
   const tables = document.querySelectorAll('table.table');
-  
+
   tables.forEach(function(table) {
-    // Add datatable class to all tables
-    table.classList.add('datatable');
-    
     // Skip tables that don't have a thead element
     if (!table.querySelector('thead')) {
       return;
     }
-    
+
     try {
       // Initialize DataTable with export buttons
       const dataTable = $(table).DataTable({
         language: indonesianLanguage,
         responsive: true,
-        dom: 'Bfrtip',
+        // Improved DOM layout with buttons in the same row as search
+        dom: '<"card-header border-0 d-flex justify-content-between align-items-center"<"d-flex align-items-center"l><"d-flex align-items-center dt-buttons-inline"B><"d-flex align-items-center ms-auto"f>>' +
+             '<"table-responsive px-0"t>' +
+             '<"card-footer border-0 d-flex justify-content-between align-items-center py-3"<"text-muted"i><"pagination mb-0"p>>',
         lengthMenu: [
-          [10, 25, 50, -1],
-          ['10 baris', '25 baris', '50 baris', 'Tampilkan semua']
+          [10, 25, 50, 100, -1],
+          ['10 baris', '25 baris', '50 baris', '100 baris', 'Semua']
         ],
+        pageLength: 10,
+        // Improved button styling and organization
         buttons: [
           {
-            extend: 'copy',
-            className: 'btn btn-sm btn-outline-primary'
-          },
-          {
-            extend: 'csv',
-            className: 'btn btn-sm btn-outline-primary'
-          },
-          {
-            extend: 'excel',
-            className: 'btn btn-sm btn-outline-primary'
-          },
-          {
-            extend: 'pdf',
-            className: 'btn btn-sm btn-outline-primary'
-          },
-          {
-            extend: 'print',
-            className: 'btn btn-sm btn-outline-primary'
+            extend: 'collection',
+            text: '<i class="fas fa-download me-1"></i> Export',
+            className: 'btn btn-sm btn-primary',
+            autoClose: true,
+            fade: 150,
+            buttons: [
+              {
+                extend: 'copy',
+                text: '<i class="fas fa-copy me-1"></i> Salin',
+                className: 'btn btn-sm btn-outline-primary',
+                exportOptions: {
+                  columns: ':visible:not(:last-child)'
+                }
+              },
+              {
+                extend: 'csv',
+                text: '<i class="fas fa-file-csv me-1"></i> CSV',
+                className: 'btn btn-sm btn-outline-primary',
+                exportOptions: {
+                  columns: ':visible:not(:last-child)'
+                }
+              },
+              {
+                extend: 'excel',
+                text: '<i class="fas fa-file-excel me-1"></i> Excel',
+                className: 'btn btn-sm btn-outline-primary',
+                exportOptions: {
+                  columns: ':visible:not(:last-child)'
+                }
+              },
+              {
+                extend: 'pdf',
+                text: '<i class="fas fa-file-pdf me-1"></i> PDF',
+                className: 'btn btn-sm btn-outline-primary',
+                exportOptions: {
+                  columns: ':visible:not(:last-child)'
+                },
+                orientation: 'landscape',
+                pageSize: 'A4',
+                customize: function(doc) {
+                  doc.defaultStyle.fontSize = 10;
+                  doc.styles.tableHeader.fontSize = 11;
+                  doc.styles.tableHeader.alignment = 'left';
+                  doc.styles.tableBodyEven.alignment = 'left';
+                  doc.styles.tableBodyOdd.alignment = 'left';
+                }
+              },
+              {
+                extend: 'print',
+                text: '<i class="fas fa-print me-1"></i> Cetak',
+                className: 'btn btn-sm btn-outline-primary',
+                exportOptions: {
+                  columns: ':visible:not(:last-child)'
+                },
+                customize: function(win) {
+                  $(win.document.body).css('font-size', '10pt');
+                  $(win.document.body).find('table')
+                    .addClass('compact')
+                    .css('font-size', 'inherit');
+                }
+              }
+            ]
           },
           {
             extend: 'colvis',
-            className: 'btn btn-sm btn-outline-primary'
+            text: '<i class="fas fa-columns me-1"></i> Kolom',
+            className: 'btn btn-sm btn-primary ms-2'
           }
         ],
-        // Preserve existing dropdown functionality by excluding the last column (action column)
+        // Improved column definitions
         columnDefs: [
           {
             targets: -1,
             orderable: false,
-            searchable: false
+            searchable: false,
+            width: '80px',
+            className: 'text-center'
+          },
+          {
+            targets: '_all',
+            className: 'align-middle'
           }
         ],
-        // Custom styling for DataTables elements
+        // Improved styling and responsiveness
         initComplete: function() {
-          // Style the buttons container
-          $('.dt-buttons').addClass('mb-3');
-          
-          // Add spacing between buttons
-          $('.dt-button').addClass('me-2');
-          
           // Style the search input
-          $('.dataTables_filter input').addClass('form-control form-control-sm');
-          $('.dataTables_filter input').attr('placeholder', 'Cari...');
-          
+          $('.dataTables_filter input')
+            .addClass('form-control form-control-sm')
+            .attr('placeholder', 'Cari...')
+            .css('width', '200px');
+
+          $('.dataTables_filter label').contents().filter(function() {
+            return this.nodeType === 3;
+          }).remove();
+
           // Style the length menu
           $('.dataTables_length select').addClass('form-select form-select-sm');
+
+          // Style the buttons container
+          $('.dt-buttons-inline').addClass('mx-2');
+
+          // Ensure buttons are properly styled
+          $('.dt-button').addClass('btn-sm');
+          $('.dt-button-collection').addClass('dropdown-menu-end');
+
+          // Add zebra striping for better readability
+          $(this).closest('.dataTables_wrapper').find('tbody tr:odd').addClass('bg-light');
+
+          // Add hover effect
+          $(this).closest('.dataTables_wrapper').find('tbody tr').hover(
+            function() { $(this).addClass('bg-soft-primary'); },
+            function() { $(this).removeClass('bg-soft-primary'); }
+          );
+
+          // Make the table header sticky
+          $(this).closest('.dataTables_wrapper').find('thead').addClass('sticky-top bg-white');
+
+          // Add shadow to the table
+          $(this).closest('.table-responsive').addClass('shadow-sm');
+
+          // Tambahkan kode untuk memastikan pagination selalu terlihat
+          $(this).closest('.dataTables_wrapper').find('.card-footer').css({
+            'position': 'sticky',
+            'bottom': '0',
+            'background-color': 'white',
+            'z-index': '1'
+          });
+
+          // Hapus scroll pada container jika tidak diperlukan
+          if ($(this).height() < 400) {
+            $(this).closest('.table-responsive').css('overflow-y', 'visible');
+          }
         }
       });
+
+      // Add responsive behavior for window resize
+      $(window).on('resize', function() {
+        dataTable.columns.adjust().responsive.recalc();
+      });
+
     } catch (error) {
       console.error('Error initializing DataTable:', error);
     }
   });
 });
+

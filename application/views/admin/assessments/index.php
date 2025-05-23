@@ -1,62 +1,26 @@
 <div class="row">
   <div class="col-12">
-    <div class="card mb-4">
+    <div class="card shadow-sm mb-4">
       <div class="card-header pb-0">
         <div class="d-flex justify-content-between align-items-center">
-          <h6>Manajemen Penilaian</h6>
+          <div>
+            <h6 class="mb-1">Manajemen Penilaian</h6>
+            <p class="text-sm mb-0">
+              <i class="fa fa-info-circle text-primary" aria-hidden="true"></i>
+              <span class="font-weight-bold">Kelola semua penilaian untuk proses rekrutmen</span>
+            </p>
+          </div>
           <div>
             <a href="<?= base_url('admin/tambah_penilaian') ?>" class="btn btn-sm btn-primary me-2">
               <i class="fas fa-plus me-2"></i> Tambah Penilaian Baru
             </a>
-            <a href="#" class="btn btn-sm btn-info me-2" data-bs-toggle="modal" data-bs-target="#manageQuestionsModal">
+            <a href="#" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#manageQuestionsModal">
               <i class="fas fa-tasks me-2"></i> Kelola Soal Penilaian
             </a>
           </div>
         </div>
-        <p class="text-sm mb-0">
-          <i class="fa fa-info-circle text-primary" aria-hidden="true"></i>
-          <span class="font-weight-bold">Kelola semua penilaian untuk proses rekrutmen</span>
-        </p>
       </div>
-      <div class="card-body px-0 pt-0 pb-2">
-        <!-- Filter -->
-        <div class="px-4 py-3">
-          <form action="<?= base_url('admin/penilaian') ?>" method="get" class="row g-3">
-            <div class="col-md-4">
-              <div class="form-group">
-                <label for="type" class="form-label">Tipe Penilaian</label>
-                <select class="form-control" id="type" name="type">
-                  <option value="">Semua Tipe</option>
-                  <?php foreach ($assessment_types as $type) : ?>
-                    <option value="<?= $type->id ?>" <?= $this->input->get('type') == $type->id ? 'selected' : '' ?>><?= $type->name ?></option>
-                  <?php endforeach; ?>
-                </select>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="form-group">
-                <label for="job_id" class="form-label">Lowongan</label>
-                <select class="form-control" id="job_id" name="job_id">
-                  <option value="">Semua Lowongan</option>
-                  <?php foreach ($jobs as $job) : ?>
-                    <option value="<?= $job->id ?>" <?= $this->input->get('job_id') == $job->id ? 'selected' : '' ?>><?= $job->title ?></option>
-                  <?php endforeach; ?>
-                </select>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="form-group">
-                <label for="search" class="form-label">Cari</label>
-                <div class="input-group">
-                  <input type="text" class="form-control" id="search" name="search" placeholder="Judul penilaian..." value="<?= $this->input->get('search') ?>">
-                  <button class="btn btn-primary" type="submit">
-                    <i class="fas fa-search"></i>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </form>
-        </div>
+      <div class="card-body p-0">
 
         <div class="table-responsive p-0">
           <?php if (empty($assessments)) : ?>
