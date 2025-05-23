@@ -65,7 +65,7 @@
                       <span class="badge badge-sm bg-gradient-<?= $user->status == 'active' ? 'success' : 'secondary' ?>"><?= $user->status == 'active' ? 'Aktif' : 'Tidak Aktif' ?></span>
                     </td>
                     <td class="align-middle text-center">
-                      <span class="text-secondary text-xs font-weight-bold"><?= $user->last_login ? date('d M Y H:i', strtotime($user->last_login)) : 'Belum Pernah' ?></span>
+                      <span class="text-secondary text-xs font-weight-bold"><?= $user->login_terakhir ? date('d M Y H:i', strtotime($user->login_terakhir)) : 'Belum Pernah' ?></span>
                     </td>
                     <td class="align-middle">
                       <div class="dropdown">

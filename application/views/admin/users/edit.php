@@ -125,7 +125,7 @@
           <strong>Terakhir Diperbarui:</strong> <?= date('d M Y H:i', strtotime($user->updated_at)) ?>
         </p>
         <p class="text-sm mb-1">
-          <strong>Login Terakhir:</strong> <?= $user->last_login ? date('d M Y H:i', strtotime($user->last_login)) : 'Belum Pernah' ?>
+          <strong>Login Terakhir:</strong> <?= $user->login_terakhir ? date('d M Y H:i', strtotime($user->login_terakhir)) : 'Belum Pernah' ?>
         </p>
         <p class="text-sm mb-1">
           <strong>IP Terakhir:</strong> <?= $user->last_ip ?? 'Tidak Tersedia' ?>

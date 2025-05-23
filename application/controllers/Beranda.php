@@ -78,16 +78,16 @@ class Beranda extends CI_Controller {
         // Get job details
         $data['job'] = $this->model_lowongan->dapatkan_lowongan($id);
 
-        // If job not found or not active, show 404
-        if (!$data['job'] || $data['job']->status != 'active') {
+        // If job not found, show 404
+        if (!$data['job']) {
             show_404();
         }
 
         // Get related jobs
-        $data['related_jobs'] = $this->model_lowongan->dapatkan_lowongan_terkait($id, $data['job']->category_id, 4);
+        $data['related_jobs'] = $this->model_lowongan->dapatkan_lowongan_terkait($id, $data['job']->id_kategori, 4);
 
         // Load views
-        $data['title'] = $data['job']->title;
+        $data['title'] = $data['job']->judul;
         $this->load->view('templates/public_header', $data);
         $this->load->view('public/detail_lowongan', $data);
         $this->load->view('templates/public_footer');

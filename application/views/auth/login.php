@@ -1,4 +1,5 @@
-<?= form_open('auth/login', ['class' => 'needs-validation']) ?>
+<?php echo form_open('auth/login', ['class' => 'needs-validation']); ?>
+<input type="hidden" name="<?php echo $this->security->get_csrf_token_name(); ?>" value="<?php echo $this->security->get_csrf_hash(); ?>" />
   <div class="mb-3">
     <input type="text" name="username" class="form-control form-control-lg" placeholder="Username" aria-label="Username" required>
   </div>

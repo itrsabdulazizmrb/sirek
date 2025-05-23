@@ -353,7 +353,7 @@ class Admin extends CI_Controller {
         // Update application status
         $data = [
             'status' => $status,
-            'updated_at' => date('Y-m-d H:i:s')
+            'diperbarui_pada' => date('Y-m-d H:i:s')
         ];
 
         $result = $this->model_lamaran->perbarui_lamaran($id, $data);
@@ -434,7 +434,7 @@ class Admin extends CI_Controller {
             $application_data = array(
                 'job_id' => $this->input->post('job_id'),
                 'status' => $this->input->post('status'),
-                'updated_at' => date('Y-m-d H:i:s')
+                'diperbarui_pada' => date('Y-m-d H:i:s')
             );
 
             // Update application data
@@ -582,16 +582,16 @@ class Admin extends CI_Controller {
         } else {
             // Get form data
             $assessment_data = array(
-                'title' => $this->input->post('title'),
-                'type_id' => $this->input->post('assessment_type_id'),
-                'description' => $this->input->post('description'),
-                'instructions' => $this->input->post('instructions'),
-                'time_limit' => $this->input->post('time_limit'),
-                'passing_score' => $this->input->post('passing_score'),
-                'max_attempts' => $this->input->post('max_attempts'),
-                'is_active' => $this->input->post('is_active') ? 1 : 0,
-                'created_by' => $this->session->userdata('user_id'),
-                'created_at' => date('Y-m-d H:i:s')
+                'judul' => $this->input->post('title'),
+                'id_jenis' => $this->input->post('assessment_type_id'),
+                'deskripsi' => $this->input->post('description'),
+                'instruksi' => $this->input->post('instructions'),
+                'batas_waktu' => $this->input->post('time_limit'),
+                'nilai_lulus' => $this->input->post('passing_score'),
+                'maks_percobaan' => $this->input->post('max_attempts'),
+                'aktif' => $this->input->post('is_active') ? 1 : 0,
+                'dibuat_oleh' => $this->session->userdata('user_id'),
+                'dibuat_pada' => date('Y-m-d H:i:s')
             );
 
             // Insert assessment data
@@ -650,15 +650,15 @@ class Admin extends CI_Controller {
         } else {
             // Get form data
             $assessment_data = array(
-                'title' => $this->input->post('title'),
-                'type_id' => $this->input->post('assessment_type_id'),
-                'description' => $this->input->post('description'),
-                'instructions' => $this->input->post('instructions'),
-                'time_limit' => $this->input->post('time_limit'),
-                'passing_score' => $this->input->post('passing_score'),
-                'max_attempts' => $this->input->post('max_attempts'),
-                'is_active' => $this->input->post('is_active') ? 1 : 0,
-                'updated_at' => date('Y-m-d H:i:s')
+                'judul' => $this->input->post('title'),
+                'id_jenis' => $this->input->post('assessment_type_id'),
+                'deskripsi' => $this->input->post('description'),
+                'instruksi' => $this->input->post('instructions'),
+                'batas_waktu' => $this->input->post('time_limit'),
+                'nilai_lulus' => $this->input->post('passing_score'),
+                'maks_percobaan' => $this->input->post('max_attempts'),
+                'aktif' => $this->input->post('is_active') ? 1 : 0,
+                'diperbarui_pada' => date('Y-m-d H:i:s')
             );
 
             // Update assessment data
@@ -987,11 +987,11 @@ class Admin extends CI_Controller {
         } else {
             // Get form data
             $question_data = array(
-                'assessment_id' => $assessment_id,
-                'question_text' => $this->input->post('question_text'),
-                'question_type' => $this->input->post('question_type'),
-                'points' => $this->input->post('points'),
-                'created_at' => date('Y-m-d H:i:s')
+                'id_penilaian' => $assessment_id,
+                'teks_soal' => $this->input->post('question_text'),
+                'jenis_soal' => $this->input->post('question_type'),
+                'poin' => $this->input->post('points'),
+                'dibuat_pada' => date('Y-m-d H:i:s')
             );
 
             // Insert question data
@@ -1017,10 +1017,10 @@ class Admin extends CI_Controller {
     // Kelola Opsi Soal
     public function opsi_soal($question_id) {
         // Get question details
-        $this->db->select('questions.*, assessments.title as assessment_title, assessments.id as assessment_id');
-        $this->db->from('questions');
-        $this->db->join('assessments', 'assessments.id = questions.assessment_id', 'left');
-        $this->db->where('questions.id', $question_id);
+        $this->db->select('soal.*, penilaian.judul as assessment_title, penilaian.id as assessment_id');
+        $this->db->from('soal');
+        $this->db->join('penilaian', 'penilaian.id = soal.id_penilaian', 'left');
+        $this->db->where('soal.id', $question_id);
         $query = $this->db->get();
         $data['question'] = $query->row();
 
@@ -1042,10 +1042,10 @@ class Admin extends CI_Controller {
     // Simpan Opsi Soal
     public function simpan_opsi_soal($question_id) {
         // Get question details
-        $this->db->select('questions.*, assessments.id as assessment_id');
-        $this->db->from('questions');
-        $this->db->join('assessments', 'assessments.id = questions.assessment_id', 'left');
-        $this->db->where('questions.id', $question_id);
+        $this->db->select('soal.*, penilaian.id as assessment_id');
+        $this->db->from('soal');
+        $this->db->join('penilaian', 'penilaian.id = soal.id_penilaian', 'left');
+        $this->db->where('soal.id', $question_id);
         $query = $this->db->get();
         $question = $query->row();
 
@@ -1055,29 +1055,29 @@ class Admin extends CI_Controller {
         }
 
         // Process based on question type
-        if ($question->question_type == 'true_false') {
+        if ($question->jenis_soal == 'true_false') {
             // For true/false questions
             $correct_option = $this->input->post('correct_option');
 
             // Delete existing options
-            $this->db->where('question_id', $question_id);
-            $this->db->delete('question_options');
+            $this->db->where('id_soal', $question_id);
+            $this->db->delete('pilihan_soal');
 
             // Add true option
             $true_option = array(
-                'question_id' => $question_id,
-                'option_text' => 'Benar',
-                'is_correct' => ($correct_option == 'true') ? 1 : 0,
-                'created_at' => date('Y-m-d H:i:s')
+                'id_soal' => $question_id,
+                'teks_pilihan' => 'Benar',
+                'benar' => ($correct_option == 'true') ? 1 : 0,
+                'dibuat_pada' => date('Y-m-d H:i:s')
             );
             $this->model_penilaian->tambah_opsi_soal($true_option);
 
             // Add false option
             $false_option = array(
-                'question_id' => $question_id,
-                'option_text' => 'Salah',
-                'is_correct' => ($correct_option == 'false') ? 1 : 0,
-                'created_at' => date('Y-m-d H:i:s')
+                'id_soal' => $question_id,
+                'teks_pilihan' => 'Salah',
+                'benar' => ($correct_option == 'false') ? 1 : 0,
+                'dibuat_pada' => date('Y-m-d H:i:s')
             );
             $this->model_penilaian->tambah_opsi_soal($false_option);
         } else {
@@ -1089,17 +1089,17 @@ class Admin extends CI_Controller {
             // If no existing options, create new ones
             if (empty($option_ids)) {
                 // Delete existing options (if any)
-                $this->db->where('question_id', $question_id);
-                $this->db->delete('question_options');
+                $this->db->where('id_soal', $question_id);
+                $this->db->delete('pilihan_soal');
 
                 // Add new options
                 foreach ($options as $index => $option_text) {
                     if (trim($option_text) != '') {
                         $option_data = array(
-                            'question_id' => $question_id,
-                            'option_text' => $option_text,
-                            'is_correct' => ($index == $correct_option) ? 1 : 0,
-                            'created_at' => date('Y-m-d H:i:s')
+                            'id_soal' => $question_id,
+                            'teks_pilihan' => $option_text,
+                            'benar' => ($index == $correct_option) ? 1 : 0,
+                            'dibuat_pada' => date('Y-m-d H:i:s')
                         );
                         $this->model_penilaian->tambah_opsi_soal($option_data);
                     }
@@ -1109,9 +1109,9 @@ class Admin extends CI_Controller {
                 foreach ($option_ids as $index => $option_id) {
                     if (isset($options[$index]) && trim($options[$index]) != '') {
                         $option_data = array(
-                            'option_text' => $options[$index],
-                            'is_correct' => ($index == $correct_option) ? 1 : 0,
-                            'updated_at' => date('Y-m-d H:i:s')
+                            'teks_pilihan' => $options[$index],
+                            'benar' => ($index == $correct_option) ? 1 : 0,
+                            'diperbarui_pada' => date('Y-m-d H:i:s')
                         );
                         $this->model_penilaian->perbarui_opsi_soal($option_id, $option_data);
                     }
@@ -1121,10 +1121,10 @@ class Admin extends CI_Controller {
                 for ($i = count($option_ids); $i < count($options); $i++) {
                     if (trim($options[$i]) != '') {
                         $option_data = array(
-                            'question_id' => $question_id,
-                            'option_text' => $options[$i],
-                            'is_correct' => ($i == $correct_option) ? 1 : 0,
-                            'created_at' => date('Y-m-d H:i:s')
+                            'id_soal' => $question_id,
+                            'teks_pilihan' => $options[$i],
+                            'benar' => ($i == $correct_option) ? 1 : 0,
+                            'dibuat_pada' => date('Y-m-d H:i:s')
                         );
                         $this->model_penilaian->tambah_opsi_soal($option_data);
                     }
@@ -1189,7 +1189,7 @@ class Admin extends CI_Controller {
                 'address' => $this->input->post('address'),
                 'role' => $this->input->post('role'),
                 'status' => $this->input->post('is_active') ? 'active' : 'inactive',
-                'created_at' => date('Y-m-d H:i:s')
+                'dibuat_pada' => date('Y-m-d H:i:s')
             );
 
             // Upload profile picture if provided
@@ -1272,7 +1272,7 @@ class Admin extends CI_Controller {
                 'address' => $this->input->post('address'),
                 'role' => $this->input->post('role'),
                 'status' => $this->input->post('is_active') ? 'active' : 'inactive',
-                'updated_at' => date('Y-m-d H:i:s')
+                'diperbarui_pada' => date('Y-m-d H:i:s')
             );
 
             // Upload profile picture if provided
@@ -1318,7 +1318,7 @@ class Admin extends CI_Controller {
                     if (!$profile) {
                         $profile_data = array(
                             'user_id' => $id,
-                            'created_at' => date('Y-m-d H:i:s')
+                            'dibuat_pada' => date('Y-m-d H:i:s')
                         );
                         $this->model_pelamar->tambah_profil($profile_data);
                     }
@@ -1418,7 +1418,7 @@ class Admin extends CI_Controller {
         $data['user'] = $this->model_pengguna->dapatkan_pengguna($id);
 
         // If user not found or not an applicant, show 404
-        if (!$data['user'] || $data['user']->role != 'applicant') {
+        if (!$data['user'] || $data['user']->role != 'pelamar') {
             show_404();
         }
 
@@ -1761,7 +1761,7 @@ class Admin extends CI_Controller {
                 'slug' => $this->input->post('slug'),
                 'content' => $this->input->post('content'),
                 'status' => $this->input->post('status'),
-                'updated_at' => date('Y-m-d H:i:s')
+                'diperbarui_pada' => date('Y-m-d H:i:s')
             );
 
             // Upload featured image if provided

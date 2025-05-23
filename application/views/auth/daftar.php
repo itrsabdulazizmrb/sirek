@@ -1,4 +1,5 @@
-<?= form_open('auth/daftar', ['class' => 'needs-validation']) ?>
+<?php echo form_open('auth/daftar', ['class' => 'needs-validation']); ?>
+<input type="hidden" name="<?php echo $this->security->get_csrf_token_name(); ?>" value="<?php echo $this->security->get_csrf_hash(); ?>" />
   <div class="mb-3">
     <input type="text" name="full_name" class="form-control form-control-lg" placeholder="Nama Lengkap" aria-label="Nama Lengkap" value="<?= set_value('full_name') ?>" required>
   </div>

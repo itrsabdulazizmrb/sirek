@@ -9,100 +9,100 @@ class Model_Kategori extends CI_Model {
 
     // Dapatkan semua kategori lowongan
     public function dapatkan_kategori_lowongan() {
-        $this->db->order_by('name', 'ASC');
-        $query = $this->db->get('job_categories');
+        $this->db->order_by('nama', 'ASC');
+        $query = $this->db->get('kategori_pekerjaan');
         return $query->result();
     }
 
     // Dapatkan kategori lowongan berdasarkan ID
     public function dapatkan_kategori_lowongan_dari_id($id) {
         $this->db->where('id', $id);
-        $query = $this->db->get('job_categories');
+        $query = $this->db->get('kategori_pekerjaan');
         return $query->row();
     }
 
     // Tambah kategori lowongan
     public function tambah_kategori_lowongan($data) {
-        $this->db->insert('job_categories', $data);
+        $this->db->insert('kategori_pekerjaan', $data);
         return $this->db->insert_id();
     }
 
     // Perbarui kategori lowongan
     public function perbarui_kategori_lowongan($id, $data) {
         $this->db->where('id', $id);
-        return $this->db->update('job_categories', $data);
+        return $this->db->update('kategori_pekerjaan', $data);
     }
 
     // Hapus kategori lowongan
     public function hapus_kategori_lowongan($id) {
         $this->db->where('id', $id);
-        return $this->db->delete('job_categories');
+        return $this->db->delete('kategori_pekerjaan');
     }
 
     // Dapatkan semua kategori blog
     public function dapatkan_kategori_blog() {
-        $this->db->order_by('name', 'ASC');
-        $query = $this->db->get('blog_categories');
+        $this->db->order_by('nama', 'ASC');
+        $query = $this->db->get('kategori_blog');
         return $query->result();
     }
 
     // Dapatkan kategori blog berdasarkan ID
     public function dapatkan_kategori_blog_dari_id($id) {
         $this->db->where('id', $id);
-        $query = $this->db->get('blog_categories');
+        $query = $this->db->get('kategori_blog');
         return $query->row();
     }
 
     // Tambah kategori blog
     public function tambah_kategori_blog($data) {
-        $this->db->insert('blog_categories', $data);
+        $this->db->insert('kategori_blog', $data);
         return $this->db->insert_id();
     }
 
     // Perbarui kategori blog
     public function perbarui_kategori_blog($id, $data) {
         $this->db->where('id', $id);
-        return $this->db->update('blog_categories', $data);
+        return $this->db->update('kategori_blog', $data);
     }
 
     // Hapus kategori blog
     public function hapus_kategori_blog($id) {
         $this->db->where('id', $id);
-        return $this->db->delete('blog_categories');
+        return $this->db->delete('kategori_blog');
     }
 
     // Hitung lowongan berdasarkan kategori
     public function hitung_lowongan_berdasarkan_kategori($category_id) {
-        $this->db->where('category_id', $category_id);
-        $query = $this->db->get('job_postings');
+        $this->db->where('id_kategori', $category_id);
+        $query = $this->db->get('lowongan_pekerjaan');
         return $query->num_rows();
     }
 
     // Hitung artikel berdasarkan kategori
     public function hitung_artikel_berdasarkan_kategori($category_id) {
-        $this->db->from('blog_post_categories');
-        $this->db->where('category_id', $category_id);
+        $this->db->from('kategori_post_blog');
+        $this->db->where('id_kategori', $category_id);
         return $this->db->count_all_results();
     }
 
     // Dapatkan kategori lowongan dengan jumlah lowongan
     public function dapatkan_kategori_lowongan_dengan_jumlah() {
-        $this->db->select('job_categories.*, COUNT(job_postings.id) as job_count');
-        $this->db->from('job_categories');
-        $this->db->join('job_postings', 'job_postings.category_id = job_categories.id', 'left');
-        $this->db->group_by('job_categories.id');
-        $this->db->order_by('job_categories.name', 'ASC');
+        $this->db->select('kategori_pekerjaan.*, COUNT(lowongan_pekerjaan.id) as job_count');
+        $this->db->from('kategori_pekerjaan');
+        $this->db->join('lowongan_pekerjaan', 'lowongan_pekerjaan.id_kategori = kategori_pekerjaan.id', 'left');
+        $this->db->group_by('kategori_pekerjaan.id');
+        $this->db->order_by('kategori_pekerjaan.nama', 'ASC');
         $query = $this->db->get();
         return $query->result();
     }
 
     // Dapatkan kategori blog dengan jumlah artikel
     public function dapatkan_kategori_blog_dengan_jumlah() {
-        $this->db->select('blog_categories.*, COUNT(blog_post_categories.post_id) as post_count');
-        $this->db->from('blog_categories');
-        $this->db->join('blog_post_categories', 'blog_post_categories.category_id = blog_categories.id', 'left');
-        $this->db->group_by('blog_categories.id');
-        $this->db->order_by('blog_categories.name', 'ASC');
+        $this->db->select('kategori_blog.*, COUNT(kategori_post_blog.id_post) as post_count');
+        $this->db->from('kategori_blog');
+        $this->db->join('kategori_post_blog', 'kategori_post_blog.id_kategori = kategori_blog.id', 'left');
+        $this->db->group_by('kategori_blog.id');
+        $this->db->order_by('kategori_blog.nama', 'ASC');
         $query = $this->db->get();
         return $query->result();
     }

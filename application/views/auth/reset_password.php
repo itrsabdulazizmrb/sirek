@@ -1,4 +1,5 @@
-<?= form_open('auth/reset_password/' . $token, ['class' => 'needs-validation']) ?>
+<?php echo form_open('auth/reset_password/' . $token, ['class' => 'needs-validation']); ?>
+<input type="hidden" name="<?php echo $this->security->get_csrf_token_name(); ?>" value="<?php echo $this->security->get_csrf_hash(); ?>" />
   <div class="mb-3">
     <input type="password" name="password" class="form-control form-control-lg" placeholder="New Password" aria-label="New Password" required>
     <small class="text-muted">Password must be at least 6 characters long</small>

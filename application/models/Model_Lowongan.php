@@ -9,64 +9,64 @@ class Model_Lowongan extends CI_Model {
 
     // Dapatkan semua lowongan
     public function dapatkan_lowongan_semua() {
-        $this->db->select('job_postings.*, job_categories.name as category_name, users.full_name as created_by_name');
-        $this->db->from('job_postings');
-        $this->db->join('job_categories', 'job_categories.id = job_postings.category_id', 'left');
-        $this->db->join('users', 'users.id = job_postings.created_by', 'left');
-        $this->db->order_by('job_postings.id', 'DESC');
+        $this->db->select('lowongan_pekerjaan.*, kategori_pekerjaan.nama as category_name, pengguna.nama_lengkap as created_by_name');
+        $this->db->from('lowongan_pekerjaan');
+        $this->db->join('kategori_pekerjaan', 'kategori_pekerjaan.id = lowongan_pekerjaan.id_kategori', 'left');
+        $this->db->join('pengguna', 'pengguna.id = lowongan_pekerjaan.dibuat_oleh', 'left');
+        $this->db->order_by('lowongan_pekerjaan.id', 'DESC');
         $query = $this->db->get();
         return $query->result();
     }
 
     // Dapatkan lowongan berdasarkan ID
     public function dapatkan_lowongan($id) {
-        $this->db->select('job_postings.*, job_categories.name as category_name, users.full_name as created_by_name');
-        $this->db->from('job_postings');
-        $this->db->join('job_categories', 'job_categories.id = job_postings.category_id', 'left');
-        $this->db->join('users', 'users.id = job_postings.created_by', 'left');
-        $this->db->where('job_postings.id', $id);
+        $this->db->select('lowongan_pekerjaan.*, kategori_pekerjaan.nama as category_name, pengguna.nama_lengkap as created_by_name');
+        $this->db->from('lowongan_pekerjaan');
+        $this->db->join('kategori_pekerjaan', 'kategori_pekerjaan.id = lowongan_pekerjaan.id_kategori', 'left');
+        $this->db->join('pengguna', 'pengguna.id = lowongan_pekerjaan.dibuat_oleh', 'left');
+        $this->db->where('lowongan_pekerjaan.id', $id);
         $query = $this->db->get();
         return $query->row();
     }
 
     // Tambah lowongan baru
     public function tambah_lowongan($data) {
-        $this->db->insert('job_postings', $data);
+        $this->db->insert('lowongan_pekerjaan', $data);
         return $this->db->insert_id();
     }
 
     // Perbarui lowongan
     public function perbarui_lowongan($id, $data) {
         $this->db->where('id', $id);
-        return $this->db->update('job_postings', $data);
+        return $this->db->update('lowongan_pekerjaan', $data);
     }
 
     // Hapus lowongan
     public function hapus_lowongan($id) {
         $this->db->where('id', $id);
-        return $this->db->delete('job_postings');
+        return $this->db->delete('lowongan_pekerjaan');
     }
 
     // Hitung total lowongan
     public function hitung_lowongan() {
-        return $this->db->count_all('job_postings');
+        return $this->db->count_all('lowongan_pekerjaan');
     }
 
     // Hitung lowongan aktif
     public function hitung_lowongan_aktif() {
-        $this->db->where('status', 'active');
-        $query = $this->db->get('job_postings');
+        $this->db->where('status', 'aktif');
+        $query = $this->db->get('lowongan_pekerjaan');
         return $query->num_rows();
     }
 
     // Dapatkan lowongan aktif dengan paginasi
     public function dapatkan_lowongan_aktif($limit, $start) {
-        $this->db->select('job_postings.*, job_categories.name as category_name');
-        $this->db->from('job_postings');
-        $this->db->join('job_categories', 'job_categories.id = job_postings.category_id', 'left');
-        $this->db->where('job_postings.status', 'active');
-        $this->db->where('job_postings.deadline >=', date('Y-m-d'));
-        $this->db->order_by('job_postings.id', 'DESC');
+        $this->db->select('lowongan_pekerjaan.*, kategori_pekerjaan.nama as category_name');
+        $this->db->from('lowongan_pekerjaan');
+        $this->db->join('kategori_pekerjaan', 'kategori_pekerjaan.id = lowongan_pekerjaan.id_kategori', 'left');
+        $this->db->where('lowongan_pekerjaan.status', 'aktif');
+        $this->db->where('lowongan_pekerjaan.batas_waktu >=', date('Y-m-d'));
+        $this->db->order_by('lowongan_pekerjaan.id', 'DESC');
         $this->db->limit($limit, $start);
         $query = $this->db->get();
         return $query->result();
@@ -74,32 +74,32 @@ class Model_Lowongan extends CI_Model {
 
     // Dapatkan lowongan unggulan
     public function dapatkan_lowongan_unggulan($limit) {
-        $this->db->select('job_postings.*, job_categories.name as category_name');
-        $this->db->from('job_postings');
-        $this->db->join('job_categories', 'job_categories.id = job_postings.category_id', 'left');
-        $this->db->where('job_postings.status', 'active');
-        $this->db->where('job_postings.featured', 1);
-        $this->db->where('job_postings.deadline >=', date('Y-m-d'));
-        $this->db->order_by('job_postings.id', 'DESC');
+        $this->db->select('lowongan_pekerjaan.*, kategori_pekerjaan.nama as category_name');
+        $this->db->from('lowongan_pekerjaan');
+        $this->db->join('kategori_pekerjaan', 'kategori_pekerjaan.id = lowongan_pekerjaan.id_kategori', 'left');
+        $this->db->where('lowongan_pekerjaan.status', 'aktif');
+        $this->db->where('lowongan_pekerjaan.unggulan', 1);
+        $this->db->where('lowongan_pekerjaan.batas_waktu >=', date('Y-m-d'));
+        $this->db->order_by('lowongan_pekerjaan.id', 'DESC');
         $this->db->limit($limit);
         $query = $this->db->get();
         return $query->result();
     }
 
     // Dapatkan lowongan terkait
-    public function dapatkan_lowongan_terkait($id, $category_id, $limit) {
-        $this->db->select('job_postings.*, job_categories.name as category_name');
-        $this->db->from('job_postings');
-        $this->db->join('job_categories', 'job_categories.id = job_postings.category_id', 'left');
-        $this->db->where('job_postings.id !=', $id);
-        $this->db->where('job_postings.status', 'active');
-        $this->db->where('job_postings.deadline >=', date('Y-m-d'));
+    public function dapatkan_lowongan_terkait($id, $id_kategori, $limit) {
+        $this->db->select('lowongan_pekerjaan.*, kategori_pekerjaan.nama as category_name');
+        $this->db->from('lowongan_pekerjaan');
+        $this->db->join('kategori_pekerjaan', 'kategori_pekerjaan.id = lowongan_pekerjaan.id_kategori', 'left');
+        $this->db->where('lowongan_pekerjaan.id !=', $id);
+        $this->db->where('lowongan_pekerjaan.status', 'aktif');
+        $this->db->where('lowongan_pekerjaan.batas_waktu >=', date('Y-m-d'));
 
-        if ($category_id) {
-            $this->db->where('job_postings.category_id', $category_id);
+        if ($id_kategori) {
+            $this->db->where('lowongan_pekerjaan.id_kategori', $id_kategori);
         }
 
-        $this->db->order_by('job_postings.id', 'DESC');
+        $this->db->order_by('lowongan_pekerjaan.id', 'DESC');
         $this->db->limit($limit);
         $query = $this->db->get();
         return $query->result();
@@ -108,48 +108,91 @@ class Model_Lowongan extends CI_Model {
     // Dapatkan lowongan rekomendasi untuk pelamar
     public function dapatkan_lowongan_rekomendasi($user_id, $limit) {
         // Dapatkan profil pelamar
-        $this->db->where('user_id', $user_id);
-        $query = $this->db->get('applicant_profiles');
+        $this->db->where('id_pengguna', $user_id);
+        $query = $this->db->get('profil_pelamar');
         $profile = $query->row();
 
         // Jika profil ditemukan dan memiliki skills
-        if ($profile && $profile->skills) {
-            $skills = explode(',', $profile->skills);
+        if ($profile && $profile->keahlian) {
+            $skills = explode(',', $profile->keahlian);
             $skills_array = array_map('trim', $skills);
 
-            $this->db->select('job_postings.*, job_categories.name as category_name');
-            $this->db->from('job_postings');
-            $this->db->join('job_categories', 'job_categories.id = job_postings.category_id', 'left');
-            $this->db->where('job_postings.status', 'active');
-            $this->db->where('job_postings.deadline >=', date('Y-m-d'));
+            $this->db->select('lowongan_pekerjaan.*, kategori_pekerjaan.nama as category_name');
+            $this->db->from('lowongan_pekerjaan');
+            $this->db->join('kategori_pekerjaan', 'kategori_pekerjaan.id = lowongan_pekerjaan.id_kategori', 'left');
+            $this->db->where('lowongan_pekerjaan.status', 'aktif');
+            $this->db->where('lowongan_pekerjaan.batas_waktu >=', date('Y-m-d'));
 
             // Cari lowongan yang sesuai dengan skills
             $this->db->group_start();
             foreach ($skills_array as $skill) {
-                $this->db->or_like('job_postings.requirements', $skill);
-                $this->db->or_like('job_postings.description', $skill);
+                $this->db->or_like('lowongan_pekerjaan.persyaratan', $skill);
+                $this->db->or_like('lowongan_pekerjaan.deskripsi', $skill);
             }
             $this->db->group_end();
 
             // Cek apakah sudah melamar
-            $this->db->where_not_in('job_postings.id', function($query) use ($user_id) {
-                $query->select('job_id')
-                      ->from('job_applications')
-                      ->where('applicant_id', $user_id);
-            });
+            // Dapatkan daftar lowongan yang sudah dilamar
+            $this->db->reset_query();
+            $this->db->select('id_pekerjaan');
+            $this->db->from('lamaran_pekerjaan');
+            $this->db->where('id_pelamar', $user_id);
+            $applied_query = $this->db->get();
+            $applied_jobs = $applied_query->result_array();
 
-            $this->db->order_by('job_postings.id', 'DESC');
+            // Reset query dan mulai query utama lagi
+            $this->db->reset_query();
+            $this->db->select('lowongan_pekerjaan.*, kategori_pekerjaan.nama as category_name');
+            $this->db->from('lowongan_pekerjaan');
+            $this->db->join('kategori_pekerjaan', 'kategori_pekerjaan.id = lowongan_pekerjaan.id_kategori', 'left');
+            $this->db->where('lowongan_pekerjaan.status', 'aktif');
+            $this->db->where('lowongan_pekerjaan.batas_waktu >=', date('Y-m-d'));
+
+            // Cari lowongan yang sesuai dengan skills
+            $this->db->group_start();
+            foreach ($skills_array as $skill) {
+                $this->db->or_like('lowongan_pekerjaan.persyaratan', $skill);
+                $this->db->or_like('lowongan_pekerjaan.deskripsi', $skill);
+            }
+            $this->db->group_end();
+
+            // Hanya tambahkan kondisi where_not_in jika ada lamaran
+            if (!empty($applied_jobs)) {
+                $applied_job_ids = array_column($applied_jobs, 'id_pekerjaan');
+                $this->db->where_not_in('lowongan_pekerjaan.id', $applied_job_ids);
+            }
+
+            $this->db->order_by('lowongan_pekerjaan.id', 'DESC');
             $this->db->limit($limit);
             $query = $this->db->get();
             return $query->result();
         } else {
             // Jika tidak ada profil atau skills, tampilkan lowongan terbaru
-            $this->db->select('job_postings.*, job_categories.name as category_name');
-            $this->db->from('job_postings');
-            $this->db->join('job_categories', 'job_categories.id = job_postings.category_id', 'left');
-            $this->db->where('job_postings.status', 'active');
-            $this->db->where('job_postings.deadline >=', date('Y-m-d'));
-            $this->db->order_by('job_postings.id', 'DESC');
+            // Reset query terlebih dahulu
+            $this->db->reset_query();
+
+            // Dapatkan daftar lowongan yang sudah dilamar
+            $this->db->select('id_pekerjaan');
+            $this->db->from('lamaran_pekerjaan');
+            $this->db->where('id_pelamar', $user_id);
+            $applied_query = $this->db->get();
+            $applied_jobs = $applied_query->result_array();
+
+            // Reset query dan mulai query utama lagi
+            $this->db->reset_query();
+            $this->db->select('lowongan_pekerjaan.*, kategori_pekerjaan.nama as category_name');
+            $this->db->from('lowongan_pekerjaan');
+            $this->db->join('kategori_pekerjaan', 'kategori_pekerjaan.id = lowongan_pekerjaan.id_kategori', 'left');
+            $this->db->where('lowongan_pekerjaan.status', 'aktif');
+            $this->db->where('lowongan_pekerjaan.batas_waktu >=', date('Y-m-d'));
+
+            // Hanya tambahkan kondisi where_not_in jika ada lamaran
+            if (!empty($applied_jobs)) {
+                $applied_job_ids = array_column($applied_jobs, 'id_pekerjaan');
+                $this->db->where_not_in('lowongan_pekerjaan.id', $applied_job_ids);
+            }
+
+            $this->db->order_by('lowongan_pekerjaan.id', 'DESC');
             $this->db->limit($limit);
             $query = $this->db->get();
             return $query->result();
@@ -158,31 +201,31 @@ class Model_Lowongan extends CI_Model {
 
     // Cari lowongan
     public function cari_lowongan($keyword) {
-        $this->db->select('job_postings.*, job_categories.name as category_name');
-        $this->db->from('job_postings');
-        $this->db->join('job_categories', 'job_categories.id = job_postings.category_id', 'left');
-        $this->db->where('job_postings.status', 'active');
-        $this->db->where('job_postings.deadline >=', date('Y-m-d'));
+        $this->db->select('lowongan_pekerjaan.*, kategori_pekerjaan.nama as category_name');
+        $this->db->from('lowongan_pekerjaan');
+        $this->db->join('kategori_pekerjaan', 'kategori_pekerjaan.id = lowongan_pekerjaan.id_kategori', 'left');
+        $this->db->where('lowongan_pekerjaan.status', 'aktif');
+        $this->db->where('lowongan_pekerjaan.batas_waktu >=', date('Y-m-d'));
         $this->db->group_start();
-        $this->db->like('job_postings.title', $keyword);
-        $this->db->or_like('job_postings.description', $keyword);
-        $this->db->or_like('job_postings.requirements', $keyword);
-        $this->db->or_like('job_postings.responsibilities', $keyword);
-        $this->db->or_like('job_postings.location', $keyword);
-        $this->db->or_like('job_categories.name', $keyword);
+        $this->db->like('lowongan_pekerjaan.judul', $keyword);
+        $this->db->or_like('lowongan_pekerjaan.deskripsi', $keyword);
+        $this->db->or_like('lowongan_pekerjaan.persyaratan', $keyword);
+        $this->db->or_like('lowongan_pekerjaan.tanggung_jawab', $keyword);
+        $this->db->or_like('lowongan_pekerjaan.lokasi', $keyword);
+        $this->db->or_like('kategori_pekerjaan.nama', $keyword);
         $this->db->group_end();
-        $this->db->order_by('job_postings.id', 'DESC');
+        $this->db->order_by('lowongan_pekerjaan.id', 'DESC');
         $query = $this->db->get();
         return $query->result();
     }
 
     // Dapatkan lowongan berdasarkan recruiter
     public function dapatkan_lowongan_recruiter($user_id) {
-        $this->db->select('job_postings.*, job_categories.name as category_name');
-        $this->db->from('job_postings');
-        $this->db->join('job_categories', 'job_categories.id = job_postings.category_id', 'left');
-        $this->db->where('job_postings.created_by', $user_id);
-        $this->db->order_by('job_postings.id', 'DESC');
+        $this->db->select('lowongan_pekerjaan.*, kategori_pekerjaan.nama as category_name');
+        $this->db->from('lowongan_pekerjaan');
+        $this->db->join('kategori_pekerjaan', 'kategori_pekerjaan.id = lowongan_pekerjaan.id_kategori', 'left');
+        $this->db->where('lowongan_pekerjaan.dibuat_oleh', $user_id);
+        $this->db->order_by('lowongan_pekerjaan.id', 'DESC');
         $query = $this->db->get();
         return $query->result();
     }

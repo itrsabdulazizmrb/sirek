@@ -57,6 +57,7 @@ $route['translate_uri_dashes'] = FALSE;
 $route['lowongan'] = 'beranda/lowongan';
 $route['lowongan/(:num)'] = 'beranda/detail_lowongan/$1';
 $route['lowongan/detail/(:num)'] = 'beranda/detail_lowongan/$1';
+$route['beranda/detail_lowongan/(:num)'] = 'beranda/detail_lowongan/$1';
 $route['blog'] = 'beranda/blog';
 $route['blog/(:any)'] = 'beranda/artikel/$1';
 $route['tentang'] = 'beranda/tentang';

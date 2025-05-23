@@ -10,71 +10,71 @@ class Model_Pengguna extends CI_Model {
     // Dapatkan semua pengguna
     public function dapatkan_pengguna_semua() {
         $this->db->order_by('id', 'DESC');
-        $query = $this->db->get('users');
+        $query = $this->db->get('pengguna');
         return $query->result();
     }
 
     // Dapatkan pengguna berdasarkan ID
     public function dapatkan_pengguna($id) {
         $this->db->where('id', $id);
-        $query = $this->db->get('users');
+        $query = $this->db->get('pengguna');
         return $query->row();
     }
 
     // Dapatkan pengguna berdasarkan username
     public function dapatkan_pengguna_dari_username($username) {
-        $this->db->where('username', $username);
-        $query = $this->db->get('users');
+        $this->db->where('nama_pengguna', $username);
+        $query = $this->db->get('pengguna');
         return $query->row();
     }
 
     // Dapatkan pengguna berdasarkan email
     public function dapatkan_pengguna_dari_email($email) {
         $this->db->where('email', $email);
-        $query = $this->db->get('users');
+        $query = $this->db->get('pengguna');
         return $query->row();
     }
 
     // Tambah pengguna baru
     public function tambah_pengguna($data) {
-        $this->db->insert('users', $data);
+        $this->db->insert('pengguna', $data);
         return $this->db->insert_id();
     }
 
     // Perbarui data pengguna
     public function perbarui_pengguna($id, $data) {
         $this->db->where('id', $id);
-        return $this->db->update('users', $data);
+        return $this->db->update('pengguna', $data);
     }
 
     // Hapus pengguna
     public function hapus_pengguna($id) {
         $this->db->where('id', $id);
-        return $this->db->delete('users');
+        return $this->db->delete('pengguna');
     }
 
     // Perbarui password pengguna
     public function perbarui_password($id, $password) {
         $this->db->where('id', $id);
-        return $this->db->update('users', array('password' => $password));
+        return $this->db->update('pengguna', array('password' => $password));
     }
 
     // Hitung total pengguna
     public function hitung_pengguna() {
-        return $this->db->count_all('users');
+        return $this->db->count_all('pengguna');
     }
 
     // Hitung pengguna berdasarkan role
     public function hitung_pengguna_berdasarkan_role($role) {
         $this->db->where('role', $role);
-        $query = $this->db->get('users');
+        $query = $this->db->get('pengguna');
         return $query->num_rows();
     }
 
     // Hitung total pelamar
     public function hitung_pelamar() {
-        $this->db->where('role', 'applicant');
-        $query = $this->db->get('users');
+        $this->db->where('role', 'pelamar');
+        $query = $this->db->get('pengguna');
         return $query->num_rows();
     }
 
@@ -82,39 +82,39 @@ class Model_Pengguna extends CI_Model {
     public function dapatkan_pengguna_paginasi($limit, $start) {
         $this->db->limit($limit, $start);
         $this->db->order_by('id', 'DESC');
-        $query = $this->db->get('users');
+        $query = $this->db->get('pengguna');
         return $query->result();
     }
 
     // Cari pengguna
     public function cari_pengguna($keyword) {
-        $this->db->like('username', $keyword);
+        $this->db->like('nama_pengguna', $keyword);
         $this->db->or_like('email', $keyword);
-        $this->db->or_like('full_name', $keyword);
-        $query = $this->db->get('users');
+        $this->db->or_like('nama_lengkap', $keyword);
+        $query = $this->db->get('pengguna');
         return $query->result();
     }
 
     // Filter pengguna berdasarkan role
     public function filter_pengguna_berdasarkan_role($role) {
         $this->db->where('role', $role);
-        $query = $this->db->get('users');
+        $query = $this->db->get('pengguna');
         return $query->result();
     }
 
     // Filter pengguna berdasarkan status
     public function filter_pengguna_berdasarkan_status($status) {
         $this->db->where('status', $status);
-        $query = $this->db->get('users');
+        $query = $this->db->get('pengguna');
         return $query->result();
     }
 
     // Dapatkan statistik pengguna berdasarkan bulan
     public function dapatkan_statistik_pengguna_bulanan($year) {
-        $this->db->select('MONTH(created_at) as month, COUNT(*) as count');
-        $this->db->from('users');
-        $this->db->where('YEAR(created_at)', $year);
-        $this->db->group_by('MONTH(created_at)');
+        $this->db->select('MONTH(dibuat_pada) as month, COUNT(*) as count');
+        $this->db->from('pengguna');
+        $this->db->where('YEAR(dibuat_pada)', $year);
+        $this->db->group_by('MONTH(dibuat_pada)');
         $query = $this->db->get();
         return $query->result();
     }
@@ -122,9 +122,9 @@ class Model_Pengguna extends CI_Model {
     // Verifikasi login
     public function verifikasi_login($username, $password) {
         // Cek apakah username ada
-        $this->db->where('username', $username);
+        $this->db->where('nama_pengguna', $username);
         $this->db->or_where('email', $username);
-        $query = $this->db->get('users');
+        $query = $this->db->get('pengguna');
         $user = $query->row();
 
         // Jika user ditemukan, verifikasi password

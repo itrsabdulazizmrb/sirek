@@ -46,7 +46,7 @@
                           <img src="<?= base_url('assets/img/small-logos/logo-company.svg') ?>" class="avatar avatar-sm me-3" alt="job">
                         </div>
                         <div class="d-flex flex-column justify-content-center">
-                          <h6 class="mb-0 text-sm"><?= $job->title ?></h6>
+                          <h6 class="mb-0 text-sm"><?= $job->judul ?></h6>
                           <p class="text-xs text-secondary mb-0">Dibuat oleh: <?= $job->created_by_name ?></p>
                         </div>
                       </div>
@@ -55,16 +55,16 @@
                       <p class="text-xs font-weight-bold mb-0"><?= $job->category_name ?></p>
                     </td>
                     <td>
-                      <p class="text-xs font-weight-bold mb-0"><?= $job->location ?></p>
+                      <p class="text-xs font-weight-bold mb-0"><?= $job->lokasi ?></p>
                     </td>
                     <td class="align-middle text-center text-sm">
-                      <span class="badge badge-sm bg-gradient-<?= $job->job_type == 'full-time' ? 'success' : ($job->job_type == 'part-time' ? 'info' : ($job->job_type == 'contract' ? 'warning' : 'secondary')) ?>"><?= $job->job_type == 'full-time' ? 'Full Time' : ($job->job_type == 'part-time' ? 'Part Time' : ($job->job_type == 'contract' ? 'Kontrak' : 'Magang')) ?></span>
+                      <span class="badge badge-sm bg-gradient-<?= $job->jenis_pekerjaan == 'penuh_waktu' ? 'success' : ($job->jenis_pekerjaan == 'paruh_waktu' ? 'info' : ($job->jenis_pekerjaan == 'kontrak' ? 'warning' : 'secondary')) ?>"><?= $job->jenis_pekerjaan == 'penuh_waktu' ? 'Full Time' : ($job->jenis_pekerjaan == 'paruh_waktu' ? 'Part Time' : ($job->jenis_pekerjaan == 'kontrak' ? 'Kontrak' : 'Magang')) ?></span>
                     </td>
                     <td class="align-middle text-center">
-                      <span class="text-secondary text-xs font-weight-bold"><?= date('d M Y', strtotime($job->deadline)) ?></span>
+                      <span class="text-secondary text-xs font-weight-bold"><?= date('d M Y', strtotime($job->batas_waktu)) ?></span>
                     </td>
                     <td class="align-middle text-center text-sm">
-                      <span class="badge badge-sm bg-gradient-<?= $job->status == 'active' ? 'success' : ($job->status == 'draft' ? 'secondary' : 'danger') ?>"><?= $job->status == 'active' ? 'Aktif' : ($job->status == 'draft' ? 'Draft' : 'Tidak Aktif') ?></span>
+                      <span class="badge badge-sm bg-gradient-<?= $job->status == 'aktif' ? 'success' : ($job->status == 'draft' ? 'secondary' : 'danger') ?>"><?= $job->status == 'aktif' ? 'Aktif' : ($job->status == 'draft' ? 'Draft' : 'Tidak Aktif') ?></span>
                     </td>
                     <td class="align-middle text-center">
                       <?php
@@ -80,7 +80,7 @@
                           Aksi<i class="fas fa-ellipsis-v"></i>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end px-2 py-3" aria-labelledby="dropdownMenuButton">
-                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('beranda/detail_lowongan/' . $job->id) ?>" target="_blank"><i class="fas fa-eye me-2"></i> Lihat</a></li>
+                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('lowongan/detail/' . $job->id) ?>" target="_blank"><i class="fas fa-eye me-2"></i> Lihat</a></li>
                           <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/edit_lowongan/' . $job->id) ?>"><i class="fas fa-edit me-2"></i> Edit</a></li>
                           <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/lamaran_lowongan/' . $job->id) ?>"><i class="fas fa-users me-2"></i> Lihat Pelamar</a></li>
                           <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/assign_assessment/' . $job->id) ?>"><i class="fas fa-tasks me-2"></i> Atur Penilaian</a></li>

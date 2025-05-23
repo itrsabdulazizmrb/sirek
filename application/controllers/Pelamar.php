@@ -6,7 +6,7 @@ class Pelamar extends CI_Controller {
     public function __construct() {
         parent::__construct();
         // Check if user is logged in and is an applicant
-        if (!$this->session->userdata('logged_in') || $this->session->userdata('role') != 'applicant') {
+        if (!$this->session->userdata('logged_in') || $this->session->userdata('role') != 'pelamar') {
             redirect('auth');
         }
 
@@ -39,7 +39,7 @@ class Pelamar extends CI_Controller {
         // Load views
         $data['title'] = 'Dasbor Pelamar';
         $this->load->view('templates/applicant_header', $data);
-        $this->load->view('pelamar/dasbor', $data);
+        $this->load->view('applicant/dashboard', $data);
         $this->load->view('templates/applicant_footer');
     }
 
@@ -48,6 +48,9 @@ class Pelamar extends CI_Controller {
         $user_id = $this->session->userdata('user_id');
         $data['user'] = $this->model_pengguna->dapatkan_pengguna($user_id);
         $data['profile'] = $this->model_pelamar->dapatkan_profil($user_id);
+
+        // Get profile completion percentage
+        $data['profile_completion'] = $this->model_pelamar->dapatkan_persentase_kelengkapan_profil($user_id);
 
         // Form validation rules
         $this->form_validation->set_rules('full_name', 'Nama Lengkap', 'trim|required');
@@ -64,25 +67,25 @@ class Pelamar extends CI_Controller {
             // If validation fails, show form with errors
             $data['title'] = 'Profil Saya';
             $this->load->view('templates/applicant_header', $data);
-            $this->load->view('pelamar/profil', $data);
+            $this->load->view('applicant/profile', $data);
             $this->load->view('templates/applicant_footer');
         } else {
             // Get form data
             $user_data = array(
-                'full_name' => $this->input->post('full_name'),
+                'nama_lengkap' => $this->input->post('full_name'),
                 'email' => $this->input->post('email'),
-                'phone' => $this->input->post('phone'),
-                'address' => $this->input->post('address')
+                'telepon' => $this->input->post('phone'),
+                'alamat' => $this->input->post('address')
             );
 
             $profile_data = array(
-                'date_of_birth' => $this->input->post('date_of_birth'),
-                'gender' => $this->input->post('gender'),
-                'education' => $this->input->post('education'),
-                'experience' => $this->input->post('experience'),
-                'skills' => $this->input->post('skills'),
-                'linkedin_url' => $this->input->post('linkedin_url'),
-                'portfolio_url' => $this->input->post('portfolio_url')
+                'tanggal_lahir' => $this->input->post('date_of_birth'),
+                'jenis_kelamin' => $this->input->post('gender'),
+                'pendidikan' => $this->input->post('education'),
+                'pengalaman' => $this->input->post('experience'),
+                'keahlian' => $this->input->post('skills'),
+                'url_linkedin' => $this->input->post('linkedin_url'),
+                'url_portofolio' => $this->input->post('portfolio_url')
             );
 
             // Handle resume upload
@@ -102,7 +105,7 @@ class Pelamar extends CI_Controller {
 
                 if ($this->upload->do_upload('resume')) {
                     $upload_data = $this->upload->data();
-                    $profile_data['resume'] = $upload_data['file_name'];
+                    $profile_data['cv'] = $upload_data['file_name'];
                 } else {
                     $this->session->set_flashdata('error', $this->upload->display_errors());
                     redirect('pelamar/profil');
@@ -126,7 +129,7 @@ class Pelamar extends CI_Controller {
 
                 if ($this->upload->do_upload('profile_picture')) {
                     $upload_data = $this->upload->data();
-                    $user_data['profile_picture'] = $upload_data['file_name'];
+                    $user_data['foto_profil'] = $upload_data['file_name'];
                 } else {
                     $this->session->set_flashdata('error', $this->upload->display_errors());
                     redirect('pelamar/profil');
@@ -138,7 +141,7 @@ class Pelamar extends CI_Controller {
             $this->model_pelamar->perbarui_profil($user_id, $profile_data);
 
             // Update session data
-            $this->session->set_userdata('full_name', $user_data['full_name']);
+            $this->session->set_userdata('full_name', $user_data['nama_lengkap']);
             $this->session->set_userdata('email', $user_data['email']);
 
             // Show success message
@@ -155,7 +158,7 @@ class Pelamar extends CI_Controller {
         // Load views
         $data['title'] = 'Lamaran Saya';
         $this->load->view('templates/applicant_header', $data);
-        $this->load->view('pelamar/lamaran', $data);
+        $this->load->view('applicant/applications', $data);
         $this->load->view('templates/applicant_footer');
     }
 
@@ -185,14 +188,14 @@ class Pelamar extends CI_Controller {
             // If validation fails, show form with errors
             $data['title'] = 'Lamar Lowongan';
             $this->load->view('templates/applicant_header', $data);
-            $this->load->view('pelamar/lamar', $data);
+            $this->load->view('applicant/apply', $data);
             $this->load->view('templates/applicant_footer');
         } else {
             // Get form data
             $application_data = array(
-                'job_id' => $job_id,
-                'applicant_id' => $user_id,
-                'cover_letter' => $this->input->post('cover_letter')
+                'id_pekerjaan' => $job_id,
+                'id_pelamar' => $user_id,
+                'surat_lamaran' => $this->input->post('cover_letter')
             );
 
             // Handle resume upload
@@ -212,14 +215,14 @@ class Pelamar extends CI_Controller {
 
                 if ($this->upload->do_upload('resume')) {
                     $upload_data = $this->upload->data();
-                    $application_data['resume'] = $upload_data['file_name'];
+                    $application_data['cv'] = $upload_data['file_name'];
                 } else {
                     $this->session->set_flashdata('error', $this->upload->display_errors());
                     redirect('pelamar/lamar/' . $job_id);
                 }
-            } else if ($data['profile']->resume) {
+            } else if ($data['profile']->cv) {
                 // Use existing resume from profile
-                $application_data['resume'] = $data['profile']->resume;
+                $application_data['cv'] = $data['profile']->cv;
             } else {
                 $this->session->set_flashdata('error', 'Silakan unggah resume Anda.');
                 redirect('pelamar/lamar/' . $job_id);
@@ -246,12 +249,12 @@ class Pelamar extends CI_Controller {
         $data['application'] = $this->model_lamaran->dapatkan_lamaran($id);
 
         // If application not found or not owned by current user, show 404
-        if (!$data['application'] || $data['application']->applicant_id != $user_id) {
+        if (!$data['application'] || $data['application']->id_pelamar != $user_id) {
             show_404();
         }
 
         // Get job details
-        $data['job'] = $this->model_lowongan->dapatkan_lowongan($data['application']->job_id);
+        $data['job'] = $this->model_lowongan->dapatkan_lowongan($data['application']->id_pekerjaan);
 
         // Get assessment results
         $data['assessments'] = $this->model_penilaian->dapatkan_penilaian_pelamar($id);
@@ -259,7 +262,7 @@ class Pelamar extends CI_Controller {
         // Load views
         $data['title'] = 'Detail Lamaran';
         $this->load->view('templates/applicant_header', $data);
-        $this->load->view('pelamar/detail_lamaran', $data);
+        $this->load->view('applicant/application_details', $data);
         $this->load->view('templates/applicant_footer');
     }
 
@@ -271,7 +274,7 @@ class Pelamar extends CI_Controller {
         // Load views
         $data['title'] = 'Penilaian Saya';
         $this->load->view('templates/applicant_header', $data);
-        $this->load->view('pelamar/penilaian', $data);
+        $this->load->view('applicant/assessments', $data);
         $this->load->view('templates/applicant_footer');
     }
 
@@ -289,7 +292,7 @@ class Pelamar extends CI_Controller {
         $data['applicant_assessment'] = $this->model_penilaian->dapatkan_penilaian_pelamar_spesifik($application_id, $assessment_id);
 
         // If applicant assessment not found or not owned by current user, show 404
-        if (!$data['applicant_assessment'] || $data['applicant_assessment']->applicant_id != $user_id) {
+        if (!$data['applicant_assessment'] || $data['applicant_assessment']->id_pelamar != $user_id) {
             show_404();
         }
 
@@ -300,7 +303,7 @@ class Pelamar extends CI_Controller {
         $data['title'] = 'Ikuti Penilaian';
         $data['application_id'] = $application_id;
         $this->load->view('templates/applicant_header', $data);
-        $this->load->view('pelamar/ikuti_penilaian', $data);
+        $this->load->view('applicant/take_assessment', $data);
         $this->load->view('templates/applicant_footer');
     }
 
@@ -318,17 +321,17 @@ class Pelamar extends CI_Controller {
 
         foreach ($questions as $question) {
             $answer_data = array(
-                'applicant_assessment_id' => $applicant_assessment_id,
-                'question_id' => $question->id
+                'id_penilaian_pelamar' => $applicant_assessment_id,
+                'id_soal' => $question->id
             );
 
-            if ($question->question_type == 'multiple_choice') {
-                $answer_data['selected_option_id'] = $this->input->post('question_' . $question->id);
-            } else if ($question->question_type == 'true_false') {
-                $answer_data['answer_text'] = $this->input->post('question_' . $question->id);
-            } else if ($question->question_type == 'essay') {
-                $answer_data['answer_text'] = $this->input->post('question_' . $question->id);
-            } else if ($question->question_type == 'file_upload') {
+            if ($question->jenis_soal == 'multiple_choice') {
+                $answer_data['id_pilihan_terpilih'] = $this->input->post('question_' . $question->id);
+            } else if ($question->jenis_soal == 'true_false') {
+                $answer_data['teks_jawaban'] = $this->input->post('question_' . $question->id);
+            } else if ($question->jenis_soal == 'essay') {
+                $answer_data['teks_jawaban'] = $this->input->post('question_' . $question->id);
+            } else if ($question->jenis_soal == 'file_upload') {
                 // Handle file upload
                 // Make sure the directory exists and is writable
                 $upload_path = FCPATH . 'uploads/answers/';
@@ -345,7 +348,7 @@ class Pelamar extends CI_Controller {
 
                 if ($this->upload->do_upload('question_' . $question->id)) {
                     $upload_data = $this->upload->data();
-                    $answer_data['file_upload'] = $upload_data['file_name'];
+                    $answer_data['unggah_file'] = $upload_data['file_name'];
                 }
             }
 
@@ -368,7 +371,7 @@ class Pelamar extends CI_Controller {
             // If validation fails, show form with errors
             $data['title'] = 'Ubah Password';
             $this->load->view('templates/applicant_header', $data);
-            $this->load->view('pelamar/ubah_password');
+            $this->load->view('applicant/change_password');
             $this->load->view('templates/applicant_footer');
         } else {
             // Get form data

@@ -12,7 +12,7 @@
               </div>
               <?php if ($profile_completion < 100) : ?>
                 <p class="mb-0 mt-2">
-                  <a href="<?= base_url('applicant/profile') ?>" class="text-primary text-sm font-weight-bolder">Complete your profile</a>
+                  <a href="<?= base_url('pelamar/profil') ?>" class="text-primary text-sm font-weight-bolder">Complete your profile</a>
                 </p>
               <?php else : ?>
                 <p class="mb-0 mt-2">
@@ -39,7 +39,7 @@
               <p class="text-sm mb-0 text-uppercase font-weight-bold">My Applications</p>
               <h5 class="font-weight-bolder"><?= count($applications) ?></h5>
               <p class="mb-0">
-                <?php 
+                <?php
                 $pending = 0;
                 foreach ($applications as $app) {
                   if ($app->status == 'pending') $pending++;
@@ -134,7 +134,7 @@
                       <span class="text-secondary text-xs font-weight-bold"><?= date('d M Y', strtotime($job->deadline)) ?></span>
                     </td>
                     <td class="align-middle">
-                      <a href="<?= base_url('home/job_details/' . $job->id) ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="View job">
+                      <a href="<?= base_url('lowongan/detail/' . $job->id) ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="View job">
                         View Details
                       </a>
                     </td>
@@ -166,13 +166,13 @@
               <div class="timeline-content">
                 <h6 class="text-dark text-sm font-weight-bold mb-0">No applications yet</h6>
                 <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">Start applying for jobs to see your application status here.</p>
-                <a href="<?= base_url('home/jobs') ?>" class="btn btn-sm btn-primary mt-3">Browse Jobs</a>
+                <a href="<?= base_url('lowongan') ?>" class="btn btn-sm btn-primary mt-3">Browse Jobs</a>
               </div>
             </div>
           <?php else : ?>
-            <?php 
+            <?php
             $count = 0;
-            foreach (array_slice($applications, 0, 5) as $app) : 
+            foreach (array_slice($applications, 0, 5) as $app) :
               $count++;
             ?>
               <div class="timeline-block mb-3">
@@ -183,13 +183,13 @@
                   <h6 class="text-dark text-sm font-weight-bold mb-0"><?= $app->job_title ?></h6>
                   <p class="text-secondary font-weight-bold text-xs mt-1 mb-0"><?= date('d M Y', strtotime($app->application_date)) ?></p>
                   <span class="badge badge-sm bg-gradient-<?= $app->status == 'pending' ? 'warning' : ($app->status == 'reviewed' ? 'info' : ($app->status == 'shortlisted' ? 'success' : ($app->status == 'interviewed' ? 'primary' : ($app->status == 'offered' ? 'warning' : ($app->status == 'hired' ? 'success' : 'danger'))))) ?> mt-2"><?= ucfirst($app->status) ?></span>
-                  <a href="<?= base_url('applicant/application_details/' . $app->id) ?>" class="btn btn-link text-primary text-sm mb-0 ps-0 ms-0 mt-2">View Details</a>
+                  <a href="<?= base_url('pelamar/detail_lamaran/' . $app->id) ?>" class="btn btn-link text-primary text-sm mb-0 ps-0 ms-0 mt-2">View Details</a>
                 </div>
               </div>
             <?php endforeach; ?>
             <?php if (count($applications) > 5) : ?>
               <div class="text-center mt-4">
-                <a href="<?= base_url('applicant/applications') ?>" class="btn btn-sm btn-primary">View All Applications</a>
+                <a href="<?= base_url('pelamar/lamaran') ?>" class="btn btn-sm btn-primary">View All Applications</a>
               </div>
             <?php endif; ?>
           <?php endif; ?>

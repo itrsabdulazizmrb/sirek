@@ -21,13 +21,13 @@
           <div class="col-md-12">
             <h6 class="text-uppercase text-sm">Soal</h6>
             <div class="p-3 border rounded">
-              <?= $question->question_text ?>
+              <?= $question->teks_soal ?>
             </div>
             <div class="d-flex justify-content-between mt-2">
               <p class="text-xs text-secondary mb-0">
                 <strong>Tipe:</strong>
                 <?php
-                switch($question->question_type) {
+                switch($question->jenis_soal) {
                   case 'multiple_choice':
                     echo 'Pilihan Ganda';
                     break;
@@ -35,11 +35,11 @@
                     echo 'Benar/Salah';
                     break;
                   default:
-                    echo ucfirst($question->question_type);
+                    echo ucfirst($question->jenis_soal);
                 }
                 ?>
               </p>
-              <p class="text-xs text-secondary mb-0"><strong>Poin:</strong> <?= $question->points ?></p>
+              <p class="text-xs text-secondary mb-0"><strong>Poin:</strong> <?= $question->poin ?></p>
             </div>
           </div>
         </div>
@@ -49,20 +49,20 @@
           <div class="col-md-12">
             <h6 class="text-uppercase text-sm">Opsi Jawaban</h6>
             <?= form_open('admin/simpan-opsi-soal/' . $question->id, ['class' => 'needs-validation']) ?>
-              <?php if ($question->question_type == 'true_false') : ?>
+              <?php if ($question->jenis_soal == 'true_false') : ?>
                 <!-- True/False Options -->
                 <div class="row mb-3">
                   <div class="col-md-10">
                     <div class="form-group">
                       <label class="form-control-label">Opsi Benar</label>
                       <div class="form-check">
-                        <input class="form-check-input" type="radio" name="correct_option" id="option_true" value="true" <?= (empty($options) || (isset($options[0]) && $options[0]->is_correct && $options[0]->option_text == 'Benar')) ? 'checked' : '' ?>>
+                        <input class="form-check-input" type="radio" name="correct_option" id="option_true" value="true" <?= (empty($options) || (isset($options[0]) && $options[0]->benar && $options[0]->teks_pilihan == 'Benar')) ? 'checked' : '' ?>>
                         <label class="form-check-label" for="option_true">
                           Benar
                         </label>
                       </div>
                       <div class="form-check">
-                        <input class="form-check-input" type="radio" name="correct_option" id="option_false" value="false" <?= (isset($options[1]) && $options[1]->is_correct && $options[1]->option_text == 'Salah') ? 'checked' : '' ?>>
+                        <input class="form-check-input" type="radio" name="correct_option" id="option_false" value="false" <?= (isset($options[1]) && $options[1]->benar && $options[1]->teks_pilihan == 'Salah') ? 'checked' : '' ?>>
                         <label class="form-check-label" for="option_false">
                           Salah
                         </label>
@@ -111,7 +111,7 @@
                         <div class="col-md-8">
                           <div class="form-group">
                             <label class="form-control-label">Opsi <?= $index + 1 ?></label>
-                            <input type="text" name="options[]" class="form-control" value="<?= $option->option_text ?>" required>
+                            <input type="text" name="options[]" class="form-control" value="<?= $option->teks_pilihan ?>" required>
                             <input type="hidden" name="option_ids[]" value="<?= $option->id ?>">
                           </div>
                         </div>
@@ -119,7 +119,7 @@
                           <div class="form-group">
                             <label class="form-control-label">Jawaban Benar</label>
                             <div class="form-check mt-2">
-                              <input class="form-check-input" type="radio" name="correct_option" value="<?= $index ?>" <?= $option->is_correct ? 'checked' : '' ?>>
+                              <input class="form-check-input" type="radio" name="correct_option" value="<?= $index ?>" <?= $option->benar ? 'checked' : '' ?>>
                               <label class="form-check-label">
                                 Benar
                               </label>

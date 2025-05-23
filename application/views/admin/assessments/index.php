@@ -54,7 +54,7 @@
                           </div>
                         </div>
                         <div class="d-flex flex-column justify-content-center">
-                          <h6 class="mb-0 text-sm"><?= $assessment->title ?></h6>
+                          <h6 class="mb-0 text-sm"><?= $assessment->judul ?></h6>
                           <p class="text-xs text-secondary mb-0">Dibuat oleh: <?= $assessment->created_by_name ?></p>
                         </div>
                       </div>
@@ -77,7 +77,7 @@
                       </span>
                     </td>
                     <td class="align-middle text-center">
-                      <span class="text-secondary text-xs font-weight-bold"><?= $assessment->time_limit ? $assessment->time_limit . ' menit' : 'Tidak ada' ?></span>
+                      <span class="text-secondary text-xs font-weight-bold"><?= $assessment->batas_waktu ? $assessment->batas_waktu . ' menit' : 'Tidak ada' ?></span>
                     </td>
                     <td class="align-middle text-center">
                       <?php
@@ -236,7 +236,7 @@
           <select class="form-control" id="assessment-select">
             <option value="">-- Pilih Penilaian --</option>
             <?php foreach ($assessments as $assessment) : ?>
-              <option value="<?= $assessment->id ?>"><?= $assessment->title ?> (<?= $assessment->type_name ?>)</option>
+              <option value="<?= $assessment->id ?>"><?= $assessment->judul ?> (<?= $assessment->type_name ?>)</option>
             <?php endforeach; ?>
           </select>
         </div>

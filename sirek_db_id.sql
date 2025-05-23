@@ -24,7 +24,7 @@ DROP TABLE IF EXISTS `jawaban_pelamar`;
 CREATE TABLE `jawaban_pelamar`  (
   `id` int NOT NULL AUTO_INCREMENT,
   `id_penilaian_pelamar` int NOT NULL,
-  `id_pertanyaan` int NOT NULL,
+  `id_soal` int NOT NULL,
   `teks_jawaban` text CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL,
   `id_pilihan_terpilih` int NULL DEFAULT NULL,
   `unggah_file` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
@@ -35,12 +35,12 @@ CREATE TABLE `jawaban_pelamar`  (
   `diperbarui_pada` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `id_penilaian_pelamar`(`id_penilaian_pelamar` ASC) USING BTREE,
-  INDEX `id_pertanyaan`(`id_pertanyaan` ASC) USING BTREE,
+  INDEX `id_soal`(`id_soal` ASC) USING BTREE,
   INDEX `id_pilihan_terpilih`(`id_pilihan_terpilih` ASC) USING BTREE,
   INDEX `dinilai_oleh`(`dinilai_oleh` ASC) USING BTREE,
   CONSTRAINT `jawaban_pelamar_ibfk_1` FOREIGN KEY (`id_penilaian_pelamar`) REFERENCES `penilaian_pelamar` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
-  CONSTRAINT `jawaban_pelamar_ibfk_2` FOREIGN KEY (`id_pertanyaan`) REFERENCES `pertanyaan` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
-  CONSTRAINT `jawaban_pelamar_ibfk_3` FOREIGN KEY (`id_pilihan_terpilih`) REFERENCES `pilihan_pertanyaan` (`id`) ON DELETE SET NULL ON UPDATE RESTRICT,
+  CONSTRAINT `jawaban_pelamar_ibfk_2` FOREIGN KEY (`id_soal`) REFERENCES `soal` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
+  CONSTRAINT `jawaban_pelamar_ibfk_3` FOREIGN KEY (`id_pilihan_terpilih`) REFERENCES `pilihan_soal` (`id`) ON DELETE SET NULL ON UPDATE RESTRICT,
   CONSTRAINT `jawaban_pelamar_ibfk_4` FOREIGN KEY (`dinilai_oleh`) REFERENCES `pengguna` (`id`) ON DELETE SET NULL ON UPDATE RESTRICT
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Compact;
 
@@ -275,36 +275,36 @@ CREATE TABLE `notifikasi`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
--- Struktur tabel untuk pilihan_pertanyaan
+-- Struktur tabel untuk pilihan_soal
 -- ----------------------------
-DROP TABLE IF EXISTS `pilihan_pertanyaan`;
-CREATE TABLE `pilihan_pertanyaan`  (
+DROP TABLE IF EXISTS `pilihan_soal`;
+CREATE TABLE `pilihan_soal`  (
   `id` int NOT NULL AUTO_INCREMENT,
-  `id_pertanyaan` int NOT NULL,
+  `id_soal` int NOT NULL,
   `teks_pilihan` text CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `benar` tinyint(1) NULL DEFAULT 0,
   `dibuat_pada` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `diperbarui_pada` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `id_pertanyaan`(`id_pertanyaan` ASC) USING BTREE,
-  CONSTRAINT `pilihan_pertanyaan_ibfk_1` FOREIGN KEY (`id_pertanyaan`) REFERENCES `pertanyaan` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
+  INDEX `id_soal`(`id_soal` ASC) USING BTREE,
+  CONSTRAINT `pilihan_soal_ibfk_1` FOREIGN KEY (`id_soal`) REFERENCES `soal` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
 ) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
--- Struktur tabel untuk pertanyaan
+-- Struktur tabel untuk soal
 -- ----------------------------
-DROP TABLE IF EXISTS `pertanyaan`;
-CREATE TABLE `pertanyaan`  (
+DROP TABLE IF EXISTS `soal`;
+CREATE TABLE `soal`  (
   `id` int NOT NULL AUTO_INCREMENT,
   `id_penilaian` int NOT NULL,
-  `teks_pertanyaan` text CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
-  `jenis_pertanyaan` enum('pilihan_ganda','benar_salah','esai','unggah_file') CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `teks_soal` text CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `jenis_soal` enum('pilihan_ganda','benar_salah','esai','unggah_file') CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `poin` int NULL DEFAULT 1,
   `dibuat_pada` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `diperbarui_pada` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `id_penilaian`(`id_penilaian` ASC) USING BTREE,
-  CONSTRAINT `pertanyaan_ibfk_1` FOREIGN KEY (`id_penilaian`) REFERENCES `penilaian` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
+  CONSTRAINT `soal_ibfk_1` FOREIGN KEY (`id_penilaian`) REFERENCES `penilaian` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
 ) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
@@ -315,8 +315,8 @@ CREATE TABLE `pengguna`  (
   `id` int NOT NULL AUTO_INCREMENT,
   `nama_pengguna` varchar(50) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `email` varchar(100) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
-  `kata_sandi` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
-  `peran` enum('admin','staff','pelamar') CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `password` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `role` enum('admin','staff','pelamar') CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `nama_lengkap` varchar(100) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `telepon` varchar(20) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
   `alamat` text CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL,

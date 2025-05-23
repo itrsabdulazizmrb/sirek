@@ -22,7 +22,7 @@ class Auth extends CI_Controller {
             // Redirect berdasarkan role
             if ($this->session->userdata('role') == 'admin') {
                 redirect('admin');
-            } else if ($this->session->userdata('role') == 'applicant') {
+            } else if ($this->session->userdata('role') == 'pelamar') {
                 redirect('pelamar');
             } else {
                 redirect('beranda');
@@ -49,7 +49,7 @@ class Auth extends CI_Controller {
 
             if ($user) {
                 // Cek status user
-                if ($user->status == 'active') {
+                if ($user->status == 'aktif') {
                     // Cek apakah user memilih "Remember Me"
                     $remember = $this->input->post('remember_me') ? TRUE : FALSE;
 
@@ -61,11 +61,11 @@ class Auth extends CI_Controller {
                     // Buat data session
                     $session_data = array(
                         'user_id' => $user->id,
-                        'username' => $user->username,
+                        'username' => $user->nama_pengguna,
                         'email' => $user->email,
-                        'full_name' => $user->full_name,
+                        'full_name' => $user->nama_lengkap,
                         'role' => $user->role,
-                        'profile_picture' => $user->profile_picture,
+                        'profile_picture' => $user->foto_profil,
                         'logged_in' => TRUE,
                         'remember_me' => $remember
                     );
@@ -74,12 +74,12 @@ class Auth extends CI_Controller {
                     $this->session->set_userdata($session_data);
 
                     // Update last login
-                    $this->model_pengguna->perbarui_pengguna($user->id, array('last_login' => date('Y-m-d H:i:s')));
+                    $this->model_pengguna->perbarui_pengguna($user->id, array('login_terakhir' => date('Y-m-d H:i:s')));
 
                     // Redirect berdasarkan role
                     if ($user->role == 'admin') {
                         redirect('admin');
-                    } else if ($user->role == 'applicant') {
+                    } else if ($user->role == 'pelamar') {
                         redirect('pelamar');
                     } else {
                         redirect('beranda');
@@ -103,7 +103,7 @@ class Auth extends CI_Controller {
             // Redirect berdasarkan role
             if ($this->session->userdata('role') == 'admin') {
                 redirect('admin');
-            } else if ($this->session->userdata('role') == 'applicant') {
+            } else if ($this->session->userdata('role') == 'pelamar') {
                 redirect('pelamar');
             } else {
                 redirect('beranda');
@@ -112,8 +112,8 @@ class Auth extends CI_Controller {
 
         // Set aturan validasi
         $this->form_validation->set_rules('full_name', 'Nama Lengkap', 'trim|required');
-        $this->form_validation->set_rules('username', 'Username', 'trim|required|is_unique[users.username]');
-        $this->form_validation->set_rules('email', 'Email', 'trim|required|valid_email|is_unique[users.email]');
+        $this->form_validation->set_rules('username', 'Username', 'trim|required|is_unique[pengguna.nama_pengguna]');
+        $this->form_validation->set_rules('email', 'Email', 'trim|required|valid_email|is_unique[pengguna.email]');
         $this->form_validation->set_rules('password', 'Password', 'trim|required|min_length[6]');
         $this->form_validation->set_rules('confirm_password', 'Konfirmasi Password', 'trim|required|matches[password]');
 
@@ -126,13 +126,13 @@ class Auth extends CI_Controller {
         } else {
             // Jika validasi berhasil, proses registrasi
             $data = array(
-                'full_name' => $this->input->post('full_name'),
-                'username' => $this->input->post('username'),
+                'nama_lengkap' => $this->input->post('full_name'),
+                'nama_pengguna' => $this->input->post('username'),
                 'email' => $this->input->post('email'),
                 'password' => password_hash($this->input->post('password'), PASSWORD_DEFAULT),
-                'role' => 'applicant',
-                'status' => 'active',
-                'created_at' => date('Y-m-d H:i:s')
+                'role' => 'pelamar',
+                'status' => 'aktif',
+                'dibuat_pada' => date('Y-m-d H:i:s')
             );
 
             // Simpan data user
@@ -239,7 +239,7 @@ class Auth extends CI_Controller {
 
             // Update password user
             $this->db->where('email', $email);
-            $this->db->update('users', array('password' => $password));
+            $this->db->update('pengguna', array('password' => $password));
 
             // Hapus token reset password
             $this->db->where('token', $token);
