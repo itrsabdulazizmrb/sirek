@@ -22,7 +22,7 @@
               <a href="<?= base_url('admin/add_job') ?>" class="btn btn-primary mt-3">Tambah Lowongan Baru</a>
             </div>
           <?php else : ?>
-            <table class="table align-items-center mb-0">
+            <table class="table align-items-center mb-0 datatable">
               <thead>
                 <tr>
                   <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Lowongan</th>

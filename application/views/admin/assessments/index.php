@@ -8,7 +8,7 @@
             <a href="<?= base_url('admin/tambah_penilaian') ?>" class="btn btn-sm btn-primary me-2">
               <i class="fas fa-plus me-2"></i> Tambah Penilaian Baru
             </a>
-            <a href="#" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#manageQuestionsModal">
+            <a href="#" class="btn btn-sm btn-info me-2" data-bs-toggle="modal" data-bs-target="#manageQuestionsModal">
               <i class="fas fa-tasks me-2"></i> Kelola Soal Penilaian
             </a>
           </div>
@@ -21,7 +21,7 @@
       <div class="card-body px-0 pt-0 pb-2">
         <!-- Filter -->
         <div class="px-4 py-3">
-          <form action="<?= base_url('admin/assessments') ?>" method="get" class="row g-3">
+          <form action="<?= base_url('admin/penilaian') ?>" method="get" class="row g-3">
             <div class="col-md-4">
               <div class="form-group">
                 <label for="type" class="form-label">Tipe Penilaian</label>
@@ -63,10 +63,10 @@
             <div class="text-center py-5">
               <h4 class="text-secondary">Tidak ada penilaian yang ditemukan</h4>
               <p class="text-muted">Mulai dengan menambahkan penilaian baru.</p>
-              <a href="<?= base_url('admin/add_assessment') ?>" class="btn btn-primary mt-3">Tambah Penilaian Baru</a>
+              <a href="<?= base_url('admin/tambah_penilaian') ?>" class="btn btn-primary mt-3">Tambah Penilaian Baru</a>
             </div>
           <?php else : ?>
-            <table class="table align-items-center mb-0">
+            <table class="table align-items-center mb-0 datatable">
               <thead>
                 <tr>
                   <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Penilaian</th>
@@ -75,6 +75,7 @@
                   <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Jumlah Soal</th>
                   <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Batas Waktu</th>
                   <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Pelamar</th>
+                  <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Aksi</th>
                   <th class="text-secondary opacity-7"></th>
                 </tr>
               </thead>
@@ -127,24 +128,23 @@
                         <?= $completed_count ?>/<?= $applicant_count ?> Selesai
                       </a>
                     </td>
+                    <td class="align-middle text-center">
+                      <a href="<?= base_url('admin/edit_penilaian/' . $assessment->id) ?>" class="btn btn-sm btn-info me-2" title="Edit">
+                        <i class="fas fa-edit"></i> Edit
+                      </a>
+                      <a href="<?= base_url('admin/hapus_penilaian/' . $assessment->id) ?>" class="btn btn-sm btn-danger" title="Hapus" onclick="return confirm('Apakah Anda yakin ingin menghapus penilaian ini?');">
+                        <i class="fas fa-trash"></i> Hapus
+                      </a>
+                    </td>
                     <td class="align-middle">
                       <div class="dropdown">
-                        <a href="#" class="text-secondary font-weight-bold text-xs" data-bs-toggle="dropdown" aria-expanded="false">
-                          <i class="fas fa-ellipsis-v"></i>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end px-2 py-3" aria-labelledby="dropdownMenuButton">
-                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/edit_assessment/' . $assessment->id) ?>">Edit</a></li>
-                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/assessment_questions/' . $assessment->id) ?>">Kelola Soal</a></li>
-                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/assessment_results/' . $assessment->id) ?>">Lihat Hasil</a></li>
-                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/assign_assessment_to_applicants/' . $assessment->id) ?>">Tetapkan ke Pelamar</a></li>
-                          <li>
-                            <hr class="dropdown-divider">
-                          </li>
-                          <li>
-                            <a class="dropdown-item border-radius-md text-danger btn-delete" href="<?= base_url('admin/delete_assessment/' . $assessment->id) ?>" onclick="return confirm('Apakah Anda yakin ingin menghapus penilaian ini?');">
-                              Hapus
-                            </a>
-                          </li>
+                        <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton<?= $assessment->id ?>" data-bs-toggle="dropdown" aria-expanded="false">
+                          <i class="fas fa-ellipsis-v"></i> Opsi
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end px-2 py-3" aria-labelledby="dropdownMenuButton<?= $assessment->id ?>">
+                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/soal_penilaian/' . $assessment->id) ?>"><i class="fas fa-list me-2"></i> Kelola Soal</a></li>
+                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/assessment_results/' . $assessment->id) ?>"><i class="fas fa-chart-bar me-2"></i> Lihat Hasil</a></li>
+                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/assign_assessment_to_applicants/' . $assessment->id) ?>"><i class="fas fa-user-plus me-2"></i> Tetapkan ke Pelamar</a></li>
                         </ul>
                       </div>
                     </td>
@@ -152,11 +152,6 @@
                 <?php endforeach; ?>
               </tbody>
             </table>
-
-            <!-- Pagination -->
-            <div class="d-flex justify-content-center mt-4">
-              <?= $pagination ?>
-            </div>
           <?php endif; ?>
         </div>
       </div>
@@ -193,6 +188,12 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", function() {
+    // Initialize Bootstrap dropdowns
+    var dropdownElementList = [].slice.call(document.querySelectorAll('[data-bs-toggle="dropdown"]'))
+    var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
+      return new bootstrap.Dropdown(dropdownToggleEl)
+    });
+
     // Assessment Type Chart
     var ctx1 = document.getElementById("assessment-type-chart").getContext("2d");
     new Chart(ctx1, {

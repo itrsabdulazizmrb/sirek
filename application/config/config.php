@@ -386,11 +386,11 @@ $config['encryption_key'] = 'sirek_recruitment_system_key';
 $config['sess_driver'] = 'files';
 $config['sess_cookie_name'] = 'ci_session';
 $config['sess_samesite'] = 'Lax';
-$config['sess_expiration'] = 7200;
-$config['sess_save_path'] = NULL;
+$config['sess_expiration'] = 0; // 0 = sampai browser ditutup
+$config['sess_save_path'] = sys_get_temp_dir(); // Gunakan direktori temp sistem
 $config['sess_match_ip'] = FALSE;
-$config['sess_time_to_update'] = 300;
-$config['sess_regenerate_destroy'] = FALSE;
+$config['sess_time_to_update'] = 7200; // 2 jam
+$config['sess_regenerate_destroy'] = TRUE;
 
 /*
 |--------------------------------------------------------------------------
@@ -411,8 +411,8 @@ $config['sess_regenerate_destroy'] = FALSE;
 $config['cookie_prefix']	= '';
 $config['cookie_domain']	= '';
 $config['cookie_path']		= '/';
-$config['cookie_secure']	= FALSE;
-$config['cookie_httponly'] 	= FALSE;
+$config['cookie_secure']	= isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on';
+$config['cookie_httponly'] 	= TRUE;
 $config['cookie_samesite'] 	= 'Lax';
 
 /*
@@ -460,9 +460,9 @@ $config['global_xss_filtering'] = FALSE;
 $config['csrf_protection'] = TRUE;
 $config['csrf_token_name'] = 'csrf_test_name';
 $config['csrf_cookie_name'] = 'csrf_cookie_name';
-$config['csrf_expire'] = 7200;
-$config['csrf_regenerate'] = TRUE;
-$config['csrf_exclude_uris'] = array();
+$config['csrf_expire'] = 7200; // 2 jam
+$config['csrf_regenerate'] = FALSE; // Jangan regenerasi token CSRF pada setiap submit
+$config['csrf_exclude_uris'] = array('api/.*');
 
 /*
 |--------------------------------------------------------------------------

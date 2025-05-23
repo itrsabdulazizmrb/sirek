@@ -50,6 +50,14 @@ class Auth extends CI_Controller {
             if ($user) {
                 // Cek status user
                 if ($user->status == 'active') {
+                    // Cek apakah user memilih "Remember Me"
+                    $remember = $this->input->post('remember_me') ? TRUE : FALSE;
+
+                    // Jika remember me dicentang, set cookie expiration ke 30 hari
+                    if ($remember) {
+                        $this->config->set_item('sess_expiration', 60*60*24*30); // 30 hari
+                    }
+
                     // Buat data session
                     $session_data = array(
                         'user_id' => $user->id,
@@ -58,7 +66,8 @@ class Auth extends CI_Controller {
                         'full_name' => $user->full_name,
                         'role' => $user->role,
                         'profile_picture' => $user->profile_picture,
-                        'logged_in' => TRUE
+                        'logged_in' => TRUE,
+                        'remember_me' => $remember
                     );
 
                     // Set session

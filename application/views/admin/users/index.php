@@ -59,7 +59,7 @@
               <p class="text-muted">Coba ubah filter atau cari dengan kata kunci yang berbeda.</p>
             </div>
           <?php else : ?>
-            <table class="table align-items-center mb-0">
+            <table class="table align-items-center mb-0 datatable">
               <thead>
                 <tr>
                   <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Pengguna</th>
@@ -134,11 +134,6 @@
                 <?php endforeach; ?>
               </tbody>
             </table>
-
-            <!-- Pagination -->
-            <div class="d-flex justify-content-center mt-4">
-              <?= $pagination ?>
-            </div>
           <?php endif; ?>
         </div>
       </div>

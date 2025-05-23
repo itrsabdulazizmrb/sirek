@@ -4,7 +4,7 @@
       <div class="card-header pb-0">
         <div class="d-flex justify-content-between align-items-center">
           <h6>Edit Penilaian</h6>
-          <a href="<?= base_url('admin/assessments') ?>" class="btn btn-sm btn-outline-primary">
+          <a href="<?= base_url('admin/penilaian') ?>" class="btn btn-sm btn-outline-primary">
             <i class="fas fa-arrow-left me-2"></i> Kembali ke Daftar Penilaian
           </a>
         </div>
@@ -14,7 +14,7 @@
         </p>
       </div>
       <div class="card-body">
-        <?= form_open('admin/edit_assessment/' . $assessment->id, ['class' => 'needs-validation']) ?>
+        <?= form_open('admin/edit_penilaian/' . $assessment->id, ['class' => 'needs-validation']) ?>
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
@@ -36,7 +36,7 @@
               </div>
             </div>
           </div>
-          
+
           <div class="row">
             <div class="col-md-12">
               <div class="form-group">
@@ -47,7 +47,7 @@
               </div>
             </div>
           </div>
-          
+
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
@@ -69,7 +69,7 @@
               </div>
             </div>
           </div>
-          
+
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
@@ -86,7 +86,7 @@
               </div>
             </div>
           </div>
-          
+
           <div class="row">
             <div class="col-md-12">
               <div class="form-group">
@@ -97,7 +97,7 @@
               </div>
             </div>
           </div>
-          
+
           <div class="row">
             <div class="col-md-12">
               <div class="form-check form-switch">
@@ -106,11 +106,11 @@
               </div>
             </div>
           </div>
-          
+
           <div class="row mt-4">
             <div class="col-md-12">
               <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
-              <a href="<?= base_url('admin/assessments') ?>" class="btn btn-secondary">Batal</a>
+              <a href="<?= base_url('admin/penilaian') ?>" class="btn btn-secondary">Batal</a>
             </div>
           </div>
         <?= form_close() ?>
@@ -125,7 +125,7 @@
       <div class="card-header pb-0">
         <div class="d-flex justify-content-between align-items-center">
           <h6>Soal Penilaian</h6>
-          <a href="<?= base_url('admin/assessment_questions/' . $assessment->id) ?>" class="btn btn-sm btn-primary">
+          <a href="<?= base_url('admin/soal_penilaian/' . $assessment->id) ?>" class="btn btn-sm btn-primary">
             <i class="fas fa-list me-2"></i> Kelola Soal
           </a>
         </div>
@@ -134,7 +134,7 @@
         <?php if (empty($questions)) : ?>
           <p class="text-center">Belum ada soal untuk penilaian ini.</p>
           <div class="text-center">
-            <a href="<?= base_url('admin/add_question/' . $assessment->id) ?>" class="btn btn-sm btn-primary">
+            <a href="<?= base_url('admin/tambah_soal/' . $assessment->id) ?>" class="btn btn-sm btn-primary">
               <i class="fas fa-plus me-2"></i> Tambah Soal
             </a>
           </div>
@@ -160,8 +160,8 @@
                     </td>
                     <td>
                       <p class="text-xs font-weight-bold mb-0">
-                        <?= $question->question_type == 'multiple_choice' ? 'Pilihan Ganda' : 
-                            ($question->question_type == 'true_false' ? 'Benar/Salah' : 
+                        <?= $question->question_type == 'multiple_choice' ? 'Pilihan Ganda' :
+                            ($question->question_type == 'true_false' ? 'Benar/Salah' :
                             ($question->question_type == 'essay' ? 'Esai' : 'Unggah File')) ?>
                       </p>
                     </td>
@@ -174,13 +174,13 @@
             </table>
           </div>
           <div class="text-center mt-3">
-            <a href="<?= base_url('admin/assessment_questions/' . $assessment->id) ?>" class="btn btn-sm btn-primary">Lihat Semua Soal</a>
+            <a href="<?= base_url('admin/soal_penilaian/' . $assessment->id) ?>" class="btn btn-sm btn-primary">Lihat Semua Soal</a>
           </div>
         <?php endif; ?>
       </div>
     </div>
   </div>
-  
+
   <div class="col-md-6">
     <div class="card">
       <div class="card-header pb-0">
@@ -192,9 +192,9 @@
         </div>
       </div>
       <div class="card-body">
-        <?php 
+        <?php
         $applicants = $this->assessment_model->get_assessment_applicants($assessment->id, 5);
-        if (empty($applicants)) : 
+        if (empty($applicants)) :
         ?>
           <p class="text-center">Belum ada pelamar yang ditugaskan untuk penilaian ini.</p>
         <?php else : ?>
@@ -256,7 +256,7 @@
       ClassicEditor.create(document.querySelector('#description')).catch(error => {
         console.error(error);
       });
-      
+
       ClassicEditor.create(document.querySelector('#instructions')).catch(error => {
         console.error(error);
       });

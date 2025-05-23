@@ -193,47 +193,14 @@ class Admin extends CI_Controller {
         $status = $this->input->get('status');
         $job_id = $this->input->get('job_id');
 
-        // Set up pagination
-        $config['base_url'] = base_url('admin/lamaran');
-        $config['total_rows'] = $this->model_lamaran->hitung_lamaran();
-        $config['per_page'] = 10;
-        $config['uri_segment'] = 3;
-        $config['page_query_string'] = TRUE;
-        $config['query_string_segment'] = 'page';
+        // Get all jobs for filter dropdown
+        $data['jobs'] = $this->model_lowongan->dapatkan_lowongan_semua();
 
-        // Pagination styling
-        $config['full_tag_open'] = '<ul class="pagination">';
-        $config['full_tag_close'] = '</ul>';
-        $config['first_link'] = 'Pertama';
-        $config['last_link'] = 'Terakhir';
-        $config['first_tag_open'] = '<li class="page-item">';
-        $config['first_tag_close'] = '</li>';
-        $config['prev_link'] = '&laquo';
-        $config['prev_tag_open'] = '<li class="page-item">';
-        $config['prev_tag_close'] = '</li>';
-        $config['next_link'] = '&raquo';
-        $config['next_tag_open'] = '<li class="page-item">';
-        $config['next_tag_close'] = '</li>';
-        $config['last_tag_open'] = '<li class="page-item">';
-        $config['last_tag_close'] = '</li>';
-        $config['cur_tag_open'] = '<li class="page-item active"><a class="page-link" href="#">';
-        $config['cur_tag_close'] = '</a></li>';
-        $config['num_tag_open'] = '<li class="page-item">';
-        $config['num_tag_close'] = '</li>';
-        $config['attributes'] = array('class' => 'page-link');
-
-        // Initialize pagination
-        $this->pagination->initialize($config);
-
-        // Get applications for current page
-        $page = $this->input->get('page') ? $this->input->get('page') : 0;
-
-        // For now, get all applications (we'll implement filtering later)
+        // Get all applications
         $data['applications'] = $this->model_lamaran->dapatkan_lamaran_semua();
 
         // Load views
         $data['title'] = 'Manajemen Lamaran';
-        $data['pagination'] = $this->pagination->create_links();
         $this->load->view('templates/admin_header', $data);
         $this->load->view('admin/applications/index', $data);
         $this->load->view('templates/admin_footer');
@@ -280,6 +247,26 @@ class Admin extends CI_Controller {
         redirect('admin/detail_lamaran/' . $application_id);
     }
 
+    // Lihat Lamaran Berdasarkan Lowongan
+    public function lamaran_lowongan($job_id) {
+        // Get job details
+        $data['job'] = $this->model_lowongan->dapatkan_lowongan($job_id);
+
+        // If job not found, show 404
+        if (!$data['job']) {
+            show_404();
+        }
+
+        // Get applications for this job
+        $data['applications'] = $this->model_lamaran->dapatkan_lamaran_lowongan($job_id);
+
+        // Load views
+        $data['title'] = 'Lamaran untuk ' . $data['job']->title;
+        $this->load->view('templates/admin_header', $data);
+        $this->load->view('admin/applications/job_applications', $data);
+        $this->load->view('templates/admin_footer');
+    }
+
     // Manajemen Penilaian
     public function penilaian() {
         // Get all assessments
@@ -290,39 +277,6 @@ class Admin extends CI_Controller {
 
         // Get jobs for filter
         $data['jobs'] = $this->model_lowongan->dapatkan_lowongan_aktif(100, 0);
-
-        // Set up pagination
-        $config['base_url'] = base_url('admin/penilaian');
-        $config['total_rows'] = count($data['assessments']);
-        $config['per_page'] = 10;
-        $config['uri_segment'] = 3;
-        $config['page_query_string'] = TRUE;
-        $config['query_string_segment'] = 'page';
-
-        // Pagination styling
-        $config['full_tag_open'] = '<ul class="pagination">';
-        $config['full_tag_close'] = '</ul>';
-        $config['first_link'] = 'Pertama';
-        $config['last_link'] = 'Terakhir';
-        $config['first_tag_open'] = '<li class="page-item">';
-        $config['first_tag_close'] = '</li>';
-        $config['prev_link'] = '&laquo';
-        $config['prev_tag_open'] = '<li class="page-item">';
-        $config['prev_tag_close'] = '</li>';
-        $config['next_link'] = '&raquo';
-        $config['next_tag_open'] = '<li class="page-item">';
-        $config['next_tag_close'] = '</li>';
-        $config['last_tag_open'] = '<li class="page-item">';
-        $config['last_tag_close'] = '</li>';
-        $config['cur_tag_open'] = '<li class="page-item active"><a class="page-link" href="#">';
-        $config['cur_tag_close'] = '</a></li>';
-        $config['num_tag_open'] = '<li class="page-item">';
-        $config['num_tag_close'] = '</li>';
-        $config['attributes'] = array('class' => 'page-link');
-
-        // Initialize pagination
-        $this->pagination->initialize($config);
-        $data['pagination'] = $this->pagination->create_links();
 
         // Load views
         $data['title'] = 'Manajemen Penilaian';
@@ -386,6 +340,118 @@ class Admin extends CI_Controller {
                 redirect('admin/tambah_penilaian');
             }
         }
+    }
+
+    // Edit Penilaian
+    public function edit_penilaian($id) {
+        // Get assessment details
+        $data['assessment'] = $this->model_penilaian->dapatkan_penilaian($id);
+
+        // If assessment not found, show 404
+        if (!$data['assessment']) {
+            show_404();
+        }
+
+        // Get assessment types
+        $data['assessment_types'] = $this->model_penilaian->dapatkan_jenis_penilaian();
+
+        // Get jobs for dropdown
+        $data['jobs'] = $this->model_lowongan->dapatkan_lowongan_aktif(100, 0);
+
+        // Get assigned job (if any)
+        $data['assigned_job'] = $this->model_penilaian->dapatkan_lowongan_penilaian($id);
+
+        // Form validation rules
+        $this->form_validation->set_rules('title', 'Judul', 'trim|required');
+        $this->form_validation->set_rules('assessment_type_id', 'Jenis Penilaian', 'trim|required');
+        $this->form_validation->set_rules('description', 'Deskripsi', 'trim|required');
+        $this->form_validation->set_rules('time_limit', 'Batas Waktu', 'trim|numeric');
+        $this->form_validation->set_rules('passing_score', 'Nilai Kelulusan', 'trim|numeric');
+
+        if ($this->form_validation->run() == FALSE) {
+            // If validation fails, show form with errors
+            $data['title'] = 'Edit Penilaian';
+            $this->load->view('templates/admin_header', $data);
+            $this->load->view('admin/assessments/edit', $data);
+            $this->load->view('templates/admin_footer');
+        } else {
+            // Get form data
+            $assessment_data = array(
+                'title' => $this->input->post('title'),
+                'type_id' => $this->input->post('assessment_type_id'),
+                'description' => $this->input->post('description'),
+                'instructions' => $this->input->post('instructions'),
+                'time_limit' => $this->input->post('time_limit'),
+                'passing_score' => $this->input->post('passing_score'),
+                'max_attempts' => $this->input->post('max_attempts'),
+                'is_active' => $this->input->post('is_active') ? 1 : 0,
+                'updated_at' => date('Y-m-d H:i:s')
+            );
+
+            // Update assessment data
+            $result = $this->model_penilaian->perbarui_penilaian($id, $assessment_data);
+
+            if ($result) {
+                // Update job assignment if needed
+                $job_id = $this->input->post('job_id');
+                $current_job = $data['assigned_job'] ? $data['assigned_job']->job_id : null;
+
+                // If job assignment has changed
+                if ($job_id != $current_job) {
+                    // Remove current assignment if exists
+                    if ($current_job) {
+                        $this->model_penilaian->hapus_penilaian_dari_lowongan($current_job, $id);
+                    }
+
+                    // Add new assignment if job_id is provided
+                    if (!empty($job_id)) {
+                        $this->model_penilaian->tetapkan_penilaian_ke_lowongan($job_id, $id);
+                    }
+                }
+
+                // Show success message
+                $this->session->set_flashdata('success', 'Penilaian berhasil diperbarui.');
+                redirect('admin/penilaian');
+            } else {
+                // If update fails, show error message
+                $this->session->set_flashdata('error', 'Gagal memperbarui penilaian. Silakan coba lagi.');
+                redirect('admin/edit_penilaian/' . $id);
+            }
+        }
+    }
+
+    // Hapus Penilaian
+    public function hapus_penilaian($id) {
+        // Get assessment details
+        $assessment = $this->model_penilaian->dapatkan_penilaian($id);
+
+        // If assessment not found, show 404
+        if (!$assessment) {
+            show_404();
+        }
+
+        // Check if assessment has been used by applicants
+        $has_applicants = $this->model_penilaian->cek_penilaian_digunakan($id);
+
+        if ($has_applicants) {
+            // If assessment has been used, show error message
+            $this->session->set_flashdata('error', 'Penilaian tidak dapat dihapus karena sudah digunakan oleh pelamar.');
+            redirect('admin/penilaian');
+            return;
+        }
+
+        // Delete assessment
+        $result = $this->model_penilaian->hapus_penilaian($id);
+
+        if ($result) {
+            // Show success message
+            $this->session->set_flashdata('success', 'Penilaian berhasil dihapus.');
+        } else {
+            // If deletion fails, show error message
+            $this->session->set_flashdata('error', 'Gagal menghapus penilaian. Silakan coba lagi.');
+        }
+
+        redirect('admin/penilaian');
     }
 
     // Kelola Soal Penilaian

@@ -60,7 +60,7 @@
               <a href="<?= base_url('admin/tambah_artikel') ?>" class="btn btn-primary mt-3">Tambah Artikel Baru</a>
             </div>
           <?php else : ?>
-            <table class="table align-items-center mb-0">
+            <table class="table align-items-center mb-0 datatable">
               <thead>
                 <tr>
                   <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Artikel</th>
@@ -134,11 +134,6 @@
                 <?php endforeach; ?>
               </tbody>
             </table>
-
-            <!-- Pagination -->
-            <div class="d-flex justify-content-center mt-4">
-              <?= $pagination ?>
-            </div>
           <?php endif; ?>
         </div>
       </div>
@@ -159,7 +154,7 @@
       </div>
       <div class="card-body">
         <div class="table-responsive">
-          <table class="table align-items-center mb-0">
+          <table class="table align-items-center mb-0 datatable">
             <thead>
               <tr>
                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Nama</th>

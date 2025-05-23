@@ -219,4 +219,40 @@ class Model_Penilaian extends CI_Model {
         $this->db->where('assessment_id', $assessment_id);
         return $this->db->delete('job_assessments');
     }
+
+    // Cek apakah penilaian sudah digunakan oleh pelamar
+    public function cek_penilaian_digunakan($assessment_id) {
+        $this->db->where('assessment_id', $assessment_id);
+        $query = $this->db->get('applicant_assessments');
+        return ($query->num_rows() > 0);
+    }
+
+    // Dapatkan lowongan yang terkait dengan penilaian
+    public function dapatkan_lowongan_penilaian($assessment_id) {
+        $this->db->select('job_assessments.*, jobs.title as job_title');
+        $this->db->from('job_assessments');
+        $this->db->join('jobs', 'jobs.id = job_assessments.job_id', 'left');
+        $this->db->where('job_assessments.assessment_id', $assessment_id);
+        $query = $this->db->get();
+        return $query->row();
+    }
+
+    // Hitung jumlah soal dalam penilaian
+    public function hitung_soal_penilaian($assessment_id) {
+        $this->db->where('assessment_id', $assessment_id);
+        return $this->db->count_all_results('questions');
+    }
+
+    // Hitung jumlah pelamar yang ditugaskan penilaian
+    public function hitung_pelamar_penilaian($assessment_id) {
+        $this->db->where('assessment_id', $assessment_id);
+        return $this->db->count_all_results('applicant_assessments');
+    }
+
+    // Hitung jumlah pelamar yang telah menyelesaikan penilaian
+    public function hitung_penyelesaian_penilaian($assessment_id) {
+        $this->db->where('assessment_id', $assessment_id);
+        $this->db->where('status', 'completed');
+        return $this->db->count_all_results('applicant_assessments');
+    }
 }

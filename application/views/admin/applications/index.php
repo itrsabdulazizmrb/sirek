@@ -5,9 +5,7 @@
         <div class="d-flex justify-content-between align-items-center">
           <h6>Manajemen Lamaran</h6>
           <div>
-            <a href="<?= base_url('admin/export_applications') ?>" class="btn btn-sm btn-success">
-              <i class="fas fa-file-excel me-2"></i> Export Excel
-            </a>
+            <!-- Removed export button as it will be handled by DataTables -->
           </div>
         </div>
         <p class="text-sm mb-0">
@@ -72,7 +70,7 @@
               <p class="text-muted">Coba ubah filter atau cari dengan kata kunci yang berbeda.</p>
             </div>
           <?php else : ?>
-            <table class="table align-items-center mb-0">
+            <table class="table align-items-center mb-0 datatable">
               <thead>
                 <tr>
                   <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Pelamar</th>
@@ -166,11 +164,6 @@
                 <?php endforeach; ?>
               </tbody>
             </table>
-
-            <!-- Pagination -->
-            <div class="d-flex justify-content-center mt-4">
-              <?= $pagination ?>
-            </div>
           <?php endif; ?>
         </div>
       </div>
