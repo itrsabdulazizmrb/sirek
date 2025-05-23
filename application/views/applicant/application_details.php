@@ -197,6 +197,15 @@
             Lamaran Anda telah ditinjau oleh tim rekrutmen kami. Kami akan menghubungi Anda segera untuk langkah selanjutnya.
           <?php elseif ($application->status == 'seleksi') : ?>
             Selamat! Anda telah masuk dalam tahap seleksi untuk posisi ini. Kami akan menghubungi Anda segera untuk menjadwalkan wawancara.
+            <?php if (!empty($assessments)) : ?>
+              <div class="mt-3">
+                <?php if (count($assessments) == 1 && ($assessments[0]->status == 'not_started' || $assessments[0]->status == 'in_progress')) : ?>
+                  <a href="<?= base_url('pelamar/ikuti_penilaian/' . $assessments[0]->assessment_id . '/' . $assessments[0]->application_id) ?>" class="btn btn-primary btn-sm">Ikuti Seleksi</a>
+                <?php else : ?>
+                  <a href="<?= base_url('pelamar/penilaian') ?>" class="btn btn-primary btn-sm">Lihat Seleksi</a>
+                <?php endif; ?>
+              </div>
+            <?php endif; ?>
           <?php elseif ($application->status == 'wawancara') : ?>
             Anda telah menyelesaikan tahap wawancara. Kami sedang mengevaluasi semua kandidat dan akan segera menghubungi Anda.
           <?php elseif ($application->status == 'ditawari') : ?>
