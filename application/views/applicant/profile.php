@@ -103,6 +103,8 @@
               </div>
             </div>
           </div>
+          <hr class="horizontal dark">
+          <p class="text-uppercase text-sm">Dokumen</p>
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
@@ -121,24 +123,6 @@
               <?php endif; ?>
             </div>
           </div>
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="linkedin_url" class="form-control-label">LinkedIn URL</label>
-                <input type="url" name="linkedin_url" id="linkedin_url" class="form-control" value="<?= set_value('linkedin_url', $profile->url_linkedin) ?>">
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="portfolio_url" class="form-control-label">Portfolio URL</label>
-                <input type="url" name="portfolio_url" id="portfolio_url" class="form-control" value="<?= set_value('portfolio_url', $profile->url_portofolio) ?>">
-              </div>
-            </div>
-          </div>
-
-          <hr class="horizontal dark">
-          <p class="text-uppercase text-sm">Dokumen Persyaratan</p>
-          <p class="text-muted small">Unggah dokumen persyaratan Anda di sini. Dokumen ini akan tersimpan dan dapat digunakan kembali saat melamar pekerjaan.</p>
 
           <?php
           // Buat array untuk menyimpan dokumen yang sudah diunggah
@@ -154,30 +138,48 @@
               // Skip CV karena sudah ada di atas
               if ($doc_type_key == 'cv') continue;
           ?>
-          <div class="row mb-3">
-            <div class="col-md-4">
-              <label for="document_<?= $doc_type_key ?>" class="form-control-label"><?= $doc_type['nama_dokumen'] ?> <?= $doc_type['wajib'] ? '<span class="text-danger">*</span>' : '' ?></label>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="document_<?= $doc_type_key ?>" class="form-control-label"><?= $doc_type['nama_dokumen'] ?> <?= $doc_type['wajib'] ? '<span class="text-danger">*</span>' : '' ?></label>
+                <input type="file" class="form-control" id="document_<?= $doc_type_key ?>" name="document_<?= $doc_type_key ?>" accept="<?= str_replace('|', ',', $doc_type['format_diizinkan']) ?>">
+                <small class="text-muted">Format: <?= strtoupper(str_replace('|', ', ', $doc_type['format_diizinkan'])) ?>. Max size: <?= $doc_type['ukuran_maksimal']/1024 ?>MB</small>
+              </div>
             </div>
-            <div class="col-md-5">
-              <input type="file" class="form-control" id="document_<?= $doc_type_key ?>" name="document_<?= $doc_type_key ?>" accept="<?= str_replace('|', ',', $doc_type['format_diizinkan']) ?>">
-              <small class="text-muted">Format: <?= strtoupper(str_replace('|', ', ', $doc_type['format_diizinkan'])) ?>. Maks: <?= $doc_type['ukuran_maksimal']/1024 ?>MB</small>
-            </div>
-            <div class="col-md-3">
+            <div class="col-md-6">
               <?php if (isset($uploaded_docs[$doc_type_key])) : ?>
-                <div class="btn-group">
-                  <a href="<?= base_url('pelamar/download_dokumen_pelamar/' . $uploaded_docs[$doc_type_key]->id) ?>" class="btn btn-sm btn-info">
-                    <i class="fas fa-download"></i> Unduh
-                  </a>
-                  <a href="<?= base_url('pelamar/hapus_dokumen_pelamar/' . $uploaded_docs[$doc_type_key]->id) ?>" class="btn btn-sm btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus dokumen ini?')">
-                    <i class="fas fa-trash"></i> Hapus
-                  </a>
+                <div class="form-group">
+                  <label class="form-control-label">Current <?= $doc_type['nama_dokumen'] ?></label>
+                  <p class="mb-0"><?= $uploaded_docs[$doc_type_key]->nama_file ?></p>
+                  <div class="mt-2">
+                    <a href="<?= base_url('pelamar/download_dokumen_pelamar/' . $uploaded_docs[$doc_type_key]->id) ?>" class="btn btn-sm btn-outline-primary" target="_blank">View Document</a>
+                    <a href="<?= base_url('pelamar/hapus_dokumen_pelamar/' . $uploaded_docs[$doc_type_key]->id) ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure you want to delete this document?')">Delete</a>
+                  </div>
                 </div>
-              <?php else : ?>
-                <span class="badge bg-secondary">Belum diunggah</span>
               <?php endif; ?>
             </div>
           </div>
           <?php } ?>
+          
+          <hr class="horizontal dark">
+         
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="linkedin_url" class="form-control-label">LinkedIn URL</label>
+                <input type="url" name="linkedin_url" id="linkedin_url" class="form-control" value="<?= set_value('linkedin_url', $profile->url_linkedin) ?>">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="portfolio_url" class="form-control-label">Portfolio URL</label>
+                <input type="url" name="portfolio_url" id="portfolio_url" class="form-control" value="<?= set_value('portfolio_url', $profile->url_portofolio) ?>">
+              </div>
+            </div>
+          </div>
+
+
+          
 
           <div class="d-flex justify-content-end mt-4">
             <button type="submit" class="btn btn-primary">Save Changes</button>
