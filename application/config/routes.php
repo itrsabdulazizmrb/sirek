@@ -131,6 +131,12 @@ $route['admin/assessments'] = 'admin/penilaian';
 $route['admin/add_question/(:num)'] = 'admin/tambah_soal/$1';
 $route['admin/edit_assessment/(:num)'] = 'admin/edit_penilaian/$1';
 $route['admin/delete_assessment/(:num)'] = 'admin/hapus_penilaian/$1';
+$route['admin/assessment_results/(:num)'] = 'admin/hasilPenilaian/$1';
+$route['admin/hasil-penilaian/(:num)'] = 'admin/hasilPenilaian/$1';
+$route['admin/save_question_options/(:num)'] = 'admin/simpanOpsiSoal/$1';
+$route['admin/simpan-opsi-soal/(:num)'] = 'admin/simpan_opsi_soal/$1';
+$route['admin/preview_assessment/(:num)'] = 'admin/previewPenilaian/$1';
+$route['admin/assign_assessment_to_applicants/(:num)'] = 'admin/tetapkanPenilaian/$1';
 
 // Rute tambahan untuk lowongan (alias)
 $route['admin/jobs'] = 'admin/lowongan';

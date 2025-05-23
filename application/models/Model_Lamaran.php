@@ -48,9 +48,10 @@ class Model_Lamaran extends CI_Model {
 
     // Dapatkan lamaran berdasarkan lowongan
     public function dapatkan_lamaran_lowongan($job_id) {
-        $this->db->select('job_applications.*, users.full_name as applicant_name, users.email as applicant_email, users.profile_picture');
+        $this->db->select('job_applications.*, job_postings.title as job_title, users.full_name as applicant_name, users.email as applicant_email, users.profile_picture');
         $this->db->from('job_applications');
         $this->db->join('users', 'users.id = job_applications.applicant_id', 'left');
+        $this->db->join('job_postings', 'job_postings.id = job_applications.job_id', 'left');
         $this->db->where('job_applications.job_id', $job_id);
         $this->db->order_by('job_applications.application_date', 'DESC');
         $query = $this->db->get();
@@ -184,6 +185,18 @@ class Model_Lamaran extends CI_Model {
         $this->db->group_by('job_postings.id');
         $this->db->order_by('application_count', 'DESC');
         $this->db->limit(10); // Ambil 10 lowongan teratas
+        $query = $this->db->get();
+        return $query->result();
+    }
+
+    // Dapatkan semua lamaran aktif
+    public function dapatkan_semua_lamaran_aktif() {
+        $this->db->select('job_applications.*, job_postings.title as job_title, job_postings.deadline, users.full_name as applicant_name, users.email as applicant_email, users.profile_picture');
+        $this->db->from('job_applications');
+        $this->db->join('job_postings', 'job_postings.id = job_applications.job_id', 'left');
+        $this->db->join('users', 'users.id = job_applications.applicant_id', 'left');
+        $this->db->where_in('job_applications.status', ['Pending', 'Direview', 'Seleksi', 'Wawancara']);
+        $this->db->order_by('job_applications.application_date', 'DESC');
         $query = $this->db->get();
         return $query->result();
     }

@@ -25,8 +25,8 @@
             </div>
             <div class="d-flex justify-content-between mt-2">
               <p class="text-xs text-secondary mb-0">
-                <strong>Tipe:</strong> 
-                <?php 
+                <strong>Tipe:</strong>
+                <?php
                 switch($question->question_type) {
                   case 'multiple_choice':
                     echo 'Pilihan Ganda';
@@ -43,12 +43,12 @@
             </div>
           </div>
         </div>
-        
+
         <!-- Options Form -->
         <div class="row">
           <div class="col-md-12">
             <h6 class="text-uppercase text-sm">Opsi Jawaban</h6>
-            <?= form_open('admin/save_question_options/' . $question->id, ['class' => 'needs-validation']) ?>
+            <?= form_open('admin/simpan-opsi-soal/' . $question->id, ['class' => 'needs-validation']) ?>
               <?php if ($question->question_type == 'true_false') : ?>
                 <!-- True/False Options -->
                 <div class="row mb-3">
@@ -138,7 +138,7 @@
                     <?php endforeach; ?>
                   <?php endif; ?>
                 </div>
-                
+
                 <div class="row mb-3">
                   <div class="col-md-12">
                     <button type="button" id="add-option" class="btn btn-outline-primary btn-sm">
@@ -147,7 +147,7 @@
                   </div>
                 </div>
               <?php endif; ?>
-              
+
               <div class="row mt-4">
                 <div class="col-md-12">
                   <button type="submit" class="btn btn-primary">Simpan Opsi</button>
@@ -191,7 +191,7 @@
         const optionsContainer = document.getElementById('options-container');
         const optionRows = document.querySelectorAll('.option-row');
         const newIndex = optionRows.length;
-        
+
         const newRow = document.createElement('div');
         newRow.className = 'row mb-3 option-row';
         newRow.innerHTML = `
@@ -221,12 +221,12 @@
             </div>
           </div>
         `;
-        
+
         optionsContainer.appendChild(newRow);
         updateRemoveButtons();
       });
     }
-    
+
     // Remove option button functionality
     document.addEventListener('click', function(e) {
       if (e.target.classList.contains('remove-option') || e.target.closest('.remove-option')) {
@@ -239,7 +239,7 @@
         }
       }
     });
-    
+
     function updateRemoveButtons() {
       const optionRows = document.querySelectorAll('.option-row');
       optionRows.forEach(row => {
@@ -249,7 +249,7 @@
         }
       });
     }
-    
+
     function updateOptionLabels() {
       const optionRows = document.querySelectorAll('.option-row');
       optionRows.forEach((row, index) => {
@@ -257,7 +257,7 @@
         if (label && label.textContent.startsWith('Opsi ')) {
           label.textContent = `Opsi ${index + 1}`;
         }
-        
+
         const radioInput = row.querySelector('input[type="radio"]');
         if (radioInput) {
           radioInput.value = index;

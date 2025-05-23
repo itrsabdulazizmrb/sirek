@@ -339,4 +339,46 @@ class Model_Penilaian extends CI_Model {
         $query = $this->db->get();
         return $query->result();
     }
+
+    // Dapatkan hasil penilaian
+    public function dapatkan_hasil_penilaian($assessment_id) {
+        $this->db->select('applicant_assessments.*, users.full_name, users.email, job_applications.id as application_id, job_postings.title as job_title');
+        $this->db->from('applicant_assessments');
+        $this->db->join('job_applications', 'job_applications.id = applicant_assessments.application_id', 'left');
+        $this->db->join('users', 'users.id = job_applications.applicant_id', 'left');
+        $this->db->join('job_postings', 'job_postings.id = job_applications.job_id', 'left');
+        $this->db->where('applicant_assessments.assessment_id', $assessment_id);
+        $this->db->order_by('applicant_assessments.score', 'DESC');
+        $query = $this->db->get();
+        return $query->result();
+    }
+
+    // Dapatkan rata-rata skor penilaian
+    public function dapatkan_rata_rata_skor($assessment_id) {
+        $this->db->select_avg('score');
+        $this->db->from('applicant_assessments');
+        $this->db->where('assessment_id', $assessment_id);
+        $this->db->where('status', 'completed');
+        $query = $this->db->get();
+        $result = $query->row();
+        return $result->score ? round($result->score) : 0;
+    }
+
+    // Dapatkan pelamar penilaian (untuk tampilan edit)
+    public function dapatkan_pelamar_penilaian($assessment_id, $limit = null) {
+        $this->db->select('applicant_assessments.*, users.full_name as applicant_name, users.email as applicant_email, job_applications.id as application_id, job_postings.title as job_title');
+        $this->db->from('applicant_assessments');
+        $this->db->join('job_applications', 'job_applications.id = applicant_assessments.application_id', 'left');
+        $this->db->join('users', 'users.id = job_applications.applicant_id', 'left');
+        $this->db->join('job_postings', 'job_postings.id = job_applications.job_id', 'left');
+        $this->db->where('applicant_assessments.assessment_id', $assessment_id);
+        $this->db->order_by('applicant_assessments.id', 'DESC');
+
+        if ($limit !== null) {
+            $this->db->limit($limit);
+        }
+
+        $query = $this->db->get();
+        return $query->result();
+    }
 }

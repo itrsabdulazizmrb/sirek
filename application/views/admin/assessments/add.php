@@ -130,11 +130,8 @@
           <div class="col-md-6">
             <h6 class="text-uppercase text-sm">Tipe Penilaian</h6>
             <ul class="text-sm">
-              <li><strong>Tes Kepribadian:</strong> Menilai karakteristik kepribadian dan kesesuaian budaya.</li>
               <li><strong>Tes Teknis:</strong> Menilai keterampilan teknis dan pengetahuan spesifik.</li>
-              <li><strong>Tes Logika:</strong> Menilai kemampuan pemecahan masalah dan penalaran logis.</li>
-              <li><strong>Tes Bahasa:</strong> Menilai kemampuan komunikasi dan bahasa.</li>
-              <li><strong>Tes Pengetahuan:</strong> Menilai pengetahuan umum atau spesifik industri.</li>
+              <li><strong>Psikotes:</strong> Menilai karakteristik kepribadian dan kesesuaian budaya.</li>
             </ul>
           </div>
           <div class="col-md-6">

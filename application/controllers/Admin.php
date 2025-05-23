@@ -841,6 +841,128 @@ class Admin extends CI_Controller {
         $this->load->view('templates/admin_footer');
     }
 
+    // Hasil Penilaian
+    public function hasilPenilaian($assessment_id) {
+        // Get assessment details
+        $data['assessment'] = $this->model_penilaian->dapatkan_penilaian($assessment_id);
+
+        // If assessment not found, show 404
+        if (!$data['assessment']) {
+            show_404();
+        }
+
+        // Get applicants who have taken this assessment
+        $data['results'] = $this->model_penilaian->dapatkan_hasil_penilaian($assessment_id);
+
+        // Get statistics
+        $data['stats'] = [
+            'total_applicants' => $this->model_penilaian->hitung_pelamar_penilaian($assessment_id),
+            'completed' => $this->model_penilaian->hitung_penyelesaian_penilaian($assessment_id),
+            'avg_score' => $this->model_penilaian->dapatkan_rata_rata_skor($assessment_id)
+        ];
+
+        // Load views
+        $data['title'] = 'Hasil Penilaian';
+        $this->load->view('templates/admin_header', $data);
+        $this->load->view('admin/assessments/hasil', $data);
+        $this->load->view('templates/admin_footer');
+    }
+
+    // Pratinjau Penilaian
+    public function previewPenilaian($assessment_id) {
+        // Get assessment details
+        $data['assessment'] = $this->model_penilaian->dapatkan_penilaian($assessment_id);
+
+        // If assessment not found, show 404
+        if (!$data['assessment']) {
+            show_404();
+        }
+
+        // Get assessment questions with options
+        $data['questions'] = $this->model_penilaian->dapatkan_soal_penilaian($assessment_id);
+        foreach ($data['questions'] as &$question) {
+            if ($question->question_type == 'multiple_choice' || $question->question_type == 'true_false') {
+                $question->options = $this->model_penilaian->dapatkan_opsi_soal($question->id);
+            }
+        }
+
+        // Load views
+        $data['title'] = 'Pratinjau Penilaian';
+        $data['preview_mode'] = true;
+        $this->load->view('templates/admin_header', $data);
+        $this->load->view('admin/assessments/preview', $data);
+        $this->load->view('templates/admin_footer');
+    }
+
+    // Tetapkan Penilaian ke Pelamar
+    public function tetapkanPenilaian($assessment_id) {
+        // Get assessment details
+        $data['assessment'] = $this->model_penilaian->dapatkan_penilaian($assessment_id);
+
+        // If assessment not found, show 404
+        if (!$data['assessment']) {
+            show_404();
+        }
+
+        // Get job applications that can be assigned to this assessment
+        // First, get the job associated with this assessment (if any)
+        $job_id = $this->model_penilaian->dapatkan_lowongan_penilaian($assessment_id);
+
+        if ($job_id) {
+            // If assessment is associated with a job, get applications for that job
+            $data['applications'] = $this->model_lamaran->dapatkan_lamaran_lowongan($job_id->job_id);
+            $data['job'] = $this->model_lowongan->dapatkan_lowongan($job_id->job_id);
+        } else {
+            // If not associated with a job, get all active applications
+            $data['applications'] = $this->model_lamaran->dapatkan_semua_lamaran_aktif();
+            $data['job'] = null;
+        }
+
+        // Process form submission
+        if ($this->input->post()) {
+            $application_ids = $this->input->post('application_ids');
+
+            if (!empty($application_ids)) {
+                $success_count = 0;
+                $already_assigned = 0;
+
+                foreach ($application_ids as $application_id) {
+                    // Check if already assigned
+                    if (!$this->model_penilaian->cek_penilaian_sudah_ditetapkan($application_id, $assessment_id)) {
+                        $applicant_assessment_data = array(
+                            'application_id' => $application_id,
+                            'assessment_id' => $assessment_id,
+                            'status' => 'not_started',
+                            'created_at' => date('Y-m-d H:i:s')
+                        );
+                        $this->model_penilaian->tambah_penilaian_pelamar($applicant_assessment_data);
+                        $success_count++;
+                    } else {
+                        $already_assigned++;
+                    }
+                }
+
+                if ($success_count > 0) {
+                    $this->session->set_flashdata('success', $success_count . ' pelamar berhasil ditetapkan untuk penilaian ini.');
+                }
+
+                if ($already_assigned > 0) {
+                    $this->session->set_flashdata('info', $already_assigned . ' pelamar sudah ditetapkan sebelumnya.');
+                }
+
+                redirect('admin/hasil-penilaian/' . $assessment_id);
+            } else {
+                $this->session->set_flashdata('error', 'Silakan pilih minimal satu pelamar.');
+            }
+        }
+
+        // Load views
+        $data['title'] = 'Tetapkan Penilaian ke Pelamar';
+        $this->load->view('templates/admin_header', $data);
+        $this->load->view('admin/assessments/assign_to_applicants', $data);
+        $this->load->view('templates/admin_footer');
+    }
+
     // Tambah Soal
     public function tambah_soal($assessment_id) {
         // Get assessment details
@@ -1013,6 +1135,12 @@ class Admin extends CI_Controller {
         // Show success message
         $this->session->set_flashdata('success', 'Opsi soal berhasil disimpan.');
         redirect('admin/soal_penilaian/' . $question->assessment_id);
+    }
+
+    // Simpan Opsi Soal (camelCase version)
+    public function simpanOpsiSoal($question_id) {
+        // Call the original method to avoid code duplication
+        return $this->simpan_opsi_soal($question_id);
     }
 
     // Manajemen Pengguna

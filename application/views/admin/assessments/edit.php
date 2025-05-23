@@ -193,7 +193,7 @@
       </div>
       <div class="card-body">
         <?php
-        $applicants = $this->assessment_model->get_assessment_applicants($assessment->id, 5);
+        $applicants = $this->model_penilaian->dapatkan_pelamar_penilaian($assessment->id, 5);
         if (empty($applicants)) :
         ?>
           <p class="text-center">Belum ada pelamar yang ditugaskan untuk penilaian ini.</p>
@@ -241,7 +241,7 @@
             </table>
           </div>
           <div class="text-center mt-3">
-            <a href="<?= base_url('admin/assessment_results/' . $assessment->id) ?>" class="btn btn-sm btn-primary">Lihat Semua Pelamar</a>
+            <a href="<?= base_url('admin/hasil-penilaian/' . $assessment->id) ?>" class="btn btn-sm btn-primary">Lihat Semua Pelamar</a>
           </div>
         <?php endif; ?>
       </div>

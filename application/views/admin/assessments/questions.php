@@ -123,7 +123,7 @@
                     <td class="align-middle text-center">
                       <?php if ($question->question_type == 'multiple_choice' || $question->question_type == 'true_false') : ?>
                         <?php
-                        $options = $this->assessment_model->get_question_options($question->id);
+                        $options = $this->model_penilaian->dapatkan_opsi_soal($question->id);
                         $option_count = count($options);
                         ?>
                         <span class="text-secondary text-xs font-weight-bold"><?= $option_count ?> opsi</span>
@@ -192,13 +192,13 @@
           <a href="<?= base_url('import/index') ?>" class="btn btn-outline-success">
             <i class="fas fa-file-import me-2"></i> Import Soal dari Excel
           </a>
-          <a href="<?= base_url('admin/preview_assessment/' . $assessment->id) ?>" class="btn btn-outline-info">
+          <a href="<?= base_url('admin/previewPenilaian/' . $assessment->id) ?>" class="btn btn-outline-info">
             <i class="fas fa-eye me-2"></i> Pratinjau Penilaian
           </a>
-          <a href="<?= base_url('admin/assign_assessment_to_applicants/' . $assessment->id) ?>" class="btn btn-outline-success">
+          <a href="<?= base_url('admin/tetapkanPenilaian/' . $assessment->id) ?>" class="btn btn-outline-success">
             <i class="fas fa-user-plus me-2"></i> Tetapkan ke Pelamar
           </a>
-          <a href="<?= base_url('admin/assessment_results/' . $assessment->id) ?>" class="btn btn-outline-warning">
+          <a href="<?= base_url('admin/hasil-penilaian/' . $assessment->id) ?>" class="btn btn-outline-warning">
             <i class="fas fa-chart-bar me-2"></i> Lihat Hasil Penilaian
           </a>
         </div>

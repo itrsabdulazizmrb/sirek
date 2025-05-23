@@ -22,7 +22,7 @@
       </div>
       <div class="card-body p-0">
 
-        <div class="table-responsive p-0">
+        <div class="table-responsive p-0" style="min-height: 500px; overflow-y: auto;">
           <?php if (empty($assessments)) : ?>
             <div class="text-center py-5">
               <h4 class="text-secondary">Tidak ada penilaian yang ditemukan</h4>
@@ -88,7 +88,7 @@
                       // $applicant_count = $this->model_penilaian->hitung_pelamar_penilaian($assessment->id);
                       // $completed_count = $this->model_penilaian->hitung_penyelesaian_penilaian($assessment->id);
                       ?>
-                      <a href="<?= base_url('admin/assessment_results/' . $assessment->id) ?>" class="text-secondary font-weight-bold text-xs">
+                      <a href="<?= base_url('admin/hasil-penilaian/' . $assessment->id) ?>" class="text-secondary font-weight-bold text-xs">
                         <?= $completed_count ?>/<?= $applicant_count ?> Selesai
                       </a>
                     </td>
@@ -107,7 +107,7 @@
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end px-2 py-3" aria-labelledby="dropdownMenuButton<?= $assessment->id ?>">
                           <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/soal_penilaian/' . $assessment->id) ?>"><i class="fas fa-list me-2"></i> Kelola Soal</a></li>
-                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/assessment_results/' . $assessment->id) ?>"><i class="fas fa-chart-bar me-2"></i> Lihat Hasil</a></li>
+                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/hasil-penilaian/' . $assessment->id) ?>"><i class="fas fa-chart-bar me-2"></i> Lihat Hasil</a></li>
                           <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/assign_assessment_to_applicants/' . $assessment->id) ?>"><i class="fas fa-user-plus me-2"></i> Tetapkan ke Pelamar</a></li>
                         </ul>
                       </div>
