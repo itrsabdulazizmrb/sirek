@@ -114,7 +114,7 @@
           <div class="col-md-12">
             <h6 class="mb-3">Surat Lamaran</h6>
             <div class="p-3 bg-light rounded">
-              <?= nl2br($application->cover_letter) ?>
+              <?= nl2br($application->surat_lamaran) ?>
             </div>
           </div>
         </div>
