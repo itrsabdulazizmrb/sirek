@@ -55,6 +55,14 @@ class Pelamar extends CI_Controller {
         $user_id = $this->session->userdata('user_id');
         $data['user'] = $this->model_pengguna->dapatkan_pengguna($user_id);
         $data['profile'] = $this->model_pelamar->dapatkan_profil($user_id);
+        $data['documents'] = $this->model_dokumen->dapatkan_dokumen_pelamar($user_id);
+
+        // Get default document types
+        $default_docs = $this->model_dokumen->dapatkan_dokumen_default();
+        $data['document_types'] = [];
+        foreach ($default_docs as $doc) {
+            $data['document_types'][$doc['jenis_dokumen']] = $doc;
+        }
 
         // Get profile completion percentage
         $data['profile_completion'] = $this->model_pelamar->dapatkan_persentase_kelengkapan_profil($user_id);
@@ -113,6 +121,24 @@ class Pelamar extends CI_Controller {
                 if ($this->upload->do_upload('resume')) {
                     $upload_data = $this->upload->data();
                     $profile_data['cv'] = $upload_data['file_name'];
+
+                    // Also save as document in dokumen_pelamar
+                    $document_data = [
+                        'id_pengguna' => $user_id,
+                        'jenis_dokumen' => 'cv',
+                        'nama_dokumen' => 'Curriculum Vitae (CV)',
+                        'nama_file' => $upload_data['file_name'],
+                        'ukuran_file' => $upload_data['file_size'],
+                        'tipe_file' => $upload_data['file_type']
+                    ];
+
+                    // Check if document already exists
+                    $existing_doc = $this->model_dokumen->dapatkan_dokumen_pelamar_by_jenis($user_id, 'cv');
+                    if ($existing_doc) {
+                        $this->model_dokumen->perbarui_dokumen_pelamar($existing_doc->id, $document_data);
+                    } else {
+                        $this->model_dokumen->tambah_dokumen_pelamar($document_data);
+                    }
                 } else {
                     $this->session->set_flashdata('error', $this->upload->display_errors());
                     redirect('pelamar/profil');
@@ -140,6 +166,62 @@ class Pelamar extends CI_Controller {
                 } else {
                     $this->session->set_flashdata('error', $this->upload->display_errors());
                     redirect('pelamar/profil');
+                }
+            }
+
+            // Handle document uploads
+            $default_docs = $this->model_dokumen->dapatkan_dokumen_default();
+            foreach ($default_docs as $doc_type) {
+                $field_name = 'document_' . $doc_type['jenis_dokumen'];
+
+                // Skip CV as it's handled separately
+                if ($doc_type['jenis_dokumen'] == 'cv') {
+                    continue;
+                }
+
+                if ($_FILES[$field_name]['name']) {
+                    // Configure upload
+                    $upload_path = FCPATH . 'uploads/documents/';
+                    if (!is_dir($upload_path)) {
+                        mkdir($upload_path, 0777, true);
+                    }
+
+                    $config = [
+                        'upload_path' => $upload_path,
+                        'allowed_types' => $doc_type['format_diizinkan'],
+                        'max_size' => $doc_type['ukuran_maksimal'],
+                        'file_name' => $doc_type['jenis_dokumen'] . '_' . $user_id . '_' . time()
+                    ];
+
+                    $this->upload->initialize($config);
+
+                    if ($this->upload->do_upload($field_name)) {
+                        $upload_data = $this->upload->data();
+
+                        // Save document data
+                        $document_data = [
+                            'id_pengguna' => $user_id,
+                            'jenis_dokumen' => $doc_type['jenis_dokumen'],
+                            'nama_dokumen' => $doc_type['nama_dokumen'],
+                            'nama_file' => $upload_data['file_name'],
+                            'ukuran_file' => $upload_data['file_size'],
+                            'tipe_file' => $upload_data['file_type']
+                        ];
+
+                        // Check if document already exists
+                        $existing_doc = $this->model_dokumen->dapatkan_dokumen_pelamar_by_jenis($user_id, $doc_type['jenis_dokumen']);
+                        if ($existing_doc) {
+                            // Delete old file
+                            if (file_exists(FCPATH . 'uploads/documents/' . $existing_doc->nama_file)) {
+                                unlink(FCPATH . 'uploads/documents/' . $existing_doc->nama_file);
+                            }
+                            $this->model_dokumen->perbarui_dokumen_pelamar($existing_doc->id, $document_data);
+                        } else {
+                            $this->model_dokumen->tambah_dokumen_pelamar($document_data);
+                        }
+                    } else {
+                        $this->session->set_flashdata('error', $doc_type['nama_dokumen'] . ': ' . $this->upload->display_errors('', ''));
+                    }
                 }
             }
 
@@ -187,6 +269,9 @@ class Pelamar extends CI_Controller {
 
         // Get applicant profile
         $data['profile'] = $this->model_pelamar->dapatkan_profil($user_id);
+
+        // Get applicant documents
+        $data['documents'] = $this->model_dokumen->dapatkan_dokumen_pelamar($user_id);
 
         // Get document requirements for this job
         $data['document_requirements'] = $this->model_dokumen->dapatkan_dokumen_lowongan($job_id);
@@ -277,6 +362,28 @@ class Pelamar extends CI_Controller {
 
                             $this->model_dokumen->tambah_dokumen_lamaran($document_data);
                             continue; // Skip to next document requirement
+                        }
+
+                        // Check if user wants to use existing document from profile
+                        $use_existing_doc_field = 'use_existing_doc_' . $req->id;
+                        if ($this->input->post($use_existing_doc_field)) {
+                            $existing_doc_id = $this->input->post($use_existing_doc_field);
+                            $existing_doc = $this->model_dokumen->dapatkan_dokumen_pelamar_by_id($existing_doc_id);
+
+                            if ($existing_doc && $existing_doc->id_pengguna == $user_id) {
+                                // Use existing document from profile
+                                $document_data = [
+                                    'id_lamaran' => $application_id,
+                                    'id_dokumen_lowongan' => $req->id,
+                                    'jenis_dokumen' => $req->jenis_dokumen,
+                                    'nama_file' => $existing_doc->nama_file,
+                                    'ukuran_file' => $existing_doc->ukuran_file,
+                                    'tipe_file' => $existing_doc->tipe_file
+                                ];
+
+                                $this->model_dokumen->tambah_dokumen_lamaran($document_data);
+                                continue; // Skip to next document requirement
+                            }
                         }
 
                         // Check if file was uploaded
@@ -415,6 +522,88 @@ class Pelamar extends CI_Controller {
         header('Content-Length: ' . filesize($file_path));
         readfile($file_path);
         exit;
+    }
+
+    // Download dokumen pelamar
+    public function download_dokumen_pelamar($id) {
+        // Get document details
+        $document = $this->model_dokumen->dapatkan_dokumen_pelamar_by_id($id);
+
+        // If document not found, show 404
+        if (!$document) {
+            show_404();
+        }
+
+        // Check if document belongs to current user
+        $user_id = $this->session->userdata('user_id');
+        if ($document->id_pengguna != $user_id) {
+            show_404();
+        }
+
+        // Set file path
+        $file_path = '';
+        if ($document->jenis_dokumen == 'cv') {
+            $file_path = './uploads/resumes/' . $document->nama_file;
+        } else {
+            $file_path = './uploads/documents/' . $document->nama_file;
+        }
+
+        // Check if file exists
+        if (!file_exists($file_path)) {
+            $this->session->set_flashdata('error', 'File dokumen tidak ditemukan.');
+            redirect('pelamar/profil');
+        }
+
+        // Get file info
+        $file_info = pathinfo($file_path);
+        $file_name = $document->jenis_dokumen . '_' . time() . '.' . $file_info['extension'];
+
+        // Force download
+        header('Content-Type: application/octet-stream');
+        header('Content-Disposition: attachment; filename="' . $file_name . '"');
+        header('Content-Length: ' . filesize($file_path));
+        readfile($file_path);
+        exit;
+    }
+
+    // Hapus dokumen pelamar
+    public function hapus_dokumen_pelamar($id) {
+        // Get document details
+        $document = $this->model_dokumen->dapatkan_dokumen_pelamar_by_id($id);
+
+        // If document not found, show 404
+        if (!$document) {
+            show_404();
+        }
+
+        // Check if document belongs to current user
+        $user_id = $this->session->userdata('user_id');
+        if ($document->id_pengguna != $user_id) {
+            show_404();
+        }
+
+        // Set file path
+        $file_path = '';
+        if ($document->jenis_dokumen == 'cv') {
+            $file_path = './uploads/resumes/' . $document->nama_file;
+
+            // Update profile to remove CV reference
+            $this->model_pelamar->perbarui_profil($user_id, ['cv' => null]);
+        } else {
+            $file_path = './uploads/documents/' . $document->nama_file;
+        }
+
+        // Delete file if exists
+        if (file_exists($file_path)) {
+            unlink($file_path);
+        }
+
+        // Delete document record
+        $this->model_dokumen->hapus_dokumen_pelamar($id);
+
+        // Show success message
+        $this->session->set_flashdata('success', 'Dokumen berhasil dihapus.');
+        redirect('pelamar/profil');
     }
 
     public function penilaian() {

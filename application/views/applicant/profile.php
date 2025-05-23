@@ -135,6 +135,50 @@
               </div>
             </div>
           </div>
+
+          <hr class="horizontal dark">
+          <p class="text-uppercase text-sm">Dokumen Persyaratan</p>
+          <p class="text-muted small">Unggah dokumen persyaratan Anda di sini. Dokumen ini akan tersimpan dan dapat digunakan kembali saat melamar pekerjaan.</p>
+
+          <?php
+          // Buat array untuk menyimpan dokumen yang sudah diunggah
+          $uploaded_docs = [];
+          if (!empty($documents)) {
+              foreach ($documents as $doc) {
+                  $uploaded_docs[$doc->jenis_dokumen] = $doc;
+              }
+          }
+
+          // Tampilkan form upload untuk setiap jenis dokumen
+          foreach ($document_types as $doc_type_key => $doc_type) {
+              // Skip CV karena sudah ada di atas
+              if ($doc_type_key == 'cv') continue;
+          ?>
+          <div class="row mb-3">
+            <div class="col-md-4">
+              <label for="document_<?= $doc_type_key ?>" class="form-control-label"><?= $doc_type['nama_dokumen'] ?> <?= $doc_type['wajib'] ? '<span class="text-danger">*</span>' : '' ?></label>
+            </div>
+            <div class="col-md-5">
+              <input type="file" class="form-control" id="document_<?= $doc_type_key ?>" name="document_<?= $doc_type_key ?>" accept="<?= str_replace('|', ',', $doc_type['format_diizinkan']) ?>">
+              <small class="text-muted">Format: <?= strtoupper(str_replace('|', ', ', $doc_type['format_diizinkan'])) ?>. Maks: <?= $doc_type['ukuran_maksimal']/1024 ?>MB</small>
+            </div>
+            <div class="col-md-3">
+              <?php if (isset($uploaded_docs[$doc_type_key])) : ?>
+                <div class="btn-group">
+                  <a href="<?= base_url('pelamar/download_dokumen_pelamar/' . $uploaded_docs[$doc_type_key]->id) ?>" class="btn btn-sm btn-info">
+                    <i class="fas fa-download"></i> Unduh
+                  </a>
+                  <a href="<?= base_url('pelamar/hapus_dokumen_pelamar/' . $uploaded_docs[$doc_type_key]->id) ?>" class="btn btn-sm btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus dokumen ini?')">
+                    <i class="fas fa-trash"></i> Hapus
+                  </a>
+                </div>
+              <?php else : ?>
+                <span class="badge bg-secondary">Belum diunggah</span>
+              <?php endif; ?>
+            </div>
+          </div>
+          <?php } ?>
+
           <div class="d-flex justify-content-end mt-4">
             <button type="submit" class="btn btn-primary">Save Changes</button>
           </div>

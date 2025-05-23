@@ -109,8 +109,8 @@ class Model_Dokumen extends CI_Model {
         $this->db->from('dokumen_lowongan');
         $this->db->where('dokumen_lowongan.id_lowongan', $job_id);
         $this->db->where('dokumen_lowongan.wajib', 1);
-        $this->db->where_not_in('dokumen_lowongan.id', 
-            "SELECT id_dokumen_lowongan FROM dokumen_lamaran WHERE id_lamaran = $application_id AND id_dokumen_lowongan IS NOT NULL", 
+        $this->db->where_not_in('dokumen_lowongan.id',
+            "SELECT id_dokumen_lowongan FROM dokumen_lamaran WHERE id_lamaran = $application_id AND id_dokumen_lowongan IS NOT NULL",
             FALSE
         );
         $query = $this->db->get();
@@ -169,5 +169,56 @@ class Model_Dokumen extends CI_Model {
                 'deskripsi' => 'Unggah pas foto terbaru dengan latar belakang berwarna (ukuran 4x6).'
             ]
         ];
+    }
+
+    // ===== DOKUMEN PELAMAR (APPLICANT DOCUMENTS) =====
+
+    // Get all documents for an applicant
+    public function dapatkan_dokumen_pelamar($user_id) {
+        $this->db->where('id_pengguna', $user_id);
+        $this->db->order_by('jenis_dokumen', 'ASC');
+        $query = $this->db->get('dokumen_pelamar');
+        return $query->result();
+    }
+
+    // Get a specific applicant document by ID
+    public function dapatkan_dokumen_pelamar_by_id($id) {
+        $this->db->where('id', $id);
+        $query = $this->db->get('dokumen_pelamar');
+        return $query->row();
+    }
+
+    // Get a specific applicant document by type
+    public function dapatkan_dokumen_pelamar_by_jenis($user_id, $jenis_dokumen) {
+        $this->db->where('id_pengguna', $user_id);
+        $this->db->where('jenis_dokumen', $jenis_dokumen);
+        $query = $this->db->get('dokumen_pelamar');
+        return $query->row();
+    }
+
+    // Add a new applicant document
+    public function tambah_dokumen_pelamar($data) {
+        $this->db->insert('dokumen_pelamar', $data);
+        return $this->db->insert_id();
+    }
+
+    // Update an applicant document
+    public function perbarui_dokumen_pelamar($id, $data) {
+        $this->db->where('id', $id);
+        return $this->db->update('dokumen_pelamar', $data);
+    }
+
+    // Delete an applicant document
+    public function hapus_dokumen_pelamar($id) {
+        $this->db->where('id', $id);
+        return $this->db->delete('dokumen_pelamar');
+    }
+
+    // Check if an applicant has a specific document type
+    public function cek_dokumen_pelamar_exists($user_id, $jenis_dokumen) {
+        $this->db->where('id_pengguna', $user_id);
+        $this->db->where('jenis_dokumen', $jenis_dokumen);
+        $query = $this->db->get('dokumen_pelamar');
+        return ($query->num_rows() > 0);
     }
 }

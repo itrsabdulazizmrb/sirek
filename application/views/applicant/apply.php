@@ -85,7 +85,21 @@
                   <?php endif; ?>
                 </label>
 
-                <?php if ($req->jenis_dokumen == 'cv' && $profile && $profile->cv) : ?>
+                <?php
+                // Cek apakah ada dokumen yang sudah diunggah di profil
+                $existing_doc = null;
+                if (!empty($documents)) {
+                    foreach ($documents as $doc) {
+                        if ($doc->jenis_dokumen == $req->jenis_dokumen) {
+                            $existing_doc = $doc;
+                            break;
+                        }
+                    }
+                }
+
+                // Khusus untuk CV, cek juga di profil
+                if ($req->jenis_dokumen == 'cv' && $profile && $profile->cv) :
+                ?>
                 <div class="d-flex align-items-center mb-3">
                   <div>
                     <i class="ni ni-single-copy-04 text-primary me-2"></i>
@@ -100,6 +114,26 @@
                   </label>
                 </div>
                 <div id="new_cv_upload_<?= $req->id ?>" style="display: none;">
+                  <input class="form-control" type="file" id="document_<?= $req->id ?>" name="document_<?= $req->id ?>">
+                </div>
+                <?php
+                // Untuk dokumen lain yang sudah ada di profil
+                elseif ($existing_doc) :
+                ?>
+                <div class="d-flex align-items-center mb-3">
+                  <div>
+                    <i class="ni ni-single-copy-04 text-primary me-2"></i>
+                    <span><?= $existing_doc->nama_dokumen ?></span>
+                  </div>
+                  <a href="<?= base_url('pelamar/download_dokumen_pelamar/' . $existing_doc->id) ?>" class="btn btn-sm btn-outline-primary ms-auto" target="_blank">Lihat</a>
+                </div>
+                <div class="form-check mb-3">
+                  <input class="form-check-input" type="checkbox" id="use_existing_doc_<?= $req->id ?>" name="use_existing_doc_<?= $req->id ?>" value="<?= $existing_doc->id ?>" checked>
+                  <label class="form-check-label" for="use_existing_doc_<?= $req->id ?>">
+                    Gunakan <?= $req->nama_dokumen ?> yang sudah ada
+                  </label>
+                </div>
+                <div id="new_doc_upload_<?= $req->id ?>" style="display: none;">
                   <input class="form-control" type="file" id="document_<?= $req->id ?>" name="document_<?= $req->id ?>">
                 </div>
                 <?php else : ?>
@@ -169,6 +203,24 @@
             newCvUpload.style.display = 'none';
           } else {
             newCvUpload.style.display = 'block';
+          }
+        });
+      }
+    });
+
+    // Toggle other document uploads for document requirements
+    const useExistingDocCheckboxes = document.querySelectorAll('[id^="use_existing_doc_"]');
+
+    useExistingDocCheckboxes.forEach(function(checkbox) {
+      const id = checkbox.id.split('_').pop();
+      const newDocUpload = document.getElementById('new_doc_upload_' + id);
+
+      if (checkbox && newDocUpload) {
+        checkbox.addEventListener('change', function() {
+          if (this.checked) {
+            newDocUpload.style.display = 'none';
+          } else {
+            newDocUpload.style.display = 'block';
           }
         });
       }

@@ -157,6 +157,8 @@ $route['admin/atur_dokumen_default/(:num)'] = 'admin/atur_dokumen_default/$1';
 $route['admin/hapus_semua_dokumen_lowongan/(:num)'] = 'admin/hapus_semua_dokumen_lowongan/$1';
 $route['admin/download_dokumen_lamaran/(:num)'] = 'admin/download_dokumen_lamaran/$1';
 $route['pelamar/download_dokumen/(:num)'] = 'pelamar/download_dokumen/$1';
+$route['pelamar/download_dokumen_pelamar/(:num)'] = 'pelamar/download_dokumen_pelamar/$1';
+$route['pelamar/hapus_dokumen_pelamar/(:num)'] = 'pelamar/hapus_dokumen_pelamar/$1';
 
 // Rute tambahan untuk pelamar (alias)
 $route['admin/profilPelamar/(:num)'] = 'admin/profilPelamar/$1';
