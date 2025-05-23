@@ -4,7 +4,7 @@
       <div class="card-header pb-0">
         <div class="d-flex justify-content-between align-items-center">
           <h6>Edit Pengguna</h6>
-          <a href="<?= base_url('admin/users') ?>" class="btn btn-sm btn-outline-primary">
+          <a href="<?= base_url('admin/pengguna') ?>" class="btn btn-sm btn-outline-primary">
             <i class="fas fa-arrow-left me-2"></i> Kembali ke Daftar Pengguna
           </a>
         </div>
@@ -18,9 +18,9 @@
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
-                <label for="full_name" class="form-control-label">Nama Lengkap <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" id="full_name" name="full_name" value="<?= set_value('full_name', $user->full_name) ?>" required>
-                <?= form_error('full_name', '<small class="text-danger">', '</small>') ?>
+                <label for="nama_lengkap" class="form-control-label">Nama Lengkap <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="nama_lengkap" name="nama_lengkap" value="<?= set_value('nama_lengkap', $user->nama_lengkap) ?>" required>
+                <?= form_error('nama_lengkap', '<small class="text-danger">', '</small>') ?>
               </div>
             </div>
             <div class="col-md-6">
@@ -35,21 +35,21 @@
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
-                <label for="username" class="form-control-label">Username <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" id="username" name="username" value="<?= set_value('username', $user->username) ?>" required>
-                <?= form_error('username', '<small class="text-danger">', '</small>') ?>
+                <label for="nama_pengguna" class="form-control-label">Nama Pengguna <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="nama_pengguna" name="nama_pengguna" value="<?= set_value('nama_pengguna', $user->nama_pengguna) ?>" required>
+                <?= form_error('nama_pengguna', '<small class="text-danger">', '</small>') ?>
               </div>
             </div>
             <div class="col-md-6">
               <div class="form-group">
-                <label for="role" class="form-control-label">Peran <span class="text-danger">*</span></label>
-                <select class="form-control" id="role" name="role" required>
+                <label for="peran" class="form-control-label">Peran <span class="text-danger">*</span></label>
+                <select class="form-control" id="peran" name="peran" required>
                   <option value="">Pilih Peran</option>
-                  <option value="admin" <?= set_select('role', 'admin', ($user->role == 'admin')) ?>>Admin</option>
-                  <option value="applicant" <?= set_select('role', 'applicant', ($user->role == 'applicant')) ?>>Pelamar</option>
-                  <option value="recruiter" <?= set_select('role', 'recruiter', ($user->role == 'recruiter')) ?>>Rekruter</option>
+                  <option value="admin" <?= set_select('peran', 'admin', ($user->peran == 'admin')) ?>>Admin</option>
+                  <option value="applicant" <?= set_select('peran', 'applicant', ($user->peran == 'applicant')) ?>>Pelamar</option>
+                  <option value="recruiter" <?= set_select('peran', 'recruiter', ($user->peran == 'recruiter')) ?>>Rekruter</option>
                 </select>
-                <?= form_error('role', '<small class="text-danger">', '</small>') ?>
+                <?= form_error('peran', '<small class="text-danger">', '</small>') ?>
               </div>
             </div>
           </div>
@@ -57,20 +57,20 @@
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
-                <label for="phone" class="form-control-label">Nomor Telepon</label>
-                <input type="text" class="form-control" id="phone" name="phone" value="<?= set_value('phone', $user->phone) ?>">
-                <?= form_error('phone', '<small class="text-danger">', '</small>') ?>
+                <label for="telepon" class="form-control-label">Nomor Telepon</label>
+                <input type="text" class="form-control" id="telepon" name="telepon" value="<?= set_value('telepon', $user->telepon) ?>">
+                <?= form_error('telepon', '<small class="text-danger">', '</small>') ?>
               </div>
             </div>
             <div class="col-md-6">
               <div class="form-group">
-                <label for="profile_picture" class="form-control-label">Foto Profil</label>
-                <?php if ($user->profile_picture) : ?>
+                <label for="foto_profil" class="form-control-label">Foto Profil</label>
+                <?php if ($user->foto_profil) : ?>
                   <div class="mb-2">
-                    <img src="<?= base_url('uploads/profile_pictures/' . $user->profile_picture) ?>" class="img-fluid rounded" style="max-height: 100px;" alt="Profile Picture">
+                    <img src="<?= base_url('uploads/profile_pictures/' . $user->foto_profil) ?>" class="img-fluid rounded" style="max-height: 100px;" alt="Profile Picture">
                   </div>
                 <?php endif; ?>
-                <input type="file" class="form-control" id="profile_picture" name="profile_picture" accept="image/*">
+                <input type="file" class="form-control" id="foto_profil" name="foto_profil" accept="image/*">
                 <small class="text-muted">Format yang diizinkan: JPG, JPEG, PNG. Maks 1MB.</small>
               </div>
             </div>
@@ -79,9 +79,9 @@
           <div class="row">
             <div class="col-md-12">
               <div class="form-group">
-                <label for="address" class="form-control-label">Alamat</label>
-                <textarea class="form-control" id="address" name="address" rows="3"><?= set_value('address', $user->address) ?></textarea>
-                <?= form_error('address', '<small class="text-danger">', '</small>') ?>
+                <label for="alamat" class="form-control-label">Alamat</label>
+                <textarea class="form-control" id="alamat" name="alamat" rows="3"><?= set_value('alamat', $user->alamat) ?></textarea>
+                <?= form_error('alamat', '<small class="text-danger">', '</small>') ?>
               </div>
             </div>
           </div>
@@ -89,8 +89,8 @@
           <div class="row">
             <div class="col-md-12">
               <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="is_active" name="is_active" value="1" <?= set_checkbox('is_active', '1', ($user->status == 'active')) ?>>
-                <label class="form-check-label" for="is_active">Aktifkan Pengguna</label>
+                <input class="form-check-input" type="checkbox" id="aktif" name="aktif" value="1" <?= set_checkbox('aktif', '1', ($user->status == 'active')) ?>>
+                <label class="form-check-label" for="aktif">Aktifkan Pengguna</label>
               </div>
             </div>
           </div>
@@ -98,7 +98,7 @@
           <div class="row mt-4">
             <div class="col-md-12">
               <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
-              <a href="<?= base_url('admin/reset_kata_sandi/' . $user->id) ?>" class="btn btn-warning">Reset Password</a>
+              <a href="<?= base_url('admin/reset_kata_sandi/' . $user->id) ?>" class="btn btn-warning">Reset Kata Sandi</a>
               <a href="<?= base_url('admin/pengguna') ?>" class="btn btn-secondary">Batal</a>
             </div>
           </div>
@@ -119,16 +119,16 @@
           <strong>ID Pengguna:</strong> <?= $user->id ?>
         </p>
         <p class="text-sm mb-1">
-          <strong>Tanggal Daftar:</strong> <?= date('d M Y H:i', strtotime($user->created_at)) ?>
+          <strong>Tanggal Daftar:</strong> <?= date('d M Y H:i', strtotime($user->dibuat_pada)) ?>
         </p>
         <p class="text-sm mb-1">
-          <strong>Terakhir Diperbarui:</strong> <?= date('d M Y H:i', strtotime($user->updated_at)) ?>
+          <strong>Terakhir Diperbarui:</strong> <?= date('d M Y H:i', strtotime($user->diperbarui_pada)) ?>
         </p>
         <p class="text-sm mb-1">
           <strong>Login Terakhir:</strong> <?= $user->login_terakhir ? date('d M Y H:i', strtotime($user->login_terakhir)) : 'Belum Pernah' ?>
         </p>
         <p class="text-sm mb-1">
-          <strong>IP Terakhir:</strong> <?= $user->last_ip ?? 'Tidak Tersedia' ?>
+          <strong>IP Terakhir:</strong> <?= $user->ip_terakhir ?? 'Tidak Tersedia' ?>
         </p>
         <p class="text-sm mb-1">
           <strong>Status:</strong> <span class="badge badge-sm bg-gradient-<?= ($user->status == 'active') ? 'success' : 'secondary' ?>"><?= ($user->status == 'active') ? 'Aktif' : 'Tidak Aktif' ?></span>
@@ -137,7 +137,7 @@
     </div>
   </div>
 
-  <?php if ($user->role == 'applicant') : ?>
+  <?php if ($user->peran == 'applicant') : ?>
     <div class="col-md-6">
       <div class="card">
         <div class="card-header pb-0">
@@ -177,12 +177,12 @@
                       <td>
                         <div class="d-flex px-2 py-1">
                           <div class="d-flex flex-column justify-content-center">
-                            <h6 class="mb-0 text-sm"><?= $application->job_title ?></h6>
+                            <h6 class="mb-0 text-sm"><?= $application->judul_pekerjaan ?></h6>
                           </div>
                         </div>
                       </td>
                       <td class="align-middle text-center">
-                        <span class="text-secondary text-xs font-weight-bold"><?= date('d M Y', strtotime($application->application_date)) ?></span>
+                        <span class="text-secondary text-xs font-weight-bold"><?= date('d M Y', strtotime($application->tanggal_lamaran)) ?></span>
                       </td>
                       <td class="align-middle text-center text-sm">
                         <span class="badge badge-sm bg-gradient-<?= $application->status == 'pending' ? 'warning' : ($application->status == 'reviewed' ? 'info' : ($application->status == 'shortlisted' ? 'success' : ($application->status == 'interviewed' ? 'primary' : ($application->status == 'offered' ? 'warning' : ($application->status == 'hired' ? 'success' : 'danger'))))) ?>"><?= ucfirst($application->status) ?></span>
@@ -196,13 +196,13 @@
         </div>
       </div>
     </div>
-  <?php elseif ($user->role == 'recruiter') : ?>
+  <?php elseif ($user->peran == 'recruiter') : ?>
     <div class="col-md-6">
       <div class="card">
         <div class="card-header pb-0">
           <div class="d-flex justify-content-between align-items-center">
             <h6>Lowongan yang Dikelola</h6>
-            <a href="<?= base_url('admin/lowongan_rekruter/' . $user->id) ?>" class="btn btn-sm btn-primary">
+            <a href="<?= base_url('admin/pekerjaan_rekruter/' . $user->id) ?>" class="btn btn-sm btn-primary">
               <i class="fas fa-list me-2"></i> Lihat Semua
             </a>
           </div>
@@ -212,7 +212,7 @@
           // Get instance of CI to access models
           $CI =& get_instance();
           // Get jobs for this recruiter (limited to 5)
-          $jobs = $CI->model_lowongan->dapatkan_lowongan_recruiter($user->id);
+          $jobs = $CI->model_lowongan->dapatkan_lowongan_rekruter($user->id);
           // Limit to 5 results if there are more
           if (count($jobs) > 5) {
             $jobs = array_slice($jobs, 0, 5);
@@ -236,12 +236,12 @@
                       <td>
                         <div class="d-flex px-2 py-1">
                           <div class="d-flex flex-column justify-content-center">
-                            <h6 class="mb-0 text-sm"><?= $job->title ?></h6>
+                            <h6 class="mb-0 text-sm"><?= $job->judul ?></h6>
                           </div>
                         </div>
                       </td>
                       <td class="align-middle text-center">
-                        <span class="text-secondary text-xs font-weight-bold"><?= date('d M Y', strtotime($job->deadline)) ?></span>
+                        <span class="text-secondary text-xs font-weight-bold"><?= date('d M Y', strtotime($job->batas_waktu)) ?></span>
                       </td>
                       <td class="align-middle text-center text-sm">
                         <span class="badge badge-sm bg-gradient-<?= $job->status == 'active' ? 'success' : ($job->status == 'draft' ? 'secondary' : 'danger') ?>"><?= $job->status == 'active' ? 'Aktif' : ($job->status == 'draft' ? 'Draft' : 'Tidak Aktif') ?></span>
@@ -261,8 +261,8 @@
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     // Confirm before changing role
-    const roleSelect = document.getElementById('role');
-    const originalRole = '<?= $user->role ?>';
+    const roleSelect = document.getElementById('peran');
+    const originalRole = '<?= $user->peran ?>';
 
     roleSelect.addEventListener('change', function() {
       if (this.value !== originalRole) {

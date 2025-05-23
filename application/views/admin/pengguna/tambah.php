@@ -4,7 +4,7 @@
       <div class="card-header pb-0">
         <div class="d-flex justify-content-between align-items-center">
           <h6>Tambah Pengguna Baru</h6>
-          <a href="<?= base_url('admin/users') ?>" class="btn btn-sm btn-outline-primary">
+          <a href="<?= base_url('admin/pengguna') ?>" class="btn btn-sm btn-outline-primary">
             <i class="fas fa-arrow-left me-2"></i> Kembali ke Daftar Pengguna
           </a>
         </div>
@@ -14,13 +14,13 @@
         </p>
       </div>
       <div class="card-body">
-        <?= form_open_multipart('admin/add_user', ['class' => 'needs-validation']) ?>
+        <?= form_open_multipart('admin/tambah_pengguna', ['class' => 'needs-validation']) ?>
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
-                <label for="full_name" class="form-control-label">Nama Lengkap <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" id="full_name" name="full_name" value="<?= set_value('full_name') ?>" required>
-                <?= form_error('full_name', '<small class="text-danger">', '</small>') ?>
+                <label for="nama_lengkap" class="form-control-label">Nama Lengkap <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="nama_lengkap" name="nama_lengkap" value="<?= set_value('nama_lengkap') ?>" required>
+                <?= form_error('nama_lengkap', '<small class="text-danger">', '</small>') ?>
               </div>
             </div>
             <div class="col-md-6">
@@ -35,21 +35,21 @@
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
-                <label for="username" class="form-control-label">Username <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" id="username" name="username" value="<?= set_value('username') ?>" required>
-                <?= form_error('username', '<small class="text-danger">', '</small>') ?>
+                <label for="nama_pengguna" class="form-control-label">Nama Pengguna <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="nama_pengguna" name="nama_pengguna" value="<?= set_value('nama_pengguna') ?>" required>
+                <?= form_error('nama_pengguna', '<small class="text-danger">', '</small>') ?>
               </div>
             </div>
             <div class="col-md-6">
               <div class="form-group">
-                <label for="role" class="form-control-label">Peran <span class="text-danger">*</span></label>
-                <select class="form-control" id="role" name="role" required>
+                <label for="peran" class="form-control-label">Peran <span class="text-danger">*</span></label>
+                <select class="form-control" id="peran" name="peran" required>
                   <option value="">Pilih Peran</option>
-                  <option value="admin" <?= set_select('role', 'admin') ?>>Admin</option>
-                  <option value="applicant" <?= set_select('role', 'applicant') ?>>Pelamar</option>
-                  <option value="recruiter" <?= set_select('role', 'recruiter') ?>>Rekruter</option>
+                  <option value="admin" <?= set_select('peran', 'admin') ?>>Admin</option>
+                  <option value="applicant" <?= set_select('peran', 'applicant') ?>>Pelamar</option>
+                  <option value="recruiter" <?= set_select('peran', 'recruiter') ?>>Rekruter</option>
                 </select>
-                <?= form_error('role', '<small class="text-danger">', '</small>') ?>
+                <?= form_error('peran', '<small class="text-danger">', '</small>') ?>
               </div>
             </div>
           </div>
@@ -57,17 +57,17 @@
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
-                <label for="password" class="form-control-label">Password <span class="text-danger">*</span></label>
-                <input type="password" class="form-control" id="password" name="password" required>
-                <?= form_error('password', '<small class="text-danger">', '</small>') ?>
+                <label for="kata_sandi" class="form-control-label">Kata Sandi <span class="text-danger">*</span></label>
+                <input type="password" class="form-control" id="kata_sandi" name="kata_sandi" required>
+                <?= form_error('kata_sandi', '<small class="text-danger">', '</small>') ?>
                 <small class="text-muted">Minimal 6 karakter, kombinasi huruf dan angka.</small>
               </div>
             </div>
             <div class="col-md-6">
               <div class="form-group">
-                <label for="confirm_password" class="form-control-label">Konfirmasi Password <span class="text-danger">*</span></label>
-                <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
-                <?= form_error('confirm_password', '<small class="text-danger">', '</small>') ?>
+                <label for="konfirmasi_kata_sandi" class="form-control-label">Konfirmasi Kata Sandi <span class="text-danger">*</span></label>
+                <input type="password" class="form-control" id="konfirmasi_kata_sandi" name="konfirmasi_kata_sandi" required>
+                <?= form_error('konfirmasi_kata_sandi', '<small class="text-danger">', '</small>') ?>
               </div>
             </div>
           </div>
@@ -75,15 +75,15 @@
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
-                <label for="phone" class="form-control-label">Nomor Telepon</label>
-                <input type="text" class="form-control" id="phone" name="phone" value="<?= set_value('phone') ?>">
-                <?= form_error('phone', '<small class="text-danger">', '</small>') ?>
+                <label for="telepon" class="form-control-label">Nomor Telepon</label>
+                <input type="text" class="form-control" id="telepon" name="telepon" value="<?= set_value('telepon') ?>">
+                <?= form_error('telepon', '<small class="text-danger">', '</small>') ?>
               </div>
             </div>
             <div class="col-md-6">
               <div class="form-group">
-                <label for="profile_picture" class="form-control-label">Foto Profil</label>
-                <input type="file" class="form-control" id="profile_picture" name="profile_picture" accept="image/*">
+                <label for="foto_profil" class="form-control-label">Foto Profil</label>
+                <input type="file" class="form-control" id="foto_profil" name="foto_profil" accept="image/*">
                 <small class="text-muted">Format yang diizinkan: JPG, JPEG, PNG. Maks 1MB.</small>
               </div>
             </div>
@@ -92,9 +92,9 @@
           <div class="row">
             <div class="col-md-12">
               <div class="form-group">
-                <label for="address" class="form-control-label">Alamat</label>
-                <textarea class="form-control" id="address" name="address" rows="3"><?= set_value('address') ?></textarea>
-                <?= form_error('address', '<small class="text-danger">', '</small>') ?>
+                <label for="alamat" class="form-control-label">Alamat</label>
+                <textarea class="form-control" id="alamat" name="alamat" rows="3"><?= set_value('alamat') ?></textarea>
+                <?= form_error('alamat', '<small class="text-danger">', '</small>') ?>
               </div>
             </div>
           </div>
@@ -102,8 +102,8 @@
           <div class="row">
             <div class="col-md-12">
               <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="is_active" name="is_active" value="1" <?= set_checkbox('is_active', '1', true) ?>>
-                <label class="form-check-label" for="is_active">Aktifkan Pengguna</label>
+                <input class="form-check-input" type="checkbox" id="aktif" name="aktif" value="1" <?= set_checkbox('aktif', '1', true) ?>>
+                <label class="form-check-label" for="aktif">Aktifkan Pengguna</label>
               </div>
             </div>
           </div>
@@ -111,8 +111,8 @@
           <div class="row">
             <div class="col-md-12">
               <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="send_email" name="send_email" value="1" <?= set_checkbox('send_email', '1', true) ?>>
-                <label class="form-check-label" for="send_email">Kirim Email Notifikasi ke Pengguna</label>
+                <input class="form-check-input" type="checkbox" id="kirim_email" name="kirim_email" value="1" <?= set_checkbox('kirim_email', '1', true) ?>>
+                <label class="form-check-label" for="kirim_email">Kirim Email Notifikasi ke Pengguna</label>
               </div>
             </div>
           </div>
@@ -149,7 +149,7 @@
             <h6 class="text-uppercase text-sm">Praktik Terbaik</h6>
             <ul class="text-sm">
               <li>Gunakan alamat email yang valid untuk memastikan pengguna dapat menerima notifikasi.</li>
-              <li>Tetapkan password yang kuat dengan kombinasi huruf, angka, dan karakter khusus.</li>
+              <li>Tetapkan kata sandi yang kuat dengan kombinasi huruf, angka, dan karakter khusus.</li>
               <li>Berikan peran yang sesuai dengan tanggung jawab pengguna.</li>
               <li>Nonaktifkan pengguna yang tidak lagi memerlukan akses ke sistem.</li>
               <li>Secara berkala tinjau dan perbarui informasi pengguna.</li>
@@ -169,7 +169,7 @@
   document.addEventListener('DOMContentLoaded', function() {
     // Auto-generate username from email
     const emailInput = document.getElementById('email');
-    const usernameInput = document.getElementById('username');
+    const usernameInput = document.getElementById('nama_pengguna');
     
     emailInput.addEventListener('blur', function() {
       if (!usernameInput.value && this.value) {
@@ -182,8 +182,8 @@
     });
     
     // Password strength meter
-    const passwordInput = document.getElementById('password');
-    const confirmPasswordInput = document.getElementById('confirm_password');
+    const passwordInput = document.getElementById('kata_sandi');
+    const confirmPasswordInput = document.getElementById('konfirmasi_kata_sandi');
     
     if (passwordInput) {
       const strengthMeter = document.createElement('div');

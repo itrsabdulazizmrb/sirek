@@ -4,7 +4,7 @@
       <div class="card-header pb-0">
         <div class="d-flex justify-content-between align-items-center">
           <div>
-            <h6 class="mb-1">Lowongan yang Dikelola oleh <?= $user->full_name ?></h6>
+            <h6 class="mb-1">Lowongan yang Dikelola oleh <?= $user->nama_lengkap ?></h6>
             <p class="text-sm mb-0">
               <i class="fa fa-info-circle text-primary" aria-hidden="true"></i>
               <span class="font-weight-bold">Daftar semua lowongan yang dibuat oleh rekruter ini</span>
@@ -22,7 +22,7 @@
           </div>
         <?php else : ?>
           <div class="table-responsive p-0">
-            <table class="table align-items-center mb-0">
+            <table class="table align-items-center mb-0 datatable">
               <thead>
                 <tr>
                   <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Lowongan</th>
@@ -39,16 +39,16 @@
                     <td>
                       <div class="d-flex px-2 py-1">
                         <div class="d-flex flex-column justify-content-center">
-                          <h6 class="mb-0 text-sm"><?= $job->title ?></h6>
-                          <p class="text-xs text-secondary mb-0"><?= $job->location ?></p>
+                          <h6 class="mb-0 text-sm"><?= $job->judul ?></h6>
+                          <p class="text-xs text-secondary mb-0"><?= $job->lokasi ?></p>
                         </div>
                       </div>
                     </td>
                     <td>
-                      <p class="text-xs font-weight-bold mb-0"><?= $job->category_name ?? 'Tidak Dikategorikan' ?></p>
+                      <p class="text-xs font-weight-bold mb-0"><?= $job->nama_kategori ?? 'Tidak Dikategorikan' ?></p>
                     </td>
                     <td class="align-middle text-center">
-                      <span class="text-secondary text-xs font-weight-bold"><?= date('d M Y', strtotime($job->deadline)) ?></span>
+                      <span class="text-secondary text-xs font-weight-bold"><?= date('d M Y', strtotime($job->batas_waktu)) ?></span>
                     </td>
                     <td class="align-middle text-center text-sm">
                       <span class="badge badge-sm bg-gradient-<?= $job->status == 'active' ? 'success' : ($job->status == 'draft' ? 'secondary' : 'danger') ?>"><?= $job->status == 'active' ? 'Aktif' : ($job->status == 'draft' ? 'Draft' : 'Tidak Aktif') ?></span>
@@ -72,7 +72,7 @@
                           <li>
                             <hr class="dropdown-divider">
                           </li>
-                          <li><a class="dropdown-item border-radius-md text-danger" href="#" onclick="confirmDelete(<?= $job->id ?>)"><i class="fas fa-trash me-2"></i> Hapus</a></li>
+                          <li><a class="dropdown-item border-radius-md text-danger btn-delete" href="javascript:void(0)" data-id="<?= $job->id ?>" data-name="<?= $job->judul ?>"><i class="fas fa-trash me-2"></i> Hapus</a></li>
                         </ul>
                       </div>
                     </td>
@@ -88,35 +88,31 @@
 </div>
 
 <script>
-  function confirmDelete(id) {
-    Swal.fire({
-      title: 'Apakah Anda yakin?',
-      text: "Lowongan yang dihapus tidak dapat dikembalikan!",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Ya, hapus!',
-      cancelButtonText: 'Batal'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        window.location.href = "<?= base_url('admin/hapus_lowongan/') ?>" + id;
-      }
-    })
-  }
-
   document.addEventListener('DOMContentLoaded', function() {
-    // Initialize DataTables
-    if (typeof $.fn.DataTable !== 'undefined') {
-      $('.table').DataTable({
-        language: {
-          url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/Indonesian.json'
-        },
-        dom: 'Bfrtip',
-        buttons: [
-          'copy', 'excel', 'pdf', 'print'
-        ]
+    // Handle delete with SweetAlert2
+    const deleteButtons = document.querySelectorAll('.btn-delete');
+    deleteButtons.forEach(function(button) {
+      button.addEventListener('click', function(e) {
+        e.preventDefault();
+
+        const jobId = this.getAttribute('data-id');
+        const jobName = this.getAttribute('data-name');
+
+        Swal.fire({
+          title: 'Konfirmasi Hapus',
+          text: `Apakah Anda yakin ingin menghapus lowongan "${jobName}"? Tindakan ini tidak dapat dibatalkan.`,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#f5365c',
+          cancelButtonColor: '#3085d6',
+          confirmButtonText: 'Ya, Hapus!',
+          cancelButtonText: 'Batal'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = `<?= base_url('admin/hapus_lowongan/') ?>${jobId}`;
+          }
+        });
       });
-    }
+    });
   });
 </script>

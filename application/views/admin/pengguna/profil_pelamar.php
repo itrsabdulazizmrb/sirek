@@ -97,7 +97,7 @@
           </div>
           <div class="col-md-6">
             <div class="form-group">
-              <label class="form-control-label">Portfolio URL</label>
+              <label class="form-control-label">URL Portofolio</label>
               <?php if (isset($profile->url_portofolio) && $profile->url_portofolio) : ?>
                 <p class="form-control-static">
                   <a href="<?= $profile->url_portofolio ?>" target="_blank" class="text-primary">
@@ -113,7 +113,7 @@
         <div class="row">
           <div class="col-md-6">
             <div class="form-group">
-              <label class="form-control-label">LinkedIn URL</label>
+              <label class="form-control-label">URL LinkedIn</label>
               <?php if (isset($profile->url_linkedin) && $profile->url_linkedin) : ?>
                 <p class="form-control-static">
                   <a href="<?= $profile->url_linkedin ?>" target="_blank" class="text-primary">

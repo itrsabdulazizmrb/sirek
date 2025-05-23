@@ -56,7 +56,7 @@
                     <i class="ni ni-chat-round text-primary"></i>
                   </span>
                   <div class="timeline-content">
-                    <h6 class="text-dark text-sm font-weight-bold mb-0">Interview</h6>
+                    <h6 class="text-dark text-sm font-weight-bold mb-0">Wawancara</h6>
                     <p class="text-secondary font-weight-bold text-xs mt-1 mb-0"><?= isset($application->diperbarui_pada) ? date('d M Y', strtotime($application->diperbarui_pada)) : date('d M Y', strtotime($application->tanggal_lamaran)) ?></p>
                   </div>
                 </div>
@@ -145,7 +145,7 @@
                           <?php endif; ?>
                         </td>
                         <td class="align-middle">
-                          <a href="<?= base_url('admin/download_dokumen_lamaran/' . $doc->id) ?>" class="btn btn-link text-secondary mb-0">
+                          <a href="<?= base_url('admin/unduh_dokumen_lamaran/' . $doc->id) ?>" class="btn btn-link text-secondary mb-0">
                             <i class="fa fa-download text-xs"></i> Unduh
                           </a>
                         </td>
@@ -159,8 +159,8 @@
               <a href="<?= base_url('uploads/resumes/' . $application->resume) ?>" class="btn btn-outline-primary btn-sm" target="_blank">
                 <i class="ni ni-single-copy-04 me-2"></i> Lihat Resume
               </a>
-              <a href="<?= base_url('admin/download_resume/' . $application->id) ?>" class="btn btn-outline-info btn-sm">
-                <i class="ni ni-cloud-download-95 me-2"></i> Download Resume
+              <a href="<?= base_url('admin/unduh_resume/' . $application->id) ?>" class="btn btn-outline-info btn-sm">
+                <i class="ni ni-cloud-download-95 me-2"></i> Unduh Resume
               </a>
             <?php else : ?>
               <p class="text-muted">Tidak ada dokumen yang dilampirkan.</p>
@@ -173,7 +173,7 @@
         <div class="row">
           <div class="col-md-12">
             <h6 class="mb-3">Catatan Admin</h6>
-            <?= form_open('admin/add_application_note/' . $application->id) ?>
+            <?= form_open('admin/tambah_catatan_lamaran/' . $application->id) ?>
               <div class="form-group">
                 <textarea class="form-control" name="note" rows="3" placeholder="Tambahkan catatan tentang pelamar ini..."><?= isset($application->catatan_admin) ? $application->catatan_admin : '' ?></textarea>
               </div>
@@ -189,7 +189,7 @@
       <div class="card-header pb-0">
         <div class="d-flex justify-content-between align-items-center">
           <h6>Penilaian</h6>
-          <a href="<?= base_url('admin/assign_assessment/' . $application->id_pekerjaan . '/' . $application->id) ?>" class="btn btn-sm btn-primary">
+          <a href="<?= base_url('admin/atur_penilaian/' . $application->id_pekerjaan . '/' . $application->id) ?>" class="btn btn-sm btn-primary">
             <i class="fas fa-plus me-2"></i> Tambah Penilaian
           </a>
         </div>
@@ -244,12 +244,12 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end px-2 py-3" aria-labelledby="dropdownMenuButton">
                           <?php if ($assessment->status == 'completed' || $assessment->status == 'graded') : ?>
-                            <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/view_assessment_results/' . $assessment->id) ?>">Lihat Hasil</a></li>
+                            <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/lihat_hasil_penilaian/' . $assessment->id) ?>">Lihat Hasil</a></li>
                           <?php endif; ?>
                           <?php if ($assessment->status == 'completed') : ?>
-                            <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/grade_assessment/' . $assessment->id) ?>">Nilai</a></li>
+                            <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/nilai_penilaian/' . $assessment->id) ?>">Nilai</a></li>
                           <?php endif; ?>
-                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/remove_assessment/' . $assessment->id . '/' . $application->id) ?>" onclick="return confirm('Apakah Anda yakin ingin menghapus penilaian ini?');">Hapus</a></li>
+                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/hapus_penilaian/' . $assessment->id . '/' . $application->id) ?>" onclick="return confirm('Apakah Anda yakin ingin menghapus penilaian ini?');">Hapus</a></li>
                         </ul>
                       </div>
                     </td>
@@ -317,7 +317,7 @@
         </div>
 
         <div class="d-flex justify-content-center mt-4">
-          <a href="<?= base_url('admin/profilPelamar/' . $applicant->id) ?>" class="btn btn-sm btn-outline-primary">Lihat Profil Lengkap</a>
+          <a href="<?= base_url('admin/profil_pelamar/' . $applicant->id) ?>" class="btn btn-sm btn-outline-primary">Lihat Profil Lengkap</a>
         </div>
       </div>
     </div>
@@ -330,10 +330,10 @@
       <div class="card-body">
         <div class="form-group">
           <label for="status" class="form-control-label">Ubah Status</label>
-          <select class="form-control" id="status" onchange="updateStatus(this.value)">
+          <select class="form-control" id="status" onchange="perbaruiStatus(this.value)">
             <option value="pending" <?= $application->status == 'pending' ? 'selected' : '' ?>>Pending</option>
             <option value="reviewed" <?= $application->status == 'reviewed' ? 'selected' : '' ?>>Direview</option>
-            <option value="interview" <?= $application->status == 'interview' ? 'selected' : '' ?>>Interview</option>
+            <option value="interview" <?= $application->status == 'interview' ? 'selected' : '' ?>>Wawancara</option>
             <option value="diterima" <?= $application->status == 'diterima' ? 'selected' : '' ?>>Diterima</option>
             <option value="ditolak" <?= $application->status == 'ditolak' ? 'selected' : '' ?>>Ditolak</option>
           </select>
@@ -347,7 +347,7 @@
         </div>
 
         <div class="d-flex justify-content-center mt-4">
-          <button type="button" class="btn btn-primary" onclick="saveStatus()">Simpan Status</button>
+          <button type="button" class="btn btn-primary" onclick="simpanStatus()">Simpan Status</button>
         </div>
       </div>
     </div>
@@ -376,7 +376,7 @@
 </div>
 
 <script>
-  function updateStatus(status) {
+  function perbaruiStatus(status) {
     // Change the color of the status dropdown based on the selected status
     const statusSelect = document.getElementById('status');
     statusSelect.className = 'form-control';
@@ -394,16 +394,16 @@
     }
   }
 
-  function saveStatus() {
+  function simpanStatus() {
     const status = document.getElementById('status').value;
     const notifyApplicant = document.getElementById('notify_applicant').checked;
 
     // Redirect to the update status URL with the notify parameter
-    window.location.href = '<?= base_url('admin/update_application_status/' . $application->id) ?>/' + status + '?notify=' + (notifyApplicant ? '1' : '0');
+    window.location.href = '<?= base_url('admin/perbarui_status_lamaran/' . $application->id) ?>/' + status + '?notify=' + (notifyApplicant ? '1' : '0');
   }
 
   // Initialize status color on page load
   document.addEventListener('DOMContentLoaded', function() {
-    updateStatus('<?= $application->status ?>');
+    perbaruiStatus('<?= $application->status ?>');
   });
 </script>

@@ -9,9 +9,9 @@
               <i class="fa fa-info-circle text-primary" aria-hidden="true"></i>
               <span class="font-weight-bold">
                 <?php if (isset($application)) : ?>
-                  Tetapkan penilaian untuk pelamar: <?= $application->applicant_name ?> (<?= $job->title ?>)
+                  Tetapkan penilaian untuk pelamar: <?= $application->applicant_name ?> (<?= $job->judul ?>)
                 <?php else : ?>
-                  Tetapkan penilaian untuk lowongan: <?= $job->title ?>
+                  Tetapkan penilaian untuk lowongan: <?= $job->judul ?>
                 <?php endif; ?>
               </span>
             </p>
@@ -81,8 +81,8 @@
                       <td>
                         <div class="d-flex px-2 py-1">
                           <div class="d-flex flex-column justify-content-center">
-                            <h6 class="mb-0 text-sm"><?= $assessment->title ?></h6>
-                            <p class="text-xs text-secondary mb-0"><?= substr($assessment->description, 0, 100) . (strlen($assessment->description) > 100 ? '...' : '') ?></p>
+                            <h6 class="mb-0 text-sm"><?= $assessment->judul ?></h6>
+                            <p class="text-xs text-secondary mb-0"><?= substr($assessment->deskripsi, 0, 100) . (strlen($assessment->deskripsi) > 100 ? '...' : '') ?></p>
                           </div>
                         </div>
                       </td>
@@ -90,10 +90,10 @@
                         <p class="text-xs font-weight-bold mb-0"><?= $assessment->type_name ?></p>
                       </td>
                       <td>
-                        <p class="text-xs font-weight-bold mb-0"><?= $assessment->time_limit ? $assessment->time_limit . ' menit' : 'Tidak ada' ?></p>
+                        <p class="text-xs font-weight-bold mb-0"><?= $assessment->batas_waktu ? $assessment->batas_waktu . ' menit' : 'Tidak ada' ?></p>
                       </td>
                       <td>
-                        <p class="text-xs font-weight-bold mb-0"><?= $assessment->passing_score ? $assessment->passing_score . '%' : 'Tidak ada' ?></p>
+                        <p class="text-xs font-weight-bold mb-0"><?= $assessment->nilai_kelulusan ? $assessment->nilai_kelulusan . '%' : 'Tidak ada' ?></p>
                       </td>
                     </tr>
                   <?php endforeach; ?>

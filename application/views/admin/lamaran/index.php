@@ -109,7 +109,7 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end px-2 py-3" aria-labelledby="dropdownMenuButton">
                           <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/detail_lamaran/' . $application->id) ?>"><i class="fas fa-eye me-2"></i> Lihat Detail</a></li>
-                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/assign_assessment/' . $application->id_pekerjaan . '/' . $application->id) ?>"><i class="fas fa-tasks me-2"></i> Atur Penilaian</a></li>
+                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/atur_penilaian/' . $application->id_pekerjaan . '/' . $application->id) ?>"><i class="fas fa-tasks me-2"></i> Atur Penilaian</a></li>
                           <!-- <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/editPelamar/' . $application->id) ?>"><i class="fas fa-edit me-2"></i> Edit</a></li> -->
                           <li>
                             <hr class="dropdown-divider">
@@ -119,8 +119,8 @@
                               <i class="fas fa-trash me-2"></i> Hapus
                             </a>
                           </li>
-                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/downloadResume/' . $application->id) ?>"><i class="fas fa-download me-2"></i> Download Resume</a></li>
-                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/printPelamar/' . $application->id) ?>"><i class="fas fa-print me-2"></i> Cetak Lamaran</a></li>
+                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/unduhResume/' . $application->id) ?>"><i class="fas fa-download me-2"></i> Unduh Resume</a></li>
+                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/cetakPelamar/' . $application->id) ?>"><i class="fas fa-print me-2"></i> Cetak Lamaran</a></li>
                         </ul>
                       </div>
                     </td>
@@ -400,7 +400,7 @@
           cancelButtonText: 'Batal'
         }).then((result) => {
           if (result.isConfirmed) {
-            window.location.href = `<?= base_url('admin/updateStatusPelamar/') ?>${applicationId}/${status}`;
+            window.location.href = `<?= base_url('admin/perbaruiStatusPelamar/') ?>${applicationId}/${status}`;
           }
         });
       });
@@ -426,7 +426,7 @@
           cancelButtonText: 'Batal'
         }).then((result) => {
           if (result.isConfirmed) {
-            window.location.href = `<?= base_url('admin/deletePelamar/') ?>${applicationId}`;
+            window.location.href = `<?= base_url('admin/hapusPelamar/') ?>${applicationId}`;
           }
         });
       });

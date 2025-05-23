@@ -4,18 +4,18 @@
       <div class="card-header pb-0">
         <div class="d-flex justify-content-between align-items-center">
           <div>
-            <h6 class="mb-1">Lamaran dari <?= $user->full_name ?></h6>
+            <h6 class="mb-1">Lamaran dari <?= $user->nama_lengkap ?></h6>
             <p class="text-sm mb-0">
               <i class="fa fa-info-circle text-primary" aria-hidden="true"></i>
               <span class="font-weight-bold">Daftar semua lamaran yang diajukan oleh pelamar ini</span>
             </p>
           </div>
           <div>
-            <a href="<?= base_url('admin/profilPelamar/' . $user->id) ?>" class="btn btn-sm btn-outline-primary me-2">
+            <a href="<?= base_url('admin/profil_pelamar/' . $user->id) ?>" class="btn btn-sm btn-outline-primary me-2">
               <i class="fas fa-arrow-left me-2"></i> Kembali ke Profil
             </a>
-            <a href="<?= base_url('admin/export_applicant_applications/' . $user->id) ?>" class="btn btn-sm btn-success">
-              <i class="fas fa-file-excel me-2"></i> Export Excel
+            <a href="<?= base_url('admin/ekspor_lamaran_pelamar/' . $user->id) ?>" class="btn btn-sm btn-success">
+              <i class="fas fa-file-excel me-2"></i> Ekspor Excel
             </a>
           </div>
         </div>
@@ -44,31 +44,31 @@
                     <td>
                       <div class="d-flex px-2 py-1">
                         <div class="d-flex flex-column justify-content-center">
-                          <h6 class="mb-0 text-sm"><?= $application->job_title ?></h6>
+                          <h6 class="mb-0 text-sm"><?= $application->judul_pekerjaan ?></h6>
                           <p class="text-xs text-secondary mb-0">
-                            <span class="badge bg-gradient-<?= $application->job_type == 'full_time' ? 'primary' : ($application->job_type == 'part_time' ? 'info' : ($application->job_type == 'contract' ? 'warning' : 'secondary')) ?> badge-sm">
-                              <?= $application->job_type == 'full_time' ? 'Full Time' : ($application->job_type == 'part_time' ? 'Part Time' : ($application->job_type == 'contract' ? 'Kontrak' : $application->job_type)) ?>
+                            <span class="badge bg-gradient-<?= $application->jenis_pekerjaan == 'full_time' ? 'primary' : ($application->jenis_pekerjaan == 'part_time' ? 'info' : ($application->jenis_pekerjaan == 'contract' ? 'warning' : 'secondary')) ?> badge-sm">
+                              <?= $application->jenis_pekerjaan == 'full_time' ? 'Full Time' : ($application->jenis_pekerjaan == 'part_time' ? 'Part Time' : ($application->jenis_pekerjaan == 'contract' ? 'Kontrak' : $application->jenis_pekerjaan)) ?>
                             </span>
-                            <span class="ms-1"><?= $application->location ?></span>
+                            <span class="ms-1"><?= $application->lokasi ?></span>
                           </p>
                         </div>
                       </div>
                     </td>
                     <td class="align-middle text-center">
-                      <span class="text-secondary text-xs font-weight-bold"><?= date('d M Y', strtotime($application->application_date)) ?></span>
+                      <span class="text-secondary text-xs font-weight-bold"><?= date('d M Y', strtotime($application->tanggal_lamaran)) ?></span>
                     </td>
                     <td class="align-middle text-center">
                       <div class="dropdown">
                         <button class="btn btn-sm bg-gradient-<?= $application->status == 'pending' ? 'warning' : ($application->status == 'reviewed' ? 'info' : ($application->status == 'interview' ? 'primary' : ($application->status == 'diterima' ? 'success' : 'danger'))) ?> dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                          <?= $application->status == 'pending' ? 'Pending' : ($application->status == 'reviewed' ? 'Direview' : ($application->status == 'interview' ? 'Interview' : ($application->status == 'diterima' ? 'Diterima' : 'Ditolak'))) ?>
+                          <?= $application->status == 'pending' ? 'Pending' : ($application->status == 'reviewed' ? 'Direview' : ($application->status == 'interview' ? 'Wawancara' : ($application->status == 'diterima' ? 'Diterima' : 'Ditolak'))) ?>
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                          <li><a class="dropdown-item status-update" href="javascript:void(0)" data-id="<?= $application->id ?>" data-status="pending" data-name="<?= $user->full_name ?>">Pending</a></li>
-                          <li><a class="dropdown-item status-update" href="javascript:void(0)" data-id="<?= $application->id ?>" data-status="reviewed" data-name="<?= $user->full_name ?>">Direview</a></li>
-                          <li><a class="dropdown-item status-update" href="javascript:void(0)" data-id="<?= $application->id ?>" data-status="interview" data-name="<?= $user->full_name ?>">Interview</a></li>
-                          <li><a class="dropdown-item status-update" href="javascript:void(0)" data-id="<?= $application->id ?>" data-status="diterima" data-name="<?= $user->full_name ?>">Diterima</a></li>
+                          <li><a class="dropdown-item status-update" href="javascript:void(0)" data-id="<?= $application->id ?>" data-status="pending" data-name="<?= $user->nama_lengkap ?>">Pending</a></li>
+                          <li><a class="dropdown-item status-update" href="javascript:void(0)" data-id="<?= $application->id ?>" data-status="reviewed" data-name="<?= $user->nama_lengkap ?>">Direview</a></li>
+                          <li><a class="dropdown-item status-update" href="javascript:void(0)" data-id="<?= $application->id ?>" data-status="interview" data-name="<?= $user->nama_lengkap ?>">Wawancara</a></li>
+                          <li><a class="dropdown-item status-update" href="javascript:void(0)" data-id="<?= $application->id ?>" data-status="diterima" data-name="<?= $user->nama_lengkap ?>">Diterima</a></li>
                           <li><hr class="dropdown-divider"></li>
-                          <li><a class="dropdown-item text-danger status-update" href="javascript:void(0)" data-id="<?= $application->id ?>" data-status="ditolak" data-name="<?= $user->full_name ?>">Ditolak</a></li>
+                          <li><a class="dropdown-item text-danger status-update" href="javascript:void(0)" data-id="<?= $application->id ?>" data-status="ditolak" data-name="<?= $user->nama_lengkap ?>">Ditolak</a></li>
                         </ul>
                       </div>
                     </td>
@@ -93,18 +93,18 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end px-2 py-3" aria-labelledby="dropdownMenuButton">
                           <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/detail_lamaran/' . $application->id) ?>"><i class="fas fa-eye me-2"></i> Lihat Detail</a></li>
-                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/assign_assessment/' . $application->job_id . '/' . $application->id) ?>"><i class="fas fa-tasks me-2"></i> Atur Penilaian</a></li>
+                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/atur_penilaian/' . $application->id_pekerjaan . '/' . $application->id) ?>"><i class="fas fa-tasks me-2"></i> Atur Penilaian</a></li>
                           <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/editPelamar/' . $application->id) ?>"><i class="fas fa-edit me-2"></i> Edit</a></li>
                           <li>
                             <hr class="dropdown-divider">
                           </li>
                           <li>
-                            <a class="dropdown-item border-radius-md text-danger btn-delete" href="javascript:void(0)" data-id="<?= $application->id ?>" data-name="<?= $user->full_name ?>">
+                            <a class="dropdown-item border-radius-md text-danger btn-delete" href="javascript:void(0)" data-id="<?= $application->id ?>" data-name="<?= $user->nama_lengkap ?>">
                               <i class="fas fa-trash me-2"></i> Hapus
                             </a>
                           </li>
-                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/downloadResume/' . $application->id) ?>"><i class="fas fa-download me-2"></i> Download Resume</a></li>
-                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/printPelamar/' . $application->id) ?>"><i class="fas fa-print me-2"></i> Cetak Lamaran</a></li>
+                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/unduhResume/' . $application->id) ?>"><i class="fas fa-download me-2"></i> Unduh Resume</a></li>
+                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/cetakPelamar/' . $application->id) ?>"><i class="fas fa-print me-2"></i> Cetak Lamaran</a></li>
                         </ul>
                       </div>
                     </td>
@@ -147,7 +147,7 @@
             confirmButtonColor = '#11cdef'; // info
             break;
           case 'interview':
-            statusText = 'Interview';
+            statusText = 'Wawancara';
             confirmButtonColor = '#5e72e4'; // primary
             break;
           case 'diterima':
@@ -173,7 +173,7 @@
           cancelButtonText: 'Batal'
         }).then((result) => {
           if (result.isConfirmed) {
-            window.location.href = `<?= base_url('admin/updateStatusPelamar/') ?>${applicationId}/${status}`;
+            window.location.href = `<?= base_url('admin/perbaruiStatusPelamar/') ?>${applicationId}/${status}`;
           }
         });
       });
@@ -199,7 +199,7 @@
           cancelButtonText: 'Batal'
         }).then((result) => {
           if (result.isConfirmed) {
-            window.location.href = `<?= base_url('admin/deletePelamar/') ?>${applicationId}`;
+            window.location.href = `<?= base_url('admin/hapusPelamar/') ?>${applicationId}`;
           }
         });
       });

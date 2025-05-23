@@ -83,12 +83,12 @@
                           <?php else : ?>
                             <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/aktifkan_pengguna/' . $user->id) ?>"><i class="fas fa-user-check me-2"></i> Aktifkan</a></li>
                           <?php endif; ?>
-                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/reset_kata_sandi/' . $user->id) ?>"><i class="fas fa-key me-2"></i> Reset Password</a></li>
+                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/reset_kata_sandi/' . $user->id) ?>"><i class="fas fa-key me-2"></i> Reset Kata Sandi</a></li>
                           <li>
                             <hr class="dropdown-divider">
                           </li>
                           <li>
-                            <a class="dropdown-item border-radius-md text-danger btn-delete" href="<?= base_url('admin/hapus_pengguna/' . $user->id) ?>" data-confirm-message="Apakah Anda yakin ingin menghapus pengguna ini? Tindakan ini tidak dapat dibatalkan.">
+                            <a class="dropdown-item border-radius-md text-danger btn-delete" href="javascript:void(0)" data-id="<?= $user->id ?>" data-name="<?= $user->full_name ?>">
                               <i class="fas fa-trash me-2"></i> Hapus
                             </a>
                           </li>
@@ -184,6 +184,32 @@
           }
         },
       },
+    });
+
+    // Handle delete with SweetAlert2
+    const deleteButtons = document.querySelectorAll('.btn-delete');
+    deleteButtons.forEach(function(button) {
+      button.addEventListener('click', function(e) {
+        e.preventDefault();
+
+        const userId = this.getAttribute('data-id');
+        const userName = this.getAttribute('data-name');
+
+        Swal.fire({
+          title: 'Konfirmasi Hapus',
+          text: `Apakah Anda yakin ingin menghapus pengguna ${userName}? Tindakan ini tidak dapat dibatalkan.`,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#f5365c',
+          cancelButtonColor: '#3085d6',
+          confirmButtonText: 'Ya, Hapus!',
+          cancelButtonText: 'Batal'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = `<?= base_url('admin/hapus_pengguna/') ?>${userId}`;
+          }
+        });
+      });
     });
   });
 </script>

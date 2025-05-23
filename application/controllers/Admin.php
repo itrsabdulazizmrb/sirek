@@ -327,7 +327,7 @@ class Admin extends CI_Controller {
         // Load views
         $data['title'] = 'Manajemen Lamaran';
         $this->load->view('templates/admin_header', $data);
-        $this->load->view('admin/applications/index', $data);
+        $this->load->view('admin/lamaran/index', $data);
         $this->load->view('templates/admin_footer');
     }
 
@@ -358,7 +358,7 @@ class Admin extends CI_Controller {
         // Load views
         $data['title'] = 'Detail Lamaran';
         $this->load->view('templates/admin_header', $data);
-        $this->load->view('admin/applications/details', $data);
+        $this->load->view('admin/lamaran/detail', $data);
         $this->load->view('templates/admin_footer');
     }
 
@@ -395,6 +395,11 @@ class Admin extends CI_Controller {
         }
 
         redirect('admin/lamaran');
+    }
+
+    // Alias untuk updateStatusPelamar dengan nama Indonesia
+    public function perbaruiStatusPelamar($id, $status) {
+        return $this->updateStatusPelamar($id, $status);
     }
 
     // Perbarui status lamaran dengan notifikasi
@@ -472,6 +477,11 @@ class Admin extends CI_Controller {
         redirect('admin/detail_lamaran/' . $id);
     }
 
+    // Alias untuk add_application_note dengan nama Indonesia
+    public function tambah_catatan_lamaran($id) {
+        return $this->add_application_note($id);
+    }
+
     // Edit pelamar
     public function editPelamar($id) {
         // Get application details
@@ -496,7 +506,7 @@ class Admin extends CI_Controller {
             // Load views
             $data['title'] = 'Edit Lamaran';
             $this->load->view('templates/admin_header', $data);
-            $this->load->view('admin/applications/edit', $data);
+            $this->load->view('admin/lamaran/edit', $data);
             $this->load->view('templates/admin_footer');
         } else {
             // Get form data
@@ -537,6 +547,11 @@ class Admin extends CI_Controller {
         redirect('admin/lamaran');
     }
 
+    // Alias untuk deletePelamar dengan nama Indonesia
+    public function hapusPelamar($id) {
+        return $this->deletePelamar($id);
+    }
+
     // Download resume
     public function downloadResume($id) {
         // Get application details
@@ -566,6 +581,16 @@ class Admin extends CI_Controller {
         header('Content-Length: ' . filesize($file_path));
         readfile($file_path);
         exit;
+    }
+
+    // Alias untuk downloadResume dengan nama Indonesia
+    public function unduhResume($id) {
+        return $this->downloadResume($id);
+    }
+
+    // Alias untuk unduh_resume dengan nama Indonesia
+    public function unduh_resume($id) {
+        return $this->downloadResume($id);
     }
 
     // ===== MANAJEMEN DOKUMEN LOWONGAN =====
@@ -807,6 +832,11 @@ class Admin extends CI_Controller {
         exit;
     }
 
+    // Alias untuk download_dokumen_lamaran dengan nama Indonesia
+    public function unduh_dokumen_lamaran($id) {
+        return $this->download_dokumen_lamaran($id);
+    }
+
     // Print pelamar
     public function printPelamar($id) {
         // Get application details
@@ -825,7 +855,12 @@ class Admin extends CI_Controller {
 
         // Load print view
         $data['title'] = 'Cetak Lamaran';
-        $this->load->view('admin/applications/print', $data);
+        $this->load->view('admin/lamaran/print', $data);
+    }
+
+    // Alias untuk printPelamar dengan nama Indonesia
+    public function cetakPelamar($id) {
+        return $this->printPelamar($id);
     }
 
     // Lihat Lamaran Berdasarkan Lowongan
@@ -844,7 +879,7 @@ class Admin extends CI_Controller {
         // Load views
         $data['title'] = 'Lamaran untuk ' . $data['job']->title;
         $this->load->view('templates/admin_header', $data);
-        $this->load->view('admin/applications/job_applications', $data);
+        $this->load->view('admin/lamaran/lamaran_pekerjaan', $data);
         $this->load->view('templates/admin_footer');
     }
 
@@ -1127,6 +1162,11 @@ class Admin extends CI_Controller {
         $this->load->view('templates/admin_header', $data);
         $this->load->view('admin/assessments/assign', $data);
         $this->load->view('templates/admin_footer');
+    }
+
+    // Alias untuk assign_assessment dengan nama Indonesia
+    public function atur_penilaian($job_id, $application_id = null) {
+        return $this->assign_assessment($job_id, $application_id);
     }
 
     // Kelola Soal Penilaian
@@ -1466,7 +1506,7 @@ class Admin extends CI_Controller {
         // Load views
         $data['title'] = 'Manajemen Pengguna';
         $this->load->view('templates/admin_header', $data);
-        $this->load->view('admin/users/index', $data);
+        $this->load->view('admin/pengguna/index', $data);
         $this->load->view('templates/admin_footer');
     }
 
@@ -1484,7 +1524,7 @@ class Admin extends CI_Controller {
             // If validation fails, show form with errors
             $data['title'] = 'Tambah Pengguna Baru';
             $this->load->view('templates/admin_header', $data);
-            $this->load->view('admin/users/add', $data);
+            $this->load->view('admin/pengguna/tambah', $data);
             $this->load->view('templates/admin_footer');
         } else {
             // Get form data
@@ -1568,7 +1608,7 @@ class Admin extends CI_Controller {
             // If validation fails, show form with errors
             $data['title'] = 'Edit Pengguna';
             $this->load->view('templates/admin_header', $data);
-            $this->load->view('admin/users/edit', $data);
+            $this->load->view('admin/pengguna/edit', $data);
             $this->load->view('templates/admin_footer');
         } else {
             // Get form data
@@ -1736,7 +1776,7 @@ class Admin extends CI_Controller {
         // Load views
         $data['title'] = 'Profil Pelamar';
         $this->load->view('templates/admin_header', $data);
-        $this->load->view('admin/users/profilPelamar', $data);
+        $this->load->view('admin/pengguna/profil_pelamar', $data);
         $this->load->view('templates/admin_footer');
     }
 
@@ -1759,7 +1799,7 @@ class Admin extends CI_Controller {
         // Load views
         $data['title'] = 'Profil Pelamar';
         $this->load->view('templates/admin_header', $data);
-        $this->load->view('admin/users/profilPelamar', $data);
+        $this->load->view('admin/pengguna/profil_pelamar', $data);
         $this->load->view('templates/admin_footer');
     }
 
@@ -1779,7 +1819,7 @@ class Admin extends CI_Controller {
         // Load views
         $data['title'] = 'Lamaran Pelamar';
         $this->load->view('templates/admin_header', $data);
-        $this->load->view('admin/users/applicant_applications', $data);
+        $this->load->view('admin/pengguna/lamaran_pelamar', $data);
         $this->load->view('templates/admin_footer');
     }
 
@@ -1929,7 +1969,7 @@ class Admin extends CI_Controller {
         // Load views
         $data['title'] = 'Lowongan yang Dikelola';
         $this->load->view('templates/admin_header', $data);
-        $this->load->view('admin/users/recruiter_jobs', $data);
+        $this->load->view('admin/pengguna/pekerjaan_rekruter', $data);
         $this->load->view('templates/admin_footer');
     }
 
