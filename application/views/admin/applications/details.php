@@ -104,8 +104,58 @@
 
         <div class="row">
           <div class="col-md-12">
-            <h6 class="mb-3">Resume</h6>
-            <?php if ($application->resume) : ?>
+            <h6 class="mb-3">Dokumen Lamaran</h6>
+
+            <?php if (!empty($documents)) : ?>
+              <div class="table-responsive">
+                <table class="table align-items-center mb-0">
+                  <thead>
+                    <tr>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Dokumen</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Jenis</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Ukuran</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Wajib</th>
+                      <th class="text-secondary opacity-7"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <?php foreach ($documents as $doc) : ?>
+                      <tr>
+                        <td>
+                          <div class="d-flex px-2 py-1">
+                            <div>
+                              <i class="ni ni-single-copy-04 text-primary me-3"></i>
+                            </div>
+                            <div class="d-flex flex-column justify-content-center">
+                              <h6 class="mb-0 text-sm"><?= $doc->nama_dokumen ?? $doc->jenis_dokumen ?></h6>
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <p class="text-xs font-weight-bold mb-0"><?= strtoupper(pathinfo($doc->nama_file, PATHINFO_EXTENSION)) ?></p>
+                        </td>
+                        <td>
+                          <p class="text-xs font-weight-bold mb-0"><?= round($doc->ukuran_file / 1024, 2) ?> MB</p>
+                        </td>
+                        <td>
+                          <?php if (isset($doc->wajib)) : ?>
+                            <span class="badge badge-sm bg-gradient-<?= $doc->wajib == 1 ? 'success' : 'secondary' ?>"><?= $doc->wajib == 1 ? 'Wajib' : 'Opsional' ?></span>
+                          <?php else : ?>
+                            <span class="badge badge-sm bg-gradient-secondary">-</span>
+                          <?php endif; ?>
+                        </td>
+                        <td class="align-middle">
+                          <a href="<?= base_url('admin/download_dokumen_lamaran/' . $doc->id) ?>" class="btn btn-link text-secondary mb-0">
+                            <i class="fa fa-download text-xs"></i> Unduh
+                          </a>
+                        </td>
+                      </tr>
+                    <?php endforeach; ?>
+                  </tbody>
+                </table>
+              </div>
+            <?php elseif ($application->resume) : ?>
+              <!-- Legacy support for old applications with just a resume -->
               <a href="<?= base_url('uploads/resumes/' . $application->resume) ?>" class="btn btn-outline-primary btn-sm" target="_blank">
                 <i class="ni ni-single-copy-04 me-2"></i> Lihat Resume
               </a>
@@ -113,7 +163,7 @@
                 <i class="ni ni-cloud-download-95 me-2"></i> Download Resume
               </a>
             <?php else : ?>
-              <p class="text-muted">Tidak ada resume yang dilampirkan.</p>
+              <p class="text-muted">Tidak ada dokumen yang dilampirkan.</p>
             <?php endif; ?>
           </div>
         </div>

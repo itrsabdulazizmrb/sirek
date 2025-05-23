@@ -19,6 +19,7 @@ class Admin extends CI_Controller {
         $this->load->model('model_blog');
         $this->load->model('model_kategori');
         $this->load->model('model_pelamar');
+        $this->load->model('model_dokumen');
 
         // Load libraries
         $this->load->library('pagination');
@@ -116,19 +117,19 @@ class Admin extends CI_Controller {
         } else {
             // Get form data
             $job_data = array(
-                'title' => $this->input->post('title'),
-                'category_id' => $this->input->post('category_id'),
-                'description' => $this->input->post('description'),
-                'requirements' => $this->input->post('requirements'),
-                'responsibilities' => $this->input->post('responsibilities'),
-                'location' => $this->input->post('location'),
-                'job_type' => $this->input->post('job_type'),
-                'salary_range' => $this->input->post('salary_range'),
-                'deadline' => $this->input->post('deadline'),
-                'vacancies' => $this->input->post('vacancies'),
-                'featured' => $this->input->post('featured') ? 1 : 0,
+                'judul' => $this->input->post('title'),
+                'id_kategori' => $this->input->post('category_id'),
+                'deskripsi' => $this->input->post('description'),
+                'persyaratan' => $this->input->post('requirements'),
+                'tanggung_jawab' => $this->input->post('responsibilities'),
+                'lokasi' => $this->input->post('location'),
+                'jenis_pekerjaan' => $this->input->post('job_type'),
+                'rentang_gaji' => $this->input->post('salary_range'),
+                'batas_waktu' => $this->input->post('deadline'),
+                'jumlah_lowongan' => $this->input->post('vacancies'),
+                'unggulan' => $this->input->post('featured') ? 1 : 0,
                 'status' => $this->input->post('status'),
-                'created_by' => $this->session->userdata('user_id')
+                'dibuat_oleh' => $this->session->userdata('user_id')
             );
 
             // Insert job data
@@ -137,7 +138,72 @@ class Admin extends CI_Controller {
             if ($job_id) {
                 // Show success message
                 $this->session->set_flashdata('success', 'Lowongan berhasil ditambahkan.');
-                redirect('admin/lowongan');
+
+                // Check if user wants to manage document requirements
+                if ($this->input->post('manage_documents') == '1') {
+                    redirect('admin/dokumen_lowongan/' . $job_id);
+                } else {
+                    redirect('admin/lowongan');
+                }
+            } else {
+                // If insertion fails, show error message
+                $this->session->set_flashdata('error', 'Gagal menambahkan lowongan. Silakan coba lagi.');
+                redirect('admin/tambah_lowongan');
+            }
+        }
+    }
+
+    // Fungsi tambahLowongan untuk menggantikan add_job
+    public function tambahLowongan() {
+        // Get job categories
+        $data['categories'] = $this->model_kategori->dapatkan_kategori_lowongan();
+
+        // Form validation rules
+        $this->form_validation->set_rules('title', 'Judul', 'trim|required');
+        $this->form_validation->set_rules('description', 'Deskripsi', 'trim|required');
+        $this->form_validation->set_rules('requirements', 'Persyaratan', 'trim|required');
+        $this->form_validation->set_rules('responsibilities', 'Tanggung Jawab', 'trim|required');
+        $this->form_validation->set_rules('location', 'Lokasi', 'trim|required');
+        $this->form_validation->set_rules('job_type', 'Tipe Pekerjaan', 'trim|required');
+        $this->form_validation->set_rules('deadline', 'Batas Waktu', 'trim|required');
+
+        if ($this->form_validation->run() == FALSE) {
+            // If validation fails, show form with errors
+            $data['title'] = 'Tambah Lowongan Baru';
+            $this->load->view('templates/admin_header', $data);
+            $this->load->view('admin/jobs/add', $data);
+            $this->load->view('templates/admin_footer');
+        } else {
+            // Get form data
+            $job_data = array(
+                'judul' => $this->input->post('title'),
+                'id_kategori' => $this->input->post('category_id'),
+                'deskripsi' => $this->input->post('description'),
+                'persyaratan' => $this->input->post('requirements'),
+                'tanggung_jawab' => $this->input->post('responsibilities'),
+                'lokasi' => $this->input->post('location'),
+                'jenis_pekerjaan' => $this->input->post('job_type'),
+                'rentang_gaji' => $this->input->post('salary_range'),
+                'batas_waktu' => $this->input->post('deadline'),
+                'jumlah_lowongan' => $this->input->post('vacancies'),
+                'unggulan' => $this->input->post('featured') ? 1 : 0,
+                'status' => $this->input->post('status'),
+                'dibuat_oleh' => $this->session->userdata('user_id')
+            );
+
+            // Insert job data
+            $job_id = $this->model_lowongan->tambah_lowongan($job_data);
+
+            if ($job_id) {
+                // Show success message
+                $this->session->set_flashdata('success', 'Lowongan berhasil ditambahkan.');
+
+                // Check if user wants to manage document requirements
+                if ($this->input->post('manage_documents') == '1') {
+                    redirect('admin/dokumen_lowongan/' . $job_id);
+                } else {
+                    redirect('admin/lowongan');
+                }
             } else {
                 // If insertion fails, show error message
                 $this->session->set_flashdata('error', 'Gagal menambahkan lowongan. Silakan coba lagi.');
@@ -176,17 +242,17 @@ class Admin extends CI_Controller {
         } else {
             // Get form data
             $job_data = array(
-                'title' => $this->input->post('title'),
-                'category_id' => $this->input->post('category_id'),
-                'description' => $this->input->post('description'),
-                'requirements' => $this->input->post('requirements'),
-                'responsibilities' => $this->input->post('responsibilities'),
-                'location' => $this->input->post('location'),
-                'job_type' => $this->input->post('job_type'),
-                'salary_range' => $this->input->post('salary_range'),
-                'deadline' => $this->input->post('deadline'),
-                'vacancies' => $this->input->post('vacancies'),
-                'featured' => $this->input->post('featured') ? 1 : 0,
+                'judul' => $this->input->post('title'),
+                'id_kategori' => $this->input->post('category_id'),
+                'deskripsi' => $this->input->post('description'),
+                'persyaratan' => $this->input->post('requirements'),
+                'tanggung_jawab' => $this->input->post('responsibilities'),
+                'lokasi' => $this->input->post('location'),
+                'jenis_pekerjaan' => $this->input->post('job_type'),
+                'rentang_gaji' => $this->input->post('salary_range'),
+                'batas_waktu' => $this->input->post('deadline'),
+                'jumlah_lowongan' => $this->input->post('vacancies'),
+                'unggulan' => $this->input->post('featured') ? 1 : 0,
                 'status' => $this->input->post('status')
             );
 
@@ -285,6 +351,9 @@ class Admin extends CI_Controller {
 
         // Get assessment results
         $data['assessments'] = $this->model_penilaian->dapatkan_penilaian_pelamar($id);
+
+        // Get uploaded documents
+        $data['documents'] = $this->model_dokumen->dapatkan_dokumen_lamaran($id);
 
         // Load views
         $data['title'] = 'Detail Lamaran';
@@ -490,6 +559,245 @@ class Admin extends CI_Controller {
         // Get file info
         $file_info = pathinfo($file_path);
         $file_name = $application->applicant_name . '_Resume.' . $file_info['extension'];
+
+        // Force download
+        header('Content-Type: application/octet-stream');
+        header('Content-Disposition: attachment; filename="' . $file_name . '"');
+        header('Content-Length: ' . filesize($file_path));
+        readfile($file_path);
+        exit;
+    }
+
+    // ===== MANAJEMEN DOKUMEN LOWONGAN =====
+
+    // Kelola dokumen lowongan
+    public function dokumen_lowongan($job_id) {
+        // Get job details
+        $data['job'] = $this->model_lowongan->dapatkan_lowongan($job_id);
+
+        // If job not found, show 404
+        if (!$data['job']) {
+            show_404();
+        }
+
+        // Get document requirements for this job
+        $data['documents'] = $this->model_dokumen->dapatkan_dokumen_lowongan($job_id);
+
+        // Load views
+        $data['title'] = 'Kelola Dokumen Lowongan';
+        $this->load->view('templates/admin_header', $data);
+        $this->load->view('admin/jobs/documents', $data);
+        $this->load->view('templates/admin_footer');
+    }
+
+    // Tambah dokumen lowongan
+    public function tambah_dokumen_lowongan($job_id) {
+        // Get job details
+        $data['job'] = $this->model_lowongan->dapatkan_lowongan($job_id);
+
+        // If job not found, show 404
+        if (!$data['job']) {
+            show_404();
+        }
+
+        // Form validation rules
+        $this->form_validation->set_rules('jenis_dokumen', 'Jenis Dokumen', 'trim|required');
+        $this->form_validation->set_rules('nama_dokumen', 'Nama Dokumen', 'trim|required');
+        $this->form_validation->set_rules('wajib', 'Wajib', 'trim|required');
+
+        if ($this->form_validation->run() == FALSE) {
+            // If validation fails, show form with errors
+            $data['title'] = 'Tambah Dokumen Lowongan';
+            $this->load->view('templates/admin_header', $data);
+            $this->load->view('admin/jobs/add_document', $data);
+            $this->load->view('templates/admin_footer');
+        } else {
+            // Get form data
+            $document_data = array(
+                'id_lowongan' => $job_id,
+                'jenis_dokumen' => $this->input->post('jenis_dokumen'),
+                'nama_dokumen' => $this->input->post('nama_dokumen'),
+                'wajib' => $this->input->post('wajib'),
+                'format_diizinkan' => $this->input->post('format_diizinkan'),
+                'ukuran_maksimal' => $this->input->post('ukuran_maksimal'),
+                'deskripsi' => $this->input->post('deskripsi')
+            );
+
+            // Insert document data
+            $document_id = $this->model_dokumen->tambah_dokumen_lowongan($document_data);
+
+            if ($document_id) {
+                // Show success message
+                $this->session->set_flashdata('success', 'Dokumen lowongan berhasil ditambahkan.');
+                redirect('admin/dokumen_lowongan/' . $job_id);
+            } else {
+                // If insertion fails, show error message
+                $this->session->set_flashdata('error', 'Gagal menambahkan dokumen lowongan. Silakan coba lagi.');
+                redirect('admin/tambah_dokumen_lowongan/' . $job_id);
+            }
+        }
+    }
+
+    // Edit dokumen lowongan
+    public function edit_dokumen_lowongan($id) {
+        // Get document details
+        $data['document'] = $this->model_dokumen->dapatkan_dokumen_lowongan_by_id($id);
+
+        // If document not found, show 404
+        if (!$data['document']) {
+            show_404();
+        }
+
+        // Get job details
+        $data['job'] = $this->model_lowongan->dapatkan_lowongan($data['document']->id_lowongan);
+
+        // Form validation rules
+        $this->form_validation->set_rules('jenis_dokumen', 'Jenis Dokumen', 'trim|required');
+        $this->form_validation->set_rules('nama_dokumen', 'Nama Dokumen', 'trim|required');
+        $this->form_validation->set_rules('wajib', 'Wajib', 'trim|required');
+
+        if ($this->form_validation->run() == FALSE) {
+            // If validation fails, show form with errors
+            $data['title'] = 'Edit Dokumen Lowongan';
+            $this->load->view('templates/admin_header', $data);
+            $this->load->view('admin/jobs/edit_document', $data);
+            $this->load->view('templates/admin_footer');
+        } else {
+            // Get form data
+            $document_data = array(
+                'jenis_dokumen' => $this->input->post('jenis_dokumen'),
+                'nama_dokumen' => $this->input->post('nama_dokumen'),
+                'wajib' => $this->input->post('wajib'),
+                'format_diizinkan' => $this->input->post('format_diizinkan'),
+                'ukuran_maksimal' => $this->input->post('ukuran_maksimal'),
+                'deskripsi' => $this->input->post('deskripsi')
+            );
+
+            // Update document data
+            $result = $this->model_dokumen->perbarui_dokumen_lowongan($id, $document_data);
+
+            if ($result) {
+                // Show success message
+                $this->session->set_flashdata('success', 'Dokumen lowongan berhasil diperbarui.');
+                redirect('admin/dokumen_lowongan/' . $data['document']->id_lowongan);
+            } else {
+                // If update fails, show error message
+                $this->session->set_flashdata('error', 'Gagal memperbarui dokumen lowongan. Silakan coba lagi.');
+                redirect('admin/edit_dokumen_lowongan/' . $id);
+            }
+        }
+    }
+
+    // Hapus dokumen lowongan
+    public function hapus_dokumen_lowongan($id) {
+        // Get document details
+        $document = $this->model_dokumen->dapatkan_dokumen_lowongan_by_id($id);
+
+        // If document not found, show 404
+        if (!$document) {
+            show_404();
+        }
+
+        // Delete document
+        $result = $this->model_dokumen->hapus_dokumen_lowongan($id);
+
+        if ($result) {
+            // Show success message
+            $this->session->set_flashdata('success', 'Dokumen lowongan berhasil dihapus.');
+        } else {
+            // If deletion fails, show error message
+            $this->session->set_flashdata('error', 'Gagal menghapus dokumen lowongan. Silakan coba lagi.');
+        }
+
+        redirect('admin/dokumen_lowongan/' . $document->id_lowongan);
+    }
+
+    // Atur dokumen default untuk lowongan
+    public function atur_dokumen_default($job_id) {
+        // Get job details
+        $job = $this->model_lowongan->dapatkan_lowongan($job_id);
+
+        // If job not found, show 404
+        if (!$job) {
+            show_404();
+        }
+
+        // Check if job already has document requirements
+        if ($this->model_dokumen->cek_dokumen_lowongan_exists($job_id)) {
+            $this->session->set_flashdata('error', 'Lowongan ini sudah memiliki persyaratan dokumen. Hapus semua dokumen terlebih dahulu untuk mengatur ulang.');
+            redirect('admin/dokumen_lowongan/' . $job_id);
+        }
+
+        // Get default document requirements
+        $default_documents = $this->model_dokumen->dapatkan_dokumen_default();
+
+        // Add default document requirements for this job
+        $success = true;
+        foreach ($default_documents as $document) {
+            $document['id_lowongan'] = $job_id;
+            $result = $this->model_dokumen->tambah_dokumen_lowongan($document);
+            if (!$result) {
+                $success = false;
+            }
+        }
+
+        if ($success) {
+            // Show success message
+            $this->session->set_flashdata('success', 'Dokumen default berhasil ditambahkan ke lowongan.');
+        } else {
+            // If insertion fails, show error message
+            $this->session->set_flashdata('error', 'Gagal menambahkan beberapa dokumen default. Silakan coba lagi.');
+        }
+
+        redirect('admin/dokumen_lowongan/' . $job_id);
+    }
+
+    // Hapus semua dokumen lowongan
+    public function hapus_semua_dokumen_lowongan($job_id) {
+        // Get job details
+        $job = $this->model_lowongan->dapatkan_lowongan($job_id);
+
+        // If job not found, show 404
+        if (!$job) {
+            show_404();
+        }
+
+        // Delete all document requirements for this job
+        $result = $this->model_dokumen->hapus_semua_dokumen_lowongan($job_id);
+
+        if ($result) {
+            // Show success message
+            $this->session->set_flashdata('success', 'Semua dokumen lowongan berhasil dihapus.');
+        } else {
+            // If deletion fails, show error message
+            $this->session->set_flashdata('error', 'Gagal menghapus dokumen lowongan. Silakan coba lagi.');
+        }
+
+        redirect('admin/dokumen_lowongan/' . $job_id);
+    }
+
+    // Download dokumen lamaran
+    public function download_dokumen_lamaran($id) {
+        // Get document details
+        $document = $this->model_dokumen->dapatkan_dokumen_lamaran_by_id($id);
+
+        // If document not found, show 404
+        if (!$document) {
+            show_404();
+        }
+
+        // Set file path
+        $file_path = './uploads/documents/' . $document->nama_file;
+
+        // Check if file exists
+        if (!file_exists($file_path)) {
+            $this->session->set_flashdata('error', 'File dokumen tidak ditemukan.');
+            redirect('admin/detail_lamaran/' . $document->id_lamaran);
+        }
+
+        // Get file info
+        $file_info = pathinfo($file_path);
+        $file_name = $document->jenis_dokumen . '_' . time() . '.' . $file_info['extension'];
 
         // Force download
         header('Content-Type: application/octet-stream');

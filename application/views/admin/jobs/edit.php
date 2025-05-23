@@ -14,12 +14,12 @@
         </p>
       </div>
       <div class="card-body">
-        <?= form_open('admin/edit_job/' . $job->id, ['class' => 'needs-validation']) ?>
+        <?= form_open('admin/edit_lowongan/' . $job->id, ['class' => 'needs-validation']) ?>
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
                 <label for="title" class="form-control-label">Judul Lowongan <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" id="title" name="title" value="<?= set_value('title', $job->title) ?>" required>
+                <input type="text" class="form-control" id="title" name="title" value="<?= set_value('title', $job->judul) ?>" required>
                 <?= form_error('title', '<small class="text-danger">', '</small>') ?>
               </div>
             </div>
@@ -29,7 +29,7 @@
                 <select class="form-control" id="category_id" name="category_id" required>
                   <option value="">Pilih Kategori</option>
                   <?php foreach ($categories as $category) : ?>
-                    <option value="<?= $category->id ?>" <?= set_select('category_id', $category->id, ($job->category_id == $category->id)) ?>><?= $category->name ?></option>
+                    <option value="<?= $category->id ?>" <?= set_select('category_id', $category->id, ($job->id_kategori == $category->id)) ?>><?= $category->nama ?></option>
                   <?php endforeach; ?>
                 </select>
                 <?= form_error('category_id', '<small class="text-danger">', '</small>') ?>
@@ -41,7 +41,7 @@
             <div class="col-md-12">
               <div class="form-group">
                 <label for="description" class="form-control-label">Deskripsi Pekerjaan <span class="text-danger">*</span></label>
-                <textarea class="form-control" id="description" name="description" rows="5" required><?= set_value('description', $job->description) ?></textarea>
+                <textarea class="form-control" id="description" name="description" rows="5" required><?= set_value('description', $job->deskripsi) ?></textarea>
                 <?= form_error('description', '<small class="text-danger">', '</small>') ?>
                 <small class="text-muted">Jelaskan secara detail tentang posisi pekerjaan ini.</small>
               </div>
@@ -52,7 +52,7 @@
             <div class="col-md-12">
               <div class="form-group">
                 <label for="requirements" class="form-control-label">Persyaratan <span class="text-danger">*</span></label>
-                <textarea class="form-control" id="requirements" name="requirements" rows="5" required><?= set_value('requirements', $job->requirements) ?></textarea>
+                <textarea class="form-control" id="requirements" name="requirements" rows="5" required><?= set_value('requirements', $job->persyaratan) ?></textarea>
                 <?= form_error('requirements', '<small class="text-danger">', '</small>') ?>
                 <small class="text-muted">Jelaskan kualifikasi dan persyaratan yang dibutuhkan untuk posisi ini.</small>
               </div>
@@ -63,7 +63,7 @@
             <div class="col-md-12">
               <div class="form-group">
                 <label for="responsibilities" class="form-control-label">Tanggung Jawab <span class="text-danger">*</span></label>
-                <textarea class="form-control" id="responsibilities" name="responsibilities" rows="5" required><?= set_value('responsibilities', $job->responsibilities) ?></textarea>
+                <textarea class="form-control" id="responsibilities" name="responsibilities" rows="5" required><?= set_value('responsibilities', $job->tanggung_jawab) ?></textarea>
                 <?= form_error('responsibilities', '<small class="text-danger">', '</small>') ?>
                 <small class="text-muted">Jelaskan tanggung jawab dan tugas-tugas untuk posisi ini.</small>
               </div>
@@ -74,7 +74,7 @@
             <div class="col-md-6">
               <div class="form-group">
                 <label for="location" class="form-control-label">Lokasi <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" id="location" name="location" value="<?= set_value('location', $job->location) ?>" required>
+                <input type="text" class="form-control" id="location" name="location" value="<?= set_value('location', $job->lokasi) ?>" required>
                 <?= form_error('location', '<small class="text-danger">', '</small>') ?>
               </div>
             </div>
@@ -83,10 +83,10 @@
                 <label for="job_type" class="form-control-label">Tipe Pekerjaan <span class="text-danger">*</span></label>
                 <select class="form-control" id="job_type" name="job_type" required>
                   <option value="">Pilih Tipe Pekerjaan</option>
-                  <option value="full-time" <?= set_select('job_type', 'full-time', ($job->job_type == 'full-time')) ?>>Full Time</option>
-                  <option value="part-time" <?= set_select('job_type', 'part-time', ($job->job_type == 'part-time')) ?>>Part Time</option>
-                  <option value="contract" <?= set_select('job_type', 'contract', ($job->job_type == 'contract')) ?>>Kontrak</option>
-                  <option value="internship" <?= set_select('job_type', 'internship', ($job->job_type == 'internship')) ?>>Magang</option>
+                  <option value="penuh_waktu" <?= set_select('job_type', 'penuh_waktu', ($job->jenis_pekerjaan == 'penuh_waktu')) ?>>Full Time</option>
+                  <option value="paruh_waktu" <?= set_select('job_type', 'paruh_waktu', ($job->jenis_pekerjaan == 'paruh_waktu')) ?>>Part Time</option>
+                  <option value="kontrak" <?= set_select('job_type', 'kontrak', ($job->jenis_pekerjaan == 'kontrak')) ?>>Kontrak</option>
+                  <option value="magang" <?= set_select('job_type', 'magang', ($job->jenis_pekerjaan == 'magang')) ?>>Magang</option>
                 </select>
                 <?= form_error('job_type', '<small class="text-danger">', '</small>') ?>
               </div>
@@ -97,14 +97,14 @@
             <div class="col-md-6">
               <div class="form-group">
                 <label for="salary_range" class="form-control-label">Kisaran Gaji</label>
-                <input type="text" class="form-control" id="salary_range" name="salary_range" value="<?= set_value('salary_range', $job->salary_range) ?>">
+                <input type="text" class="form-control" id="salary_range" name="salary_range" value="<?= set_value('salary_range', $job->rentang_gaji) ?>">
                 <small class="text-muted">Contoh: Rp 5.000.000 - Rp 8.000.000 per bulan</small>
               </div>
             </div>
             <div class="col-md-6">
               <div class="form-group">
                 <label for="deadline" class="form-control-label">Batas Waktu Lamaran <span class="text-danger">*</span></label>
-                <input type="date" class="form-control" id="deadline" name="deadline" value="<?= set_value('deadline', date('Y-m-d', strtotime($job->deadline))) ?>" required>
+                <input type="date" class="form-control" id="deadline" name="deadline" value="<?= set_value('deadline', date('Y-m-d', strtotime($job->batas_waktu))) ?>" required>
                 <?= form_error('deadline', '<small class="text-danger">', '</small>') ?>
               </div>
             </div>
@@ -114,16 +114,16 @@
             <div class="col-md-6">
               <div class="form-group">
                 <label for="vacancies" class="form-control-label">Jumlah Posisi</label>
-                <input type="number" class="form-control" id="vacancies" name="vacancies" value="<?= set_value('vacancies', $job->vacancies) ?>" min="1">
+                <input type="number" class="form-control" id="vacancies" name="vacancies" value="<?= set_value('vacancies', $job->jumlah_lowongan) ?>" min="1">
               </div>
             </div>
             <div class="col-md-6">
               <div class="form-group">
                 <label for="status" class="form-control-label">Status <span class="text-danger">*</span></label>
                 <select class="form-control" id="status" name="status" required>
-                  <option value="active" <?= set_select('status', 'active', ($job->status == 'active')) ?>>Aktif</option>
+                  <option value="aktif" <?= set_select('status', 'aktif', ($job->status == 'aktif')) ?>>Aktif</option>
                   <option value="draft" <?= set_select('status', 'draft', ($job->status == 'draft')) ?>>Draft</option>
-                  <option value="inactive" <?= set_select('status', 'inactive', ($job->status == 'inactive')) ?>>Tidak Aktif</option>
+                  <option value="ditutup" <?= set_select('status', 'ditutup', ($job->status == 'ditutup')) ?>>Tidak Aktif</option>
                 </select>
                 <?= form_error('status', '<small class="text-danger">', '</small>') ?>
               </div>
@@ -133,7 +133,7 @@
           <div class="row">
             <div class="col-md-12">
               <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="featured" name="featured" value="1" <?= set_checkbox('featured', '1', ($job->featured == 1)) ?>>
+                <input class="form-check-input" type="checkbox" id="featured" name="featured" value="1" <?= set_checkbox('featured', '1', ($job->unggulan == 1)) ?>>
                 <label class="form-check-label" for="featured">Tampilkan sebagai Lowongan Unggulan</label>
               </div>
             </div>
@@ -142,6 +142,7 @@
           <div class="row mt-4">
             <div class="col-md-12">
               <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+              <a href="<?= base_url('admin/dokumen_lowongan/' . $job->id) ?>" class="btn btn-info">Kelola Dokumen Persyaratan</a>
               <a href="<?= base_url('admin/jobs') ?>" class="btn btn-secondary">Batal</a>
             </div>
           </div>

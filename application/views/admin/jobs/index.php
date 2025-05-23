@@ -82,6 +82,7 @@
                         <ul class="dropdown-menu dropdown-menu-end px-2 py-3" aria-labelledby="dropdownMenuButton">
                           <li><a class="dropdown-item border-radius-md" href="<?= base_url('lowongan/detail/' . $job->id) ?>" target="_blank"><i class="fas fa-eye me-2"></i> Lihat</a></li>
                           <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/edit_lowongan/' . $job->id) ?>"><i class="fas fa-edit me-2"></i> Edit</a></li>
+                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/dokumen_lowongan/' . $job->id) ?>"><i class="fas fa-file-alt me-2"></i> Kelola Dokumen Persyaratan</a></li>
                           <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/lamaran_lowongan/' . $job->id) ?>"><i class="fas fa-users me-2"></i> Lihat Pelamar</a></li>
                           <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/assign_assessment/' . $job->id) ?>"><i class="fas fa-tasks me-2"></i> Atur Penilaian</a></li>
                           <li>

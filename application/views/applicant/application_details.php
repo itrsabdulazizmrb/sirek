@@ -3,22 +3,22 @@
     <div class="card">
       <div class="card-header pb-0">
         <div class="d-flex align-items-center">
-          <p class="mb-0">Application Details</p>
-          <a href="<?= base_url('applicant/applications') ?>" class="btn btn-primary btn-sm ms-auto">Back to Applications</a>
+          <p class="mb-0">Detail Lamaran</p>
+          <a href="<?= base_url('pelamar/lamaran') ?>" class="btn btn-primary btn-sm ms-auto">Kembali ke Lamaran</a>
         </div>
       </div>
       <div class="card-body">
         <div class="row">
           <div class="col-md-12">
-            <h6 class="mb-3"><?= $job->title ?></h6>
+            <h6 class="mb-3"><?= $job->judul ?></h6>
             <div class="d-flex mb-4">
-              <span class="badge badge-sm bg-gradient-<?= $job->job_type == 'full-time' ? 'success' : ($job->job_type == 'part-time' ? 'info' : ($job->job_type == 'contract' ? 'warning' : 'secondary')) ?> me-2"><?= ucfirst(str_replace('-', ' ', $job->job_type)) ?></span>
-              <span class="text-sm me-3"><i class="ni ni-pin-3 me-1"></i> <?= $job->location ?></span>
-              <span class="text-sm"><i class="ni ni-calendar-grid-58 me-1"></i> Applied on <?= date('d M Y', strtotime($application->application_date)) ?></span>
+              <span class="badge badge-sm bg-gradient-<?= $job->jenis_pekerjaan == 'penuh_waktu' ? 'success' : ($job->jenis_pekerjaan == 'paruh_waktu' ? 'info' : ($job->jenis_pekerjaan == 'kontrak' ? 'warning' : 'secondary')) ?> me-2"><?= ucfirst(str_replace('_', ' ', $job->jenis_pekerjaan)) ?></span>
+              <span class="text-sm me-3"><i class="ni ni-pin-3 me-1"></i> <?= $job->lokasi ?></span>
+              <span class="text-sm"><i class="ni ni-calendar-grid-58 me-1"></i> Dilamar pada <?= date('d M Y', strtotime($application->tanggal_lamaran)) ?></span>
             </div>
           </div>
         </div>
-        
+
         <div class="row">
           <div class="col-md-12">
             <div class="timeline timeline-one-side">
@@ -27,151 +27,193 @@
                   <i class="ni ni-send text-primary"></i>
                 </span>
                 <div class="timeline-content">
-                  <h6 class="text-dark text-sm font-weight-bold mb-0">Application Submitted</h6>
-                  <p class="text-secondary font-weight-bold text-xs mt-1 mb-0"><?= date('d M Y H:i', strtotime($application->application_date)) ?></p>
+                  <h6 class="text-dark text-sm font-weight-bold mb-0">Lamaran Dikirim</h6>
+                  <p class="text-secondary font-weight-bold text-xs mt-1 mb-0"><?= date('d M Y H:i', strtotime($application->tanggal_lamaran)) ?></p>
                 </div>
               </div>
-              
-              <?php if ($application->status != 'pending') : ?>
+
+              <?php if ($application->status != 'menunggu') : ?>
                 <div class="timeline-block mb-3">
                   <span class="timeline-step">
                     <i class="ni ni-check-bold text-info"></i>
                   </span>
                   <div class="timeline-content">
-                    <h6 class="text-dark text-sm font-weight-bold mb-0">Application Reviewed</h6>
+                    <h6 class="text-dark text-sm font-weight-bold mb-0">Lamaran Ditinjau</h6>
                     <p class="text-secondary font-weight-bold text-xs mt-1 mb-0"><?= date('d M Y', strtotime($application->updated_at)) ?></p>
                   </div>
                 </div>
               <?php endif; ?>
-              
-              <?php if (in_array($application->status, ['shortlisted', 'interviewed', 'offered', 'hired'])) : ?>
+
+              <?php if (in_array($application->status, ['seleksi', 'wawancara', 'ditawari', 'diterima'])) : ?>
                 <div class="timeline-block mb-3">
                   <span class="timeline-step">
                     <i class="ni ni-trophy text-success"></i>
                   </span>
                   <div class="timeline-content">
-                    <h6 class="text-dark text-sm font-weight-bold mb-0">Shortlisted</h6>
+                    <h6 class="text-dark text-sm font-weight-bold mb-0">Masuk Seleksi</h6>
                     <p class="text-secondary font-weight-bold text-xs mt-1 mb-0"><?= date('d M Y', strtotime($application->updated_at)) ?></p>
                   </div>
                 </div>
               <?php endif; ?>
-              
-              <?php if (in_array($application->status, ['interviewed', 'offered', 'hired'])) : ?>
+
+              <?php if (in_array($application->status, ['wawancara', 'ditawari', 'diterima'])) : ?>
                 <div class="timeline-block mb-3">
                   <span class="timeline-step">
                     <i class="ni ni-chat-round text-primary"></i>
                   </span>
                   <div class="timeline-content">
-                    <h6 class="text-dark text-sm font-weight-bold mb-0">Interviewed</h6>
+                    <h6 class="text-dark text-sm font-weight-bold mb-0">Wawancara</h6>
                     <p class="text-secondary font-weight-bold text-xs mt-1 mb-0"><?= date('d M Y', strtotime($application->updated_at)) ?></p>
                   </div>
                 </div>
               <?php endif; ?>
-              
-              <?php if (in_array($application->status, ['offered', 'hired'])) : ?>
+
+              <?php if (in_array($application->status, ['ditawari', 'diterima'])) : ?>
                 <div class="timeline-block mb-3">
                   <span class="timeline-step">
                     <i class="ni ni-tie-bow text-warning"></i>
                   </span>
                   <div class="timeline-content">
-                    <h6 class="text-dark text-sm font-weight-bold mb-0">Job Offered</h6>
+                    <h6 class="text-dark text-sm font-weight-bold mb-0">Pekerjaan Ditawarkan</h6>
                     <p class="text-secondary font-weight-bold text-xs mt-1 mb-0"><?= date('d M Y', strtotime($application->updated_at)) ?></p>
                   </div>
                 </div>
               <?php endif; ?>
-              
-              <?php if ($application->status == 'hired') : ?>
+
+              <?php if ($application->status == 'diterima') : ?>
                 <div class="timeline-block mb-3">
                   <span class="timeline-step">
                     <i class="ni ni-check-bold text-success"></i>
                   </span>
                   <div class="timeline-content">
-                    <h6 class="text-dark text-sm font-weight-bold mb-0">Hired</h6>
+                    <h6 class="text-dark text-sm font-weight-bold mb-0">Diterima</h6>
                     <p class="text-secondary font-weight-bold text-xs mt-1 mb-0"><?= date('d M Y', strtotime($application->updated_at)) ?></p>
                   </div>
                 </div>
               <?php endif; ?>
-              
-              <?php if ($application->status == 'rejected') : ?>
+
+              <?php if ($application->status == 'ditolak') : ?>
                 <div class="timeline-block mb-3">
                   <span class="timeline-step">
                     <i class="ni ni-fat-remove text-danger"></i>
                   </span>
                   <div class="timeline-content">
-                    <h6 class="text-dark text-sm font-weight-bold mb-0">Application Rejected</h6>
+                    <h6 class="text-dark text-sm font-weight-bold mb-0">Lamaran Ditolak</h6>
                     <p class="text-secondary font-weight-bold text-xs mt-1 mb-0"><?= date('d M Y', strtotime($application->updated_at)) ?></p>
-                    <p class="text-sm mt-2 mb-0">Thank you for your interest. We encourage you to apply for other positions that match your skills and experience.</p>
+                    <p class="text-sm mt-2 mb-0">Terima kasih atas minat Anda. Kami mendorong Anda untuk melamar posisi lain yang sesuai dengan keterampilan dan pengalaman Anda.</p>
                   </div>
                 </div>
               <?php endif; ?>
             </div>
           </div>
         </div>
-        
+
         <hr class="horizontal dark">
-        
+
         <div class="row">
           <div class="col-md-12">
-            <h6 class="mb-3">Cover Letter</h6>
+            <h6 class="mb-3">Surat Lamaran</h6>
             <div class="p-3 bg-light rounded">
               <?= nl2br($application->cover_letter) ?>
             </div>
           </div>
         </div>
-        
+
         <hr class="horizontal dark">
-        
+
         <div class="row">
           <div class="col-md-12">
-            <h6 class="mb-3">Resume</h6>
-            <?php if ($application->resume) : ?>
-              <a href="<?= base_url('uploads/resumes/' . $application->resume) ?>" class="btn btn-outline-primary btn-sm" target="_blank">
-                <i class="ni ni-single-copy-04 me-2"></i> View Resume
+            <h6 class="mb-3">Dokumen Lamaran</h6>
+
+            <?php if (!empty($documents)) : ?>
+              <div class="table-responsive">
+                <table class="table align-items-center mb-0">
+                  <thead>
+                    <tr>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Dokumen</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Jenis</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Ukuran</th>
+                      <th class="text-secondary opacity-7"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <?php foreach ($documents as $doc) : ?>
+                      <tr>
+                        <td>
+                          <div class="d-flex px-2 py-1">
+                            <div>
+                              <i class="ni ni-single-copy-04 text-primary me-3"></i>
+                            </div>
+                            <div class="d-flex flex-column justify-content-center">
+                              <h6 class="mb-0 text-sm"><?= $doc->nama_dokumen ?? $doc->jenis_dokumen ?></h6>
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <p class="text-xs font-weight-bold mb-0"><?= strtoupper(pathinfo($doc->nama_file, PATHINFO_EXTENSION)) ?></p>
+                        </td>
+                        <td>
+                          <p class="text-xs font-weight-bold mb-0"><?= round($doc->ukuran_file / 1024, 2) ?> MB</p>
+                        </td>
+                        <td class="align-middle">
+                          <a href="<?= base_url('pelamar/download_dokumen/' . $doc->id) ?>" class="btn btn-link text-secondary mb-0">
+                            <i class="fa fa-download text-xs"></i> Unduh
+                          </a>
+                        </td>
+                      </tr>
+                    <?php endforeach; ?>
+                  </tbody>
+                </table>
+              </div>
+            <?php elseif ($application->cv) : ?>
+              <!-- Legacy support for old applications with just a resume -->
+              <a href="<?= base_url('uploads/resumes/' . $application->cv) ?>" class="btn btn-outline-primary btn-sm" target="_blank">
+                <i class="ni ni-single-copy-04 me-2"></i> Lihat CV
               </a>
             <?php else : ?>
-              <p class="text-muted">No resume attached.</p>
+              <p class="text-muted">Tidak ada dokumen yang dilampirkan.</p>
             <?php endif; ?>
           </div>
         </div>
       </div>
     </div>
   </div>
-  
+
   <div class="col-md-4">
     <div class="card">
       <div class="card-header pb-0">
-        <h6>Application Status</h6>
+        <h6>Status Lamaran</h6>
       </div>
       <div class="card-body">
         <div class="d-flex align-items-center">
           <div>
-            <span class="badge badge-lg bg-gradient-<?= $application->status == 'pending' ? 'warning' : ($application->status == 'reviewed' ? 'info' : ($application->status == 'shortlisted' ? 'success' : ($application->status == 'interviewed' ? 'primary' : ($application->status == 'offered' ? 'warning' : ($application->status == 'hired' ? 'success' : 'danger'))))) ?> mb-3"><?= ucfirst($application->status) ?></span>
+            <span class="badge badge-lg bg-gradient-<?= $application->status == 'menunggu' ? 'warning' : ($application->status == 'direview' ? 'info' : ($application->status == 'seleksi' ? 'success' : ($application->status == 'wawancara' ? 'primary' : ($application->status == 'ditawari' ? 'warning' : ($application->status == 'diterima' ? 'success' : 'danger'))))) ?> mb-3"><?= ucfirst($application->status) ?></span>
           </div>
         </div>
         <p class="text-sm">
-          <?php if ($application->status == 'pending') : ?>
-            Your application is currently under review. We will notify you once there's an update.
-          <?php elseif ($application->status == 'reviewed') : ?>
-            Your application has been reviewed by our hiring team. We will contact you soon with next steps.
-          <?php elseif ($application->status == 'shortlisted') : ?>
-            Congratulations! You have been shortlisted for this position. We will contact you soon to schedule an interview.
-          <?php elseif ($application->status == 'interviewed') : ?>
-            You have completed the interview stage. We are currently evaluating all candidates and will get back to you soon.
-          <?php elseif ($application->status == 'offered') : ?>
-            Congratulations! You have been offered this position. Please check your email for the offer details.
-          <?php elseif ($application->status == 'hired') : ?>
-            Congratulations! You have been hired for this position. Welcome to our team!
-          <?php elseif ($application->status == 'rejected') : ?>
-            We appreciate your interest in this position. Unfortunately, we have decided to move forward with other candidates at this time.
+          <?php if ($application->status == 'menunggu') : ?>
+            Lamaran Anda sedang dalam proses peninjauan. Kami akan memberi tahu Anda setelah ada pembaruan.
+          <?php elseif ($application->status == 'direview') : ?>
+            Lamaran Anda telah ditinjau oleh tim rekrutmen kami. Kami akan menghubungi Anda segera untuk langkah selanjutnya.
+          <?php elseif ($application->status == 'seleksi') : ?>
+            Selamat! Anda telah masuk dalam tahap seleksi untuk posisi ini. Kami akan menghubungi Anda segera untuk menjadwalkan wawancara.
+          <?php elseif ($application->status == 'wawancara') : ?>
+            Anda telah menyelesaikan tahap wawancara. Kami sedang mengevaluasi semua kandidat dan akan segera menghubungi Anda.
+          <?php elseif ($application->status == 'ditawari') : ?>
+            Selamat! Anda telah ditawari posisi ini. Silakan periksa email Anda untuk detail penawaran.
+          <?php elseif ($application->status == 'diterima') : ?>
+            Selamat! Anda telah diterima untuk posisi ini. Selamat bergabung dengan tim kami!
+          <?php elseif ($application->status == 'ditolak') : ?>
+            Kami menghargai minat Anda pada posisi ini. Sayangnya, kami telah memutuskan untuk melanjutkan dengan kandidat lain saat ini.
           <?php endif; ?>
         </p>
       </div>
     </div>
-    
+
     <?php if (!empty($assessments)) : ?>
       <div class="card mt-4">
         <div class="card-header pb-0">
-          <h6>Assessments</h6>
+          <h6>Penilaian</h6>
         </div>
         <div class="card-body">
           <?php foreach ($assessments as $assessment) : ?>
@@ -185,13 +227,13 @@
                 <h6 class="mb-0 text-sm"><?= $assessment->assessment_title ?></h6>
                 <p class="text-xs text-secondary mb-0"><?= $assessment->type_name ?></p>
                 <?php if ($assessment->status == 'not_started') : ?>
-                  <a href="<?= base_url('applicant/take_assessment/' . $assessment->assessment_id . '/' . $assessment->application_id) ?>" class="btn btn-sm btn-primary mt-2">Take Assessment</a>
+                  <a href="<?= base_url('pelamar/ikuti_penilaian/' . $assessment->assessment_id . '/' . $assessment->application_id) ?>" class="btn btn-sm btn-primary mt-2">Ikuti Penilaian</a>
                 <?php elseif ($assessment->status == 'in_progress') : ?>
-                  <a href="<?= base_url('applicant/take_assessment/' . $assessment->assessment_id . '/' . $assessment->application_id) ?>" class="btn btn-sm btn-warning mt-2">Continue Assessment</a>
+                  <a href="<?= base_url('pelamar/ikuti_penilaian/' . $assessment->assessment_id . '/' . $assessment->application_id) ?>" class="btn btn-sm btn-warning mt-2">Lanjutkan Penilaian</a>
                 <?php elseif ($assessment->status == 'completed') : ?>
-                  <span class="badge badge-sm bg-gradient-success mt-2">Completed</span>
+                  <span class="badge badge-sm bg-gradient-success mt-2">Selesai</span>
                 <?php elseif ($assessment->status == 'graded') : ?>
-                  <span class="badge badge-sm bg-gradient-info mt-2">Score: <?= $assessment->score ?></span>
+                  <span class="badge badge-sm bg-gradient-info mt-2">Nilai: <?= $assessment->score ?></span>
                 <?php endif; ?>
               </div>
             </div>
@@ -199,20 +241,20 @@
         </div>
       </div>
     <?php endif; ?>
-    
+
     <div class="card mt-4">
       <div class="card-header pb-0">
-        <h6>Job Details</h6>
+        <h6>Detail Lowongan</h6>
       </div>
       <div class="card-body">
-        <p class="text-sm mb-1"><strong>Job Type:</strong> <?= ucfirst(str_replace('-', ' ', $job->job_type)) ?></p>
-        <p class="text-sm mb-1"><strong>Location:</strong> <?= $job->location ?></p>
-        <?php if ($job->salary_range) : ?>
-          <p class="text-sm mb-1"><strong>Salary Range:</strong> <?= $job->salary_range ?></p>
+        <p class="text-sm mb-1"><strong>Tipe Pekerjaan:</strong> <?= ucfirst(str_replace('-', ' ', $job->jenis_pekerjaan)) ?></p>
+        <p class="text-sm mb-1"><strong>Lokasi:</strong> <?= $job->lokasi ?></p>
+        <?php if ($job->rentang_gaji) : ?>
+          <p class="text-sm mb-1"><strong>Kisaran Gaji:</strong> <?= $job->rentang_gaji ?></p>
         <?php endif; ?>
-        <p class="text-sm mb-3"><strong>Deadline:</strong> <?= date('d M Y', strtotime($job->deadline)) ?></p>
-        
-        <a href="<?= base_url('home/job_details/' . $job->id) ?>" class="btn btn-outline-primary btn-sm">View Full Job Details</a>
+        <p class="text-sm mb-3"><strong>Batas Waktu:</strong> <?= date('d M Y', strtotime($job->batas_waktu)) ?></p>
+
+        <a href="<?= base_url('lowongan/detail/' . $job->id) ?>" class="btn btn-outline-primary btn-sm">Lihat Detail Lengkap</a>
       </div>
     </div>
   </div>

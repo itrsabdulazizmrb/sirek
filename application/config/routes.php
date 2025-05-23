@@ -79,6 +79,7 @@ $route['pelamar/lamar/(:num)'] = 'pelamar/lamar/$1';
 $route['pelamar/detail-lamaran/(:num)'] = 'pelamar/detail_lamaran/$1';
 $route['pelamar/penilaian'] = 'pelamar/penilaian';
 $route['pelamar/ikuti-penilaian/(:num)/(:num)'] = 'pelamar/ikuti_penilaian/$1/$2';
+$route['pelamar/detail_lamaran/(:num)'] = 'pelamar/detail_lamaran/$1';
 $route['pelamar/kirim-penilaian'] = 'pelamar/kirim_penilaian';
 $route['pelamar/ubah-password'] = 'pelamar/ubah_password';
 
@@ -141,14 +142,25 @@ $route['admin/assign_assessment_to_applicants/(:num)'] = 'admin/tetapkanPenilaia
 
 // Rute tambahan untuk lowongan (alias)
 $route['admin/jobs'] = 'admin/lowongan';
-$route['admin/add_job'] = 'admin/tambah_lowongan';
+$route['admin/add_job'] = 'admin/tambahLowongan';
 $route['admin/edit_job/(:num)'] = 'admin/edit_lowongan/$1';
 $route['admin/delete_job/(:num)'] = 'admin/hapus_lowongan/$1';
 $route['admin/job_applications/(:num)'] = 'admin/lamaran_lowongan/$1';
 
+// Rute untuk dokumen lowongan
+$route['admin/dokumen_lowongan/(:num)'] = 'admin/dokumen_lowongan/$1';
+$route['admin/tambah_dokumen_lowongan/(:num)'] = 'admin/tambah_dokumen_lowongan/$1';
+$route['admin/edit_dokumen_lowongan/(:num)'] = 'admin/edit_dokumen_lowongan/$1';
+$route['admin/hapus_dokumen_lowongan/(:num)'] = 'admin/hapus_dokumen_lowongan/$1';
+$route['admin/atur_dokumen_default/(:num)'] = 'admin/atur_dokumen_default/$1';
+$route['admin/hapus_semua_dokumen_lowongan/(:num)'] = 'admin/hapus_semua_dokumen_lowongan/$1';
+$route['admin/download_dokumen_lamaran/(:num)'] = 'admin/download_dokumen_lamaran/$1';
+$route['pelamar/download_dokumen/(:num)'] = 'pelamar/download_dokumen/$1';
+
 // Rute tambahan untuk pelamar (alias)
 $route['admin/profilPelamar/(:num)'] = 'admin/profilPelamar/$1';
 $route['admin/recruiter_jobs/(:num)'] = 'admin/lowongan_rekruter/$1';
+$route['applicant/application_details/(:num)'] = 'pelamar/detail_lamaran/$1';
 
 // Rute tambahan untuk pengguna (alias)
 $route['admin/edit_user/(:num)'] = 'admin/edit_pengguna/$1';

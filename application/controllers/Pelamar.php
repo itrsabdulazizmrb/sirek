@@ -16,9 +16,16 @@ class Pelamar extends CI_Controller {
         $this->load->model('model_lowongan');
         $this->load->model('model_lamaran');
         $this->load->model('model_penilaian');
+        $this->load->model('model_dokumen');
 
         // Load libraries
         $this->load->library('upload');
+        $this->load->library('form_validation');
+
+        // Create uploads directory if it doesn't exist
+        if (!is_dir('./uploads/documents')) {
+            mkdir('./uploads/documents', 0777, TRUE);
+        }
     }
 
     public function index() {
@@ -167,7 +174,7 @@ class Pelamar extends CI_Controller {
         $data['job'] = $this->model_lowongan->dapatkan_lowongan($job_id);
 
         // If job not found or not active, show 404
-        if (!$data['job'] || $data['job']->status != 'active') {
+        if (!$data['job'] || $data['job']->status != 'aktif') {
             show_404();
         }
 
@@ -175,11 +182,14 @@ class Pelamar extends CI_Controller {
         $user_id = $this->session->userdata('user_id');
         if ($this->model_lamaran->sudah_melamar($user_id, $job_id)) {
             $this->session->set_flashdata('error', 'Anda sudah melamar untuk lowongan ini.');
-            redirect('beranda/detail_lowongan/' . $job_id);
+            redirect('lowongan/detail/' . $job_id);
         }
 
         // Get applicant profile
         $data['profile'] = $this->model_pelamar->dapatkan_profil($user_id);
+
+        // Get document requirements for this job
+        $data['document_requirements'] = $this->model_dokumen->dapatkan_dokumen_lowongan($job_id);
 
         // Form validation rules
         $this->form_validation->set_rules('cover_letter', 'Surat Lamaran', 'trim|required');
@@ -198,7 +208,7 @@ class Pelamar extends CI_Controller {
                 'surat_lamaran' => $this->input->post('cover_letter')
             );
 
-            // Handle resume upload
+            // Handle resume upload (for backward compatibility)
             if ($_FILES['resume']['name']) {
                 // Make sure the directory exists and is writable
                 $upload_path = FCPATH . 'uploads/resumes/';
@@ -224,14 +234,113 @@ class Pelamar extends CI_Controller {
                 // Use existing resume from profile
                 $application_data['cv'] = $data['profile']->cv;
             } else {
-                $this->session->set_flashdata('error', 'Silakan unggah resume Anda.');
-                redirect('pelamar/lamar/' . $job_id);
+                // Check if CV is required in document requirements
+                $cv_required = false;
+                foreach ($data['document_requirements'] as $req) {
+                    if ($req->jenis_dokumen == 'cv' && $req->wajib == 1) {
+                        $cv_required = true;
+                        break;
+                    }
+                }
+
+                if ($cv_required) {
+                    $this->session->set_flashdata('error', 'Silakan unggah CV Anda.');
+                    redirect('pelamar/lamar/' . $job_id);
+                }
             }
 
             // Insert application data
             $application_id = $this->model_lamaran->tambah_lamaran($application_data);
 
             if ($application_id) {
+                // Process document uploads
+                $upload_errors = [];
+                $missing_required_docs = [];
+
+                // Check if there are document requirements
+                if (!empty($data['document_requirements'])) {
+                    foreach ($data['document_requirements'] as $req) {
+                        $field_name = 'document_' . $req->id;
+                        $use_existing_cv_field = 'use_existing_cv_' . $req->id;
+
+                        // Check if it's a CV document and user wants to use existing CV
+                        if ($req->jenis_dokumen == 'cv' && $data['profile']->cv && $this->input->post($use_existing_cv_field) == '1') {
+                            // Use existing CV from profile
+                            $document_data = [
+                                'id_lamaran' => $application_id,
+                                'id_dokumen_lowongan' => $req->id,
+                                'jenis_dokumen' => $req->jenis_dokumen,
+                                'nama_file' => $data['profile']->cv,
+                                'ukuran_file' => 0, // We don't know the exact size
+                                'tipe_file' => 'application/pdf' // Assume PDF as default
+                            ];
+
+                            $this->model_dokumen->tambah_dokumen_lamaran($document_data);
+                            continue; // Skip to next document requirement
+                        }
+
+                        // Check if file was uploaded
+                        if (isset($_FILES[$field_name]) && $_FILES[$field_name]['name']) {
+                            // Configure upload
+                            $upload_path = FCPATH . 'uploads/documents/';
+                            if (!is_dir($upload_path)) {
+                                mkdir($upload_path, 0777, true);
+                            }
+
+                            $config = [
+                                'upload_path' => $upload_path,
+                                'allowed_types' => $req->format_diizinkan,
+                                'max_size' => $req->ukuran_maksimal,
+                                'file_name' => $req->jenis_dokumen . '_' . $user_id . '_' . time()
+                            ];
+
+                            $this->upload->initialize($config);
+
+                            if ($this->upload->do_upload($field_name)) {
+                                $upload_data = $this->upload->data();
+
+                                // Save document data
+                                $document_data = [
+                                    'id_lamaran' => $application_id,
+                                    'id_dokumen_lowongan' => $req->id,
+                                    'jenis_dokumen' => $req->jenis_dokumen,
+                                    'nama_file' => $upload_data['file_name'],
+                                    'ukuran_file' => $upload_data['file_size'],
+                                    'tipe_file' => $upload_data['file_type']
+                                ];
+
+                                $this->model_dokumen->tambah_dokumen_lamaran($document_data);
+                            } else {
+                                $upload_errors[] = $req->nama_dokumen . ': ' . $this->upload->display_errors('', '');
+                            }
+                        } else if ($req->wajib == 1) {
+                            // Document is required but not uploaded
+                            // Skip CV if using existing CV
+                            if (!($req->jenis_dokumen == 'cv' && $data['profile']->cv && $this->input->post($use_existing_cv_field) == '1')) {
+                                $missing_required_docs[] = $req->nama_dokumen;
+                            }
+                        }
+                    }
+                }
+
+                // Check for missing required documents
+                if (!empty($missing_required_docs)) {
+                    // Delete the application since required documents are missing
+                    $this->model_lamaran->hapus_lamaran($application_id);
+
+                    $this->session->set_flashdata('error', 'Dokumen wajib berikut belum diunggah: ' . implode(', ', $missing_required_docs));
+                    redirect('pelamar/lamar/' . $job_id);
+                }
+
+                // Check for upload errors
+                if (!empty($upload_errors)) {
+                    // Delete the application since there were upload errors
+                    $this->model_lamaran->hapus_lamaran($application_id);
+
+                    $this->session->set_flashdata('error', 'Terjadi kesalahan saat mengunggah dokumen: ' . implode('; ', $upload_errors));
+                    redirect('pelamar/lamar/' . $job_id);
+                }
+
                 // Show success message
                 $this->session->set_flashdata('success', 'Lamaran Anda berhasil dikirim.');
                 redirect('pelamar/lamaran');
@@ -259,11 +368,53 @@ class Pelamar extends CI_Controller {
         // Get assessment results
         $data['assessments'] = $this->model_penilaian->dapatkan_penilaian_pelamar($id);
 
+        // Get uploaded documents
+        $data['documents'] = $this->model_dokumen->dapatkan_dokumen_lamaran($id);
+
         // Load views
         $data['title'] = 'Detail Lamaran';
         $this->load->view('templates/applicant_header', $data);
         $this->load->view('applicant/application_details', $data);
         $this->load->view('templates/applicant_footer');
+    }
+
+    // Download dokumen lamaran
+    public function download_dokumen($id) {
+        // Get document details
+        $document = $this->model_dokumen->dapatkan_dokumen_lamaran_by_id($id);
+
+        // If document not found, show 404
+        if (!$document) {
+            show_404();
+        }
+
+        // Check if document belongs to current user
+        $user_id = $this->session->userdata('user_id');
+        $application = $this->model_lamaran->dapatkan_lamaran($document->id_lamaran);
+
+        if (!$application || $application->id_pelamar != $user_id) {
+            show_404();
+        }
+
+        // Set file path
+        $file_path = './uploads/documents/' . $document->nama_file;
+
+        // Check if file exists
+        if (!file_exists($file_path)) {
+            $this->session->set_flashdata('error', 'File dokumen tidak ditemukan.');
+            redirect('pelamar/detail_lamaran/' . $document->id_lamaran);
+        }
+
+        // Get file info
+        $file_info = pathinfo($file_path);
+        $file_name = $document->jenis_dokumen . '_' . time() . '.' . $file_info['extension'];
+
+        // Force download
+        header('Content-Type: application/octet-stream');
+        header('Content-Disposition: attachment; filename="' . $file_name . '"');
+        header('Content-Length: ' . filesize($file_path));
+        readfile($file_path);
+        exit;
     }
 
     public function penilaian() {
@@ -314,7 +465,7 @@ class Pelamar extends CI_Controller {
         $applicant_assessment_id = $this->input->post('applicant_assessment_id');
 
         // Update applicant assessment status
-        $this->model_penilaian->perbarui_status_penilaian_pelamar($applicant_assessment_id, 'completed');
+        $this->model_penilaian->perbarui_status_penilaian_pelamar($applicant_assessment_id, 'selesai');
 
         // Process answers
         $questions = $this->model_penilaian->dapatkan_soal_penilaian($assessment_id);

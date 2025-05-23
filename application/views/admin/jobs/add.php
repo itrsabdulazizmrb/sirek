@@ -14,7 +14,7 @@
         </p>
       </div>
       <div class="card-body">
-        <?= form_open('admin/add_job', ['class' => 'needs-validation']) ?>
+        <?= form_open('admin/tambahLowongan', ['class' => 'needs-validation']) ?>
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
@@ -29,14 +29,14 @@
                 <select class="form-control" id="category_id" name="category_id" required>
                   <option value="">Pilih Kategori</option>
                   <?php foreach ($categories as $category) : ?>
-                    <option value="<?= $category->id ?>" <?= set_select('category_id', $category->id) ?>><?= $category->name ?></option>
+                    <option value="<?= $category->id ?>" <?= set_select('category_id', $category->id) ?>><?= $category->nama ?></option>
                   <?php endforeach; ?>
                 </select>
                 <?= form_error('category_id', '<small class="text-danger">', '</small>') ?>
               </div>
             </div>
           </div>
-          
+
           <div class="row">
             <div class="col-md-12">
               <div class="form-group">
@@ -47,7 +47,7 @@
               </div>
             </div>
           </div>
-          
+
           <div class="row">
             <div class="col-md-12">
               <div class="form-group">
@@ -58,7 +58,7 @@
               </div>
             </div>
           </div>
-          
+
           <div class="row">
             <div class="col-md-12">
               <div class="form-group">
@@ -69,7 +69,7 @@
               </div>
             </div>
           </div>
-          
+
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
@@ -92,7 +92,7 @@
               </div>
             </div>
           </div>
-          
+
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
@@ -109,7 +109,7 @@
               </div>
             </div>
           </div>
-          
+
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
@@ -129,20 +129,28 @@
               </div>
             </div>
           </div>
-          
+
           <div class="row">
             <div class="col-md-12">
               <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox" id="featured" name="featured" value="1" <?= set_checkbox('featured', '1') ?>>
                 <label class="form-check-label" for="featured">Tampilkan sebagai Lowongan Unggulan</label>
               </div>
+              <div class="form-check form-switch mt-2">
+                <input class="form-check-input" type="checkbox" id="manage_documents" name="manage_documents" value="1" <?= set_checkbox('manage_documents', '1', true) ?>>
+                <label class="form-check-label" for="manage_documents">Kelola dokumen persyaratan setelah menyimpan</label>
+              </div>
             </div>
           </div>
-          
+
           <div class="row mt-4">
             <div class="col-md-12">
               <button type="submit" class="btn btn-primary">Simpan Lowongan</button>
               <button type="reset" class="btn btn-secondary">Reset</button>
+              <div class="alert alert-info mt-3">
+                <i class="fas fa-info-circle me-2"></i>
+                <strong>Catatan:</strong> Setelah menyimpan lowongan, Anda dapat mengelola dokumen persyaratan yang diperlukan untuk lamaran.
+              </div>
             </div>
           </div>
         <?= form_close() ?>
@@ -158,16 +166,16 @@
       ClassicEditor.create(document.querySelector('#description')).catch(error => {
         console.error(error);
       });
-      
+
       ClassicEditor.create(document.querySelector('#requirements')).catch(error => {
         console.error(error);
       });
-      
+
       ClassicEditor.create(document.querySelector('#responsibilities')).catch(error => {
         console.error(error);
       });
     }
-    
+
     // Set minimum date for deadline to today
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('deadline').setAttribute('min', today);
