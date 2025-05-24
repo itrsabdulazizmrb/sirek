@@ -69,11 +69,11 @@
                     </td>
                     <td class="align-middle">
                       <?php if ($assessment->status == 'belum_mulai' || $assessment->status == 'not_started' || $assessment->status == 'sedang_berlangsung' || $assessment->status == 'in_progress') : ?>
-                        <a href="<?= base_url('pelamar/ikuti-penilaian/' . $assessment->assessment_id . '/' . $assessment->id) ?>" class="btn btn-sm btn-primary">
+                        <a href="<?= base_url('pelamar/ikuti-penilaian/' . $assessment->id_penilaian . '/' . $assessment->id) ?>" class="btn btn-sm btn-primary">
                           <?= ($assessment->status == 'belum_mulai' || $assessment->status == 'not_started') ? 'Ikuti Penilaian' : 'Lanjutkan' ?>
                         </a>
                       <?php else : ?>
-                        <a href="<?= base_url('pelamar/detail-lamaran/' . $assessment->application_id) ?>" class="text-secondary font-weight-bold text-xs">
+                        <a href="<?= base_url('pelamar/detail-lamaran/' . $assessment->id_lamaran) ?>" class="text-secondary font-weight-bold text-xs">
                           Lihat Lamaran
                         </a>
                       <?php endif; ?>
