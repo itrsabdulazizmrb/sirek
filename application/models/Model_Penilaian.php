@@ -158,14 +158,38 @@ class Model_Penilaian extends CI_Model {
 
     // Perbarui status penilaian pelamar
     public function perbarui_status_penilaian_pelamar($id, $status) {
+        $update_data = array('status' => $status);
+
+        // Set waktu_mulai when starting assessment
+        if ($status == 'sedang_berlangsung') {
+            $update_data['waktu_mulai'] = date('Y-m-d H:i:s');
+        }
+
+        // Set waktu_selesai when completing assessment
+        if ($status == 'selesai') {
+            $update_data['waktu_selesai'] = date('Y-m-d H:i:s');
+        }
+
         $this->db->where('id', $id);
-        return $this->db->update('penilaian_pelamar', array('status' => $status, 'waktu_selesai' => date('Y-m-d H:i:s')));
+        return $this->db->update('penilaian_pelamar', $update_data);
     }
 
     // Tambah jawaban pelamar
     public function tambah_jawaban_pelamar($data) {
         $this->db->insert('jawaban_pelamar', $data);
         return $this->db->insert_id();
+    }
+
+    // Update nilai jawaban pelamar (untuk soal esai)
+    public function update_nilai_jawaban($answer_id, $nilai, $dinilai_oleh) {
+        $data = array(
+            'nilai' => $nilai,
+            'dinilai_oleh' => $dinilai_oleh,
+            'tanggal_dinilai' => date('Y-m-d H:i:s')
+        );
+
+        $this->db->where('id', $answer_id);
+        return $this->db->update('jawaban_pelamar', $data);
     }
 
     // Dapatkan jawaban pelamar
@@ -183,8 +207,8 @@ class Model_Penilaian extends CI_Model {
         $total_points = 0;
         $earned_points = 0;
 
-        // Dapatkan semua jawaban pelamar
-        $this->db->select('jawaban_pelamar.*, soal.poin as points, pilihan_soal.benar as is_correct');
+        // Dapatkan semua jawaban pelamar dengan detail soal
+        $this->db->select('jawaban_pelamar.id, jawaban_pelamar.id_soal, jawaban_pelamar.teks_jawaban, jawaban_pelamar.id_pilihan_terpilih, jawaban_pelamar.unggah_file, jawaban_pelamar.nilai, soal.poin as points, soal.jenis_soal, pilihan_soal.benar as is_correct');
         $this->db->from('jawaban_pelamar');
         $this->db->join('soal', 'soal.id = jawaban_pelamar.id_soal', 'left');
         $this->db->join('pilihan_soal', 'pilihan_soal.id = jawaban_pelamar.id_pilihan_terpilih', 'left');
@@ -192,11 +216,44 @@ class Model_Penilaian extends CI_Model {
         $query = $this->db->get();
         $answers = $query->result();
 
-        foreach ($answers as $answer) {
-            $total_points += $answer->points;
+        // Dapatkan semua soal dalam penilaian untuk menghitung total poin
+        $this->db->select('soal.id, soal.poin, soal.jenis_soal');
+        $this->db->from('soal');
+        $this->db->join('penilaian_pelamar', 'penilaian_pelamar.id_penilaian = soal.id_penilaian', 'inner');
+        $this->db->where('penilaian_pelamar.id', $applicant_assessment_id);
+        $all_questions_query = $this->db->get();
+        $all_questions = $all_questions_query->result();
 
-            if ($answer->is_correct == 1) {
+        // Hitung total poin dari semua soal
+        foreach ($all_questions as $question) {
+            $total_points += $question->poin;
+        }
+
+        // Hitung poin yang diperoleh
+        foreach ($answers as $answer) {
+            // Untuk soal pilihan ganda dan benar/salah
+            if (($answer->jenis_soal == 'pilihan_ganda' || $answer->jenis_soal == 'benar_salah') && $answer->is_correct == 1) {
                 $earned_points += $answer->points;
+            }
+            // Untuk soal esai, gunakan nilai manual jika ada, atau berikan poin penuh sementara
+            elseif ($answer->jenis_soal == 'esai' && !empty($answer->teks_jawaban)) {
+                if ($answer->nilai !== null) {
+                    // Gunakan nilai manual dari admin
+                    $earned_points += $answer->nilai;
+                } else {
+                    // Berikan poin penuh sementara jika belum dinilai manual
+                    $earned_points += $answer->points;
+                }
+            }
+            // Untuk soal upload file, gunakan nilai manual jika ada, atau berikan poin penuh
+            elseif ($answer->jenis_soal == 'unggah_file' && !empty($answer->unggah_file)) {
+                if ($answer->nilai !== null) {
+                    // Gunakan nilai manual dari admin
+                    $earned_points += $answer->nilai;
+                } else {
+                    // Berikan poin penuh sementara jika belum dinilai manual
+                    $earned_points += $answer->points;
+                }
             }
         }
 
@@ -352,6 +409,42 @@ class Model_Penilaian extends CI_Model {
         $this->db->order_by('penilaian_pelamar.nilai', 'DESC');
         $query = $this->db->get();
         return $query->result();
+    }
+
+    // Dapatkan detail penilaian pelamar berdasarkan ID
+    public function dapatkan_detail_penilaian_pelamar($applicant_assessment_id) {
+        $this->db->select('penilaian_pelamar.*, penilaian.judul as assessment_title, penilaian.deskripsi as description, penilaian.nilai_lulus as passing_score, jenis_penilaian.nama as type_name, lamaran_pekerjaan.id_pelamar, pengguna.nama_lengkap as applicant_name, pengguna.email as applicant_email, lowongan_pekerjaan.judul as job_title');
+        $this->db->from('penilaian_pelamar');
+        $this->db->join('penilaian', 'penilaian.id = penilaian_pelamar.id_penilaian', 'left');
+        $this->db->join('jenis_penilaian', 'jenis_penilaian.id = penilaian.id_jenis', 'left');
+        $this->db->join('lamaran_pekerjaan', 'lamaran_pekerjaan.id = penilaian_pelamar.id_lamaran', 'left');
+        $this->db->join('pengguna', 'pengguna.id = lamaran_pekerjaan.id_pelamar', 'left');
+        $this->db->join('lowongan_pekerjaan', 'lowongan_pekerjaan.id = lamaran_pekerjaan.id_pekerjaan', 'left');
+        $this->db->where('penilaian_pelamar.id', $applicant_assessment_id);
+        $query = $this->db->get();
+        return $query->row();
+    }
+
+    // Dapatkan soal dengan jawaban pelamar
+    public function dapatkan_soal_dengan_jawaban_pelamar($applicant_assessment_id) {
+        $this->db->select('soal.*, jawaban_pelamar.id as answer_id, jawaban_pelamar.teks_jawaban, jawaban_pelamar.id_pilihan_terpilih, jawaban_pelamar.nilai as nilai_manual, jawaban_pelamar.tanggal_dinilai, pilihan_soal.teks_pilihan as selected_option_text, pilihan_soal.benar as is_correct');
+        $this->db->from('soal');
+        $this->db->join('jawaban_pelamar', 'jawaban_pelamar.id_soal = soal.id AND jawaban_pelamar.id_penilaian_pelamar = ' . $applicant_assessment_id, 'left');
+        $this->db->join('pilihan_soal', 'pilihan_soal.id = jawaban_pelamar.id_pilihan_terpilih', 'left');
+        $this->db->join('penilaian_pelamar', 'penilaian_pelamar.id = ' . $applicant_assessment_id, 'inner');
+        $this->db->where('soal.id_penilaian', 'penilaian_pelamar.id_penilaian', false);
+        $this->db->order_by('soal.id', 'ASC');
+        $query = $this->db->get();
+        $questions = $query->result();
+
+        // Get all options for each question
+        foreach ($questions as &$question) {
+            if ($question->jenis_soal == 'pilihan_ganda' || $question->jenis_soal == 'benar_salah') {
+                $question->options = $this->dapatkan_opsi_soal($question->id);
+            }
+        }
+
+        return $questions;
     }
 
     // Dapatkan rata-rata skor penilaian

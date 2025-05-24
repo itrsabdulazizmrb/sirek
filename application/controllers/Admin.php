@@ -1330,6 +1330,75 @@ class Admin extends CI_Controller {
         $this->load->view('templates/admin_footer');
     }
 
+    // Detail Hasil Penilaian Pelamar
+    public function detailHasilPenilaian($applicant_assessment_id) {
+        // Get applicant assessment details
+        $data['applicant_assessment'] = $this->model_penilaian->dapatkan_detail_penilaian_pelamar($applicant_assessment_id);
+
+        // If applicant assessment not found, show 404
+        if (!$data['applicant_assessment']) {
+            show_404();
+        }
+
+        // Get assessment details
+        $data['assessment'] = $this->model_penilaian->dapatkan_penilaian($data['applicant_assessment']->id_penilaian);
+
+        // Get assessment questions with applicant's answers
+        $data['questions_with_answers'] = $this->model_penilaian->dapatkan_soal_dengan_jawaban_pelamar($applicant_assessment_id);
+
+        // Get applicant details
+        $data['applicant'] = $this->model_pengguna->dapatkan_pengguna($data['applicant_assessment']->id_pelamar);
+
+        // Load views
+        $data['title'] = 'Detail Hasil Penilaian Pelamar';
+        $this->load->view('templates/admin_header', $data);
+        $this->load->view('admin/assessments/detail_hasil', $data);
+        $this->load->view('templates/admin_footer');
+    }
+
+    // Update nilai jawaban pelamar (untuk soal esai)
+    public function update_nilai_jawaban() {
+        // Check if request is AJAX
+        if (!$this->input->is_ajax_request()) {
+            show_404();
+        }
+
+        // Get JSON input
+        $json_input = json_decode(file_get_contents('php://input'), true);
+
+        $answer_id = $json_input['answer_id'] ?? null;
+        $nilai = $json_input['nilai'] ?? null;
+
+        // Validate input
+        if (!$answer_id || $nilai === null) {
+            echo json_encode(['status' => 'error', 'message' => 'Data tidak lengkap']);
+            return;
+        }
+
+        // Get current user ID
+        $user_id = $this->session->userdata('user_id');
+
+        // Update nilai jawaban
+        $result = $this->model_penilaian->update_nilai_jawaban($answer_id, $nilai, $user_id);
+
+        if ($result) {
+            // Get the applicant assessment ID to recalculate score
+            $this->db->select('id_penilaian_pelamar');
+            $this->db->where('id', $answer_id);
+            $answer_query = $this->db->get('jawaban_pelamar');
+            $answer = $answer_query->row();
+
+            if ($answer) {
+                // Recalculate total score
+                $this->model_penilaian->hitung_skor_penilaian_pelamar($answer->id_penilaian_pelamar);
+            }
+
+            echo json_encode(['status' => 'success', 'message' => 'Nilai berhasil disimpan']);
+        } else {
+            echo json_encode(['status' => 'error', 'message' => 'Gagal menyimpan nilai']);
+        }
+    }
+
     // Pratinjau Penilaian
     public function previewPenilaian($assessment_id) {
         // Get assessment details

@@ -678,7 +678,14 @@ class Pelamar extends CI_Controller {
         $application_id = $this->input->post('application_id');
         $applicant_assessment_id = $this->input->post('applicant_assessment_id');
 
-        // Update applicant assessment status
+        // Validate required data
+        if (!$assessment_id || !$application_id || !$applicant_assessment_id) {
+            $this->session->set_flashdata('error', 'Data penilaian tidak lengkap.');
+            redirect('pelamar/penilaian');
+            return;
+        }
+
+        // Update applicant assessment status and completion time
         $this->model_penilaian->perbarui_status_penilaian_pelamar($applicant_assessment_id, 'selesai');
 
         // Process answers
@@ -687,18 +694,42 @@ class Pelamar extends CI_Controller {
         foreach ($questions as $question) {
             $answer_data = array(
                 'id_penilaian_pelamar' => $applicant_assessment_id,
-                'id_soal' => $question->id
+                'id_soal' => $question->id,
+                'teks_jawaban' => null,
+                'id_pilihan_terpilih' => null,
+                'unggah_file' => null
             );
 
-            if ($question->jenis_soal == 'multiple_choice') {
-                $answer_data['id_pilihan_terpilih'] = $this->input->post('question_' . $question->id);
-            } else if ($question->jenis_soal == 'true_false') {
-                $answer_data['teks_jawaban'] = $this->input->post('question_' . $question->id);
-            } else if ($question->jenis_soal == 'essay') {
-                $answer_data['teks_jawaban'] = $this->input->post('question_' . $question->id);
-            } else if ($question->jenis_soal == 'file_upload') {
+            // Handle different question types based on Indonesian field names
+            if ($question->jenis_soal == 'pilihan_ganda' || $question->jenis_soal == 'multiple_choice') {
+                $selected_option = $this->input->post('question_' . $question->id);
+                if ($selected_option) {
+                    $answer_data['id_pilihan_terpilih'] = $selected_option;
+                }
+            } else if ($question->jenis_soal == 'benar_salah' || $question->jenis_soal == 'true_false') {
+                $selected_option = $this->input->post('question_' . $question->id);
+                if ($selected_option) {
+                    // For true/false questions, we need to find the correct option ID
+                    $this->db->where('id_soal', $question->id);
+                    if ($selected_option == 'true') {
+                        $this->db->where('teks_pilihan', 'Benar');
+                    } else {
+                        $this->db->where('teks_pilihan', 'Salah');
+                    }
+                    $option_query = $this->db->get('pilihan_soal');
+                    $option = $option_query->row();
+
+                    if ($option) {
+                        $answer_data['id_pilihan_terpilih'] = $option->id;
+                    }
+                }
+            } else if ($question->jenis_soal == 'esai' || $question->jenis_soal == 'essay') {
+                $text_answer = $this->input->post('question_' . $question->id);
+                if ($text_answer && trim($text_answer) != '') {
+                    $answer_data['teks_jawaban'] = trim($text_answer);
+                }
+            } else if ($question->jenis_soal == 'unggah_file' || $question->jenis_soal == 'file_upload') {
                 // Handle file upload
-                // Make sure the directory exists and is writable
                 $upload_path = FCPATH . 'uploads/answers/';
                 if (!is_dir($upload_path)) {
                     mkdir($upload_path, 0777, true);
@@ -709,7 +740,7 @@ class Pelamar extends CI_Controller {
                 $config['max_size'] = 2048; // 2MB
                 $config['file_name'] = 'answer_' . $applicant_assessment_id . '_' . $question->id . '_' . time();
 
-                $this->upload->initialize($config);
+                $this->load->library('upload', $config);
 
                 if ($this->upload->do_upload('question_' . $question->id)) {
                     $upload_data = $this->upload->data();
@@ -717,12 +748,17 @@ class Pelamar extends CI_Controller {
                 }
             }
 
-            // Insert answer
-            $this->model_penilaian->tambah_jawaban_pelamar($answer_data);
+            // Only insert answer if there's actually an answer provided
+            if ($answer_data['id_pilihan_terpilih'] || $answer_data['teks_jawaban'] || $answer_data['unggah_file']) {
+                $this->model_penilaian->tambah_jawaban_pelamar($answer_data);
+            }
         }
 
+        // Calculate and update score
+        $score = $this->model_penilaian->hitung_skor_penilaian_pelamar($applicant_assessment_id);
+
         // Show success message
-        $this->session->set_flashdata('success', 'Penilaian berhasil dikirim.');
+        $this->session->set_flashdata('success', 'Penilaian berhasil dikirim. Skor Anda: ' . $score . '%');
         redirect('pelamar/detail_lamaran/' . $application_id);
     }
 

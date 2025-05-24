@@ -111,7 +111,7 @@
                     </td>
                     <td class="align-middle">
                       <?php if ($result->status == 'selesai' || $result->status == 'dinilai') : ?>
-                        <a href="<?= base_url('admin/detail-lamaran/' . (isset($result->id_lamaran) ? $result->id_lamaran : $result->application_id)) ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Lihat Detail">
+                        <a href="<?= base_url('admin/detail-hasil-penilaian/' . $result->id) ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Lihat Detail Hasil Penilaian">
                           <i class="fas fa-eye"></i> Detail
                         </a>
                       <?php endif; ?>

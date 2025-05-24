@@ -65,22 +65,43 @@
                   <?php endforeach; ?>
 
                 <?php elseif ($question->jenis_soal == 'benar_salah' || $question->jenis_soal == 'true_false') : ?>
-                  <div class="option-item mb-2 p-3 border rounded" data-question-id="<?= $question->id ?>" data-option-id="true">
-                    <div class="form-check">
-                      <input class="form-check-input" type="radio" name="question_<?= $question->id ?>" id="option_<?= $question->id ?>_true" value="true">
-                      <label class="form-check-label" for="option_<?= $question->id ?>_true">
-                        Benar
-                      </label>
+                  <?php
+                  // Get options for true/false question
+                  $this->db->where('id_soal', $question->id);
+                  $options_query = $this->db->get('pilihan_soal');
+                  $options = $options_query->result();
+                  ?>
+
+                  <?php if (!empty($options)) : ?>
+                    <?php foreach ($options as $option) : ?>
+                      <div class="option-item mb-2 p-3 border rounded" data-question-id="<?= $question->id ?>" data-option-id="<?= $option->id ?>">
+                        <div class="form-check">
+                          <input class="form-check-input" type="radio" name="question_<?= $question->id ?>" id="option_<?= $option->id ?>" value="<?= $option->id ?>">
+                          <label class="form-check-label" for="option_<?= $option->id ?>">
+                            <?= $option->teks_pilihan ?>
+                          </label>
+                        </div>
+                      </div>
+                    <?php endforeach; ?>
+                  <?php else : ?>
+                    <!-- Fallback for true/false if no options in database -->
+                    <div class="option-item mb-2 p-3 border rounded" data-question-id="<?= $question->id ?>" data-option-id="true">
+                      <div class="form-check">
+                        <input class="form-check-input" type="radio" name="question_<?= $question->id ?>" id="option_<?= $question->id ?>_true" value="true">
+                        <label class="form-check-label" for="option_<?= $question->id ?>_true">
+                          Benar
+                        </label>
+                      </div>
                     </div>
-                  </div>
-                  <div class="option-item mb-2 p-3 border rounded" data-question-id="<?= $question->id ?>" data-option-id="false">
-                    <div class="form-check">
-                      <input class="form-check-input" type="radio" name="question_<?= $question->id ?>" id="option_<?= $question->id ?>_false" value="false">
-                      <label class="form-check-label" for="option_<?= $question->id ?>_false">
-                        Salah
-                      </label>
+                    <div class="option-item mb-2 p-3 border rounded" data-question-id="<?= $question->id ?>" data-option-id="false">
+                      <div class="form-check">
+                        <input class="form-check-input" type="radio" name="question_<?= $question->id ?>" id="option_<?= $question->id ?>_false" value="false">
+                        <label class="form-check-label" for="option_<?= $question->id ?>_false">
+                          Salah
+                        </label>
+                      </div>
                     </div>
-                  </div>
+                  <?php endif; ?>
 
                 <?php elseif ($question->jenis_soal == 'esai' || $question->jenis_soal == 'essay') : ?>
                   <div class="form-group">
