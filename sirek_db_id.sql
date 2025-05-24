@@ -300,6 +300,7 @@ CREATE TABLE `soal`  (
   `teks_soal` text CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `jenis_soal` enum('pilihan_ganda','benar_salah','esai','unggah_file') CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `poin` int NULL DEFAULT 1,
+  `gambar_soal` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
   `dibuat_pada` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `diperbarui_pada` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE,
@@ -334,7 +335,7 @@ CREATE TABLE `pengguna`  (
 -- Struktur view untuk pekerjaan
 -- ----------------------------
 DROP VIEW IF EXISTS `pekerjaan`;
-CREATE ALGORITHM = UNDEFINED SQL SECURITY DEFINER VIEW `pekerjaan` AS SELECT 
+CREATE ALGORITHM = UNDEFINED SQL SECURITY DEFINER VIEW `pekerjaan` AS SELECT
     id,
     judul,
     id_kategori,
@@ -353,4 +354,4 @@ CREATE ALGORITHM = UNDEFINED SQL SECURITY DEFINER VIEW `pekerjaan` AS SELECT
     diperbarui_pada
 FROM lowongan_pekerjaan ;
 
-SET FOREIGN_KEY_CHECKS = 1; 
+SET FOREIGN_KEY_CHECKS = 1;

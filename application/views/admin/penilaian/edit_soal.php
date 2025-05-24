@@ -1,33 +1,33 @@
 <?php
-// Copy dari assessments/add_question.php dengan perbaikan bahasa Indonesia
+// Edit soal dengan fitur upload gambar
 ?>
 <div class="row">
   <div class="col-12">
     <div class="card mb-4">
       <div class="card-header pb-0">
         <div class="d-flex justify-content-between align-items-center">
-          <h6>Tambah Soal Baru</h6>
-          <a href="<?= base_url('admin/soal-penilaian/' . $assessment->id) ?>" class="btn btn-sm btn-outline-primary">
+          <h6>Edit Soal</h6>
+          <a href="<?= base_url('admin/soal-penilaian/' . $question->assessment_id) ?>" class="btn btn-sm btn-outline-primary">
             <i class="fas fa-arrow-left me-2"></i> Kembali ke Daftar Soal
           </a>
         </div>
         <p class="text-sm mb-0">
           <i class="fa fa-info-circle text-primary" aria-hidden="true"></i>
-          <span class="font-weight-bold">Tambahkan soal baru untuk penilaian: <?= $assessment->judul ?></span>
+          <span class="font-weight-bold">Edit soal untuk penilaian: <?= $question->assessment_title ?></span>
         </p>
       </div>
       <div class="card-body">
-        <?= form_open_multipart('admin/tambah-soal/' . $assessment->id, ['class' => 'needs-validation']) ?>
+        <?= form_open_multipart('admin/edit_question/' . $question->id, ['class' => 'needs-validation']) ?>
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
                 <label for="question_type" class="form-control-label">Tipe Soal <span class="text-danger">*</span></label>
                 <select id="question_type" name="question_type" class="form-control">
                   <option value="">Pilih Tipe Soal</option>
-                  <option value="pilihan_ganda" <?= set_select('question_type', 'pilihan_ganda') ?>>Pilihan Ganda</option>
-                  <option value="benar_salah" <?= set_select('question_type', 'benar_salah') ?>>Benar/Salah</option>
-                  <option value="esai" <?= set_select('question_type', 'esai') ?>>Esai</option>
-                  <option value="unggah_file" <?= set_select('question_type', 'unggah_file') ?>>Unggah File</option>
+                  <option value="pilihan_ganda" <?= set_select('question_type', 'pilihan_ganda', $question->jenis_soal == 'pilihan_ganda') ?>>Pilihan Ganda</option>
+                  <option value="benar_salah" <?= set_select('question_type', 'benar_salah', $question->jenis_soal == 'benar_salah') ?>>Benar/Salah</option>
+                  <option value="esai" <?= set_select('question_type', 'esai', $question->jenis_soal == 'esai') ?>>Esai</option>
+                  <option value="unggah_file" <?= set_select('question_type', 'unggah_file', $question->jenis_soal == 'unggah_file') ?>>Unggah File</option>
                 </select>
                 <?= form_error('question_type', '<small class="text-danger">', '</small>') ?>
                 <small class="form-text text-muted">Pilih tipe soal yang sesuai.</small>
@@ -36,7 +36,7 @@
             <div class="col-md-6">
               <div class="form-group">
                 <label for="points" class="form-control-label">Poin Soal <span class="text-danger">*</span></label>
-                <input type="number" class="form-control" id="points" name="points" value="<?= set_value('points', 1) ?>" min="1" required>
+                <input type="number" class="form-control" id="points" name="points" value="<?= set_value('points', $question->poin) ?>" min="1" required>
                 <?= form_error('points', '<small class="text-danger">', '</small>') ?>
                 <small class="form-text text-muted">Berapa poin yang diberikan untuk soal ini.</small>
               </div>
@@ -47,17 +47,44 @@
             <div class="col-md-12">
               <div class="form-group">
                 <label for="question_text" class="form-control-label">Teks Soal <span class="text-danger">*</span></label>
-                <textarea class="form-control" id="question_text" name="question_text" rows="6" required><?= set_value('question_text') ?></textarea>
+                <textarea class="form-control" id="question_text" name="question_text" rows="6" required><?= set_value('question_text', $question->teks_soal) ?></textarea>
                 <?= form_error('question_text', '<small class="text-danger">', '</small>') ?>
                 <small class="form-text text-muted">Tulis pertanyaan dengan jelas dan lengkap. Anda dapat menggunakan HTML untuk formatting.</small>
               </div>
             </div>
           </div>
 
+          <!-- Gambar Soal Saat Ini -->
+          <?php if (!empty($question->gambar_soal)) : ?>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label class="form-control-label">Gambar Soal Saat Ini</label>
+                  <div class="current-image mb-3">
+                    <div class="card" style="max-width: 300px;">
+                      <img src="<?= base_url('uploads/gambar_soal/' . $question->gambar_soal) ?>"
+                           class="card-img-top"
+                           alt="Gambar Soal Saat Ini"
+                           style="max-height: 200px; object-fit: cover;">
+                      <div class="card-body p-2">
+                        <small class="text-muted d-block"><?= $question->gambar_soal ?></small>
+                        <button type="button" class="btn btn-sm btn-danger mt-2" id="delete-current-image" data-question-id="<?= $question->id ?>">
+                          <i class="fas fa-trash me-1"></i> Hapus Gambar
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <?php endif; ?>
+
           <div class="row">
             <div class="col-md-12">
               <div class="form-group">
-                <label for="question_image" class="form-control-label">Gambar Soal (Opsional)</label>
+                <label for="question_image" class="form-control-label">
+                  <?= !empty($question->gambar_soal) ? 'Ganti Gambar Soal (Opsional)' : 'Gambar Soal (Opsional)' ?>
+                </label>
                 <div class="custom-file">
                   <input type="file" class="custom-file-input" id="question_image" name="question_image" accept="image/*">
                   <label class="custom-file-label" for="question_image">Pilih gambar...</label>
@@ -69,7 +96,7 @@
                   <div class="card" style="max-width: 300px;">
                     <img id="preview-img" src="" class="card-img-top" alt="Preview Gambar">
                     <div class="card-body p-2">
-                      <small class="text-muted">Preview Gambar</small>
+                      <small class="text-muted">Preview Gambar Baru</small>
                       <button type="button" class="btn btn-sm btn-danger float-end" id="remove-image">
                         <i class="fas fa-times"></i>
                       </button>
@@ -81,9 +108,9 @@
           </div>
 
           <div class="d-flex justify-content-end mt-4">
-            <a href="<?= base_url('admin/soal-penilaian/' . $assessment->id) ?>" class="btn btn-light me-2">Batal</a>
+            <a href="<?= base_url('admin/soal-penilaian/' . $question->assessment_id) ?>" class="btn btn-light me-2">Batal</a>
             <button type="submit" class="btn btn-primary">
-              <i class="fas fa-save me-2"></i> Simpan Soal
+              <i class="fas fa-save me-2"></i> Perbarui Soal
             </button>
           </div>
         <?= form_close() ?>
@@ -103,19 +130,11 @@
         <div class="row">
           <div class="col-md-6">
             <p class="text-xs text-secondary mb-1">Judul Penilaian:</p>
-            <p class="text-sm mb-2"><?= $assessment->judul ?></p>
+            <p class="text-sm mb-2"><?= $question->assessment_title ?></p>
           </div>
           <div class="col-md-6">
-            <p class="text-xs text-secondary mb-1">Tipe Penilaian:</p>
-            <p class="text-sm mb-2"><?= $assessment->type_name ?></p>
-          </div>
-          <div class="col-md-6">
-            <p class="text-xs text-secondary mb-1">Batas Waktu:</p>
-            <p class="text-sm mb-2"><?= $assessment->batas_waktu ? $assessment->batas_waktu . ' menit' : 'Tidak ada batas waktu' ?></p>
-          </div>
-          <div class="col-md-6">
-            <p class="text-xs text-secondary mb-1">Nilai Kelulusan:</p>
-            <p class="text-sm mb-2"><?= $assessment->nilai_lulus ? $assessment->nilai_lulus . ' poin' : 'Tidak ditentukan' ?></p>
+            <p class="text-xs text-secondary mb-1">ID Soal:</p>
+            <p class="text-sm mb-2">#<?= $question->id ?></p>
           </div>
         </div>
       </div>
@@ -184,10 +203,10 @@ $(document).ready(function() {
 
         switch(type) {
             case 'pilihan_ganda':
-                helpText = 'Setelah menyimpan soal, Anda akan diarahkan untuk menambahkan opsi jawaban.';
+                helpText = 'Setelah menyimpan soal, Anda dapat mengelola opsi jawaban.';
                 break;
             case 'benar_salah':
-                helpText = 'Setelah menyimpan soal, Anda akan diarahkan untuk mengatur jawaban benar/salah.';
+                helpText = 'Setelah menyimpan soal, Anda dapat mengatur jawaban benar/salah.';
                 break;
             case 'esai':
                 helpText = 'Soal esai akan dinilai secara manual oleh admin.';
@@ -249,6 +268,59 @@ $(document).ready(function() {
         $('#question_image').val('');
         $('#question_image').next('.custom-file-label').text('Pilih gambar...');
         $('#image-preview').hide();
+    });
+
+    // Delete current image handler
+    $('#delete-current-image').on('click', function() {
+        const questionId = $(this).data('question-id');
+
+        Swal.fire({
+            title: 'Hapus Gambar?',
+            text: 'Apakah Anda yakin ingin menghapus gambar soal ini?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Ya, Hapus!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Send AJAX request to delete image
+                $.ajax({
+                    url: '<?= base_url('admin/hapus-gambar-soal/') ?>' + questionId,
+                    type: 'POST',
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            Swal.fire({
+                                title: 'Berhasil!',
+                                text: response.message,
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                // Reload page to show updated form
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                title: 'Gagal!',
+                                text: response.message,
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    },
+                    error: function() {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'Terjadi kesalahan saat menghapus gambar.',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                });
+            }
+        });
     });
 });
 </script>

@@ -43,7 +43,44 @@
             <?php $question_number = 1; ?>
             <?php foreach ($questions as $question) : ?>
               <div class="question-card mb-4">
-                <h6 class="mb-3">Pertanyaan <?= $question_number ?>: <?= $question->teks_soal ?></h6>
+                <h6 class="mb-3">Pertanyaan <?= $question_number ?>:</h6>
+
+                <!-- Gambar Soal (jika ada) -->
+                <?php if (!empty($question->gambar_soal)) : ?>
+                  <div class="question-image mb-3">
+                    <img src="<?= base_url('uploads/gambar_soal/' . $question->gambar_soal) ?>"
+                         class="img-fluid rounded shadow-sm question-img"
+                         alt="Gambar Soal <?= $question_number ?>"
+                         style="max-width: 100%; height: auto; cursor: pointer;"
+                         data-bs-toggle="modal"
+                         data-bs-target="#imageModal<?= $question->id ?>">
+                    <small class="text-muted d-block mt-1">
+                      <i class="fas fa-search-plus"></i> Klik gambar untuk memperbesar
+                    </small>
+                  </div>
+
+                  <!-- Modal untuk memperbesar gambar -->
+                  <div class="modal fade" id="imageModal<?= $question->id ?>" tabindex="-1" aria-labelledby="imageModalLabel<?= $question->id ?>" aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-dialog-centered">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="imageModalLabel<?= $question->id ?>">Gambar Soal <?= $question_number ?></h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body text-center">
+                          <img src="<?= base_url('uploads/gambar_soal/' . $question->gambar_soal) ?>"
+                               class="img-fluid"
+                               alt="Gambar Soal <?= $question_number ?>">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                <?php endif; ?>
+
+                <!-- Teks Soal -->
+                <div class="question-text mb-3">
+                  <?= $question->teks_soal ?>
+                </div>
 
                 <?php if ($question->jenis_soal == 'pilihan_ganda' || $question->jenis_soal == 'multiple_choice') : ?>
                   <?php
@@ -136,6 +173,41 @@
     </div>
   </div>
 </div>
+
+<style>
+.question-img {
+    transition: transform 0.2s ease-in-out;
+    border: 2px solid #e9ecef;
+}
+
+.question-img:hover {
+    transform: scale(1.02);
+    border-color: #007bff;
+}
+
+.question-card {
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.question-image {
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .question-img {
+        max-width: 100%;
+        height: auto;
+    }
+
+    .modal-dialog {
+        margin: 10px;
+    }
+}
+</style>
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {

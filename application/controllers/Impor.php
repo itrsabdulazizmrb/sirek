@@ -222,14 +222,16 @@ class Impor extends CI_Controller {
         }
 
         // Konfigurasi upload
-        $config['upload_path'] = './uploads/temp/';
-        $config['allowed_types'] = 'xlsx|xls';
-        $config['max_size'] = 2048; // 2MB
+        $upload_path_full = FCPATH . 'uploads/temp/';
 
         // Buat direktori jika belum ada
-        if (!is_dir($config['upload_path'])) {
-            mkdir($config['upload_path'], 0777, TRUE);
+        if (!is_dir($upload_path_full)) {
+            mkdir($upload_path_full, 0777, TRUE);
         }
+
+        $config['upload_path'] = realpath($upload_path_full) . '/';
+        $config['allowed_types'] = 'xlsx|xls';
+        $config['max_size'] = 2048; // 2MB
 
         $this->load->library('upload', $config);
 

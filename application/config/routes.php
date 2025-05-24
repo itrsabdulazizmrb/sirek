@@ -113,6 +113,7 @@ $route['admin/edit-soal/(:num)'] = 'admin/edit_soal/$1';
 $route['admin/hapus-soal/(:num)'] = 'admin/hapus_soal/$1';
 $route['admin/opsi-soal/(:num)'] = 'admin/opsi_soal/$1';
 $route['admin/simpan-opsi-soal/(:num)'] = 'admin/simpan_opsi_soal/$1';
+$route['admin/hapus-gambar-soal/(:num)'] = 'admin/hapus_gambar_soal/$1';
 $route['admin/pratinjau-penilaian/(:num)'] = 'admin/pratinjau_penilaian/$1';
 $route['admin/hasil-penilaian/(:num)'] = 'admin/hasil_penilaian/$1';
 $route['admin/tetapkan-ke-pelamar/(:num)'] = 'admin/tetapkan_ke_pelamar/$1';

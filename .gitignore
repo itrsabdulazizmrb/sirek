@@ -260,6 +260,7 @@ clover.xml
 !uploads/documents/.gitkeep
 !uploads/profile_pictures/.gitkeep
 !uploads/answers/.gitkeep
+!uploads/gambar_soal/.gitkeep
 
 # Keep sample files for documentation
 !uploads/samples/

@@ -82,6 +82,21 @@ class Model_Penilaian extends CI_Model {
 
     // Hapus soal
     public function hapus_soal($id) {
+        // Dapatkan data soal untuk menghapus gambar jika ada
+        $this->db->select('gambar_soal');
+        $this->db->where('id', $id);
+        $query = $this->db->get('soal');
+        $soal = $query->row();
+
+        // Hapus file gambar jika ada
+        if ($soal && $soal->gambar_soal) {
+            $file_path = FCPATH . 'uploads/gambar_soal/' . $soal->gambar_soal;
+            if (file_exists($file_path)) {
+                unlink($file_path);
+            }
+        }
+
+        // Hapus data soal dari database
         $this->db->where('id', $id);
         return $this->db->delete('soal');
     }
@@ -98,6 +113,31 @@ class Model_Penilaian extends CI_Model {
     public function tambah_opsi_soal($data) {
         $this->db->insert('pilihan_soal', $data);
         return $this->db->insert_id();
+    }
+
+    // Hapus gambar soal
+    public function hapus_gambar_soal($id) {
+        // Dapatkan data soal untuk menghapus gambar
+        $this->db->select('gambar_soal');
+        $this->db->where('id', $id);
+        $query = $this->db->get('soal');
+        $soal = $query->row();
+
+        if ($soal && $soal->gambar_soal) {
+            // Hapus file gambar
+            $file_path = FCPATH . 'uploads/gambar_soal/' . $soal->gambar_soal;
+            if (file_exists($file_path)) {
+                unlink($file_path);
+            }
+
+            // Update database untuk menghapus referensi gambar
+            $this->db->where('id', $id);
+            $this->db->update('soal', array('gambar_soal' => NULL));
+
+            return true;
+        }
+
+        return false;
     }
 
     // Perbarui opsi soal

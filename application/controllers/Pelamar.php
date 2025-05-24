@@ -106,12 +106,12 @@ class Pelamar extends CI_Controller {
             // Handle CV upload
             if (!empty($_FILES['resume']['name'])) {
                 // Make sure the directory exists and is writable
-                $upload_path = FCPATH . 'uploads/cv/';
-                if (!is_dir($upload_path)) {
-                    mkdir($upload_path, 0777, true);
+                $upload_path_full = FCPATH . 'uploads/cv/';
+                if (!is_dir($upload_path_full)) {
+                    mkdir($upload_path_full, 0777, true);
                 }
 
-                $config['upload_path'] = $upload_path;
+                $config['upload_path'] = 'uploads/cv';
                 $config['allowed_types'] = 'pdf|doc|docx';
                 $config['max_size'] = 2048; // 2MB
                 $config['file_name'] = 'cv_' . $user_id . '_' . time();
@@ -149,12 +149,12 @@ class Pelamar extends CI_Controller {
             // Handle profile picture upload
             if ($_FILES['profile_picture']['name']) {
                 // Make sure the directory exists and is writable
-                $upload_path = FCPATH . 'uploads/profile_pictures/';
-                if (!is_dir($upload_path)) {
-                    mkdir($upload_path, 0777, true);
+                $upload_path_full = FCPATH . 'uploads/profile_pictures/';
+                if (!is_dir($upload_path_full)) {
+                    mkdir($upload_path_full, 0777, true);
                 }
 
-                $config['upload_path'] = $upload_path;
+                $config['upload_path'] = 'uploads/profile_pictures';
                 $config['allowed_types'] = 'jpg|jpeg|png';
                 $config['max_size'] = 1024; // 1MB
                 $config['file_name'] = 'profile_' . $user_id . '_' . time();
@@ -182,13 +182,13 @@ class Pelamar extends CI_Controller {
 
                 if ($_FILES[$field_name]['name']) {
                     // Configure upload
-                    $upload_path = FCPATH . 'uploads/documents/';
-                    if (!is_dir($upload_path)) {
-                        mkdir($upload_path, 0777, true);
+                    $upload_path_full = FCPATH . 'uploads/documents/';
+                    if (!is_dir($upload_path_full)) {
+                        mkdir($upload_path_full, 0777, true);
                     }
 
                     $config = [
-                        'upload_path' => $upload_path,
+                        'upload_path' => 'uploads/documents',
                         'allowed_types' => $doc_type['format_diizinkan'],
                         'max_size' => $doc_type['ukuran_maksimal'],
                         'file_name' => $doc_type['jenis_dokumen'] . '_' . $user_id . '_' . time()
@@ -297,12 +297,12 @@ class Pelamar extends CI_Controller {
             // Handle CV upload (for backward compatibility)
             if ($_FILES['resume']['name']) {
                 // Make sure the directory exists and is writable
-                $upload_path = FCPATH . 'uploads/cv/';
-                if (!is_dir($upload_path)) {
-                    mkdir($upload_path, 0777, true);
+                $upload_path_full = FCPATH . 'uploads/cv/';
+                if (!is_dir($upload_path_full)) {
+                    mkdir($upload_path_full, 0777, true);
                 }
 
-                $config['upload_path'] = $upload_path;
+                $config['upload_path'] = realpath($upload_path_full) . '/';
                 $config['allowed_types'] = 'pdf|doc|docx';
                 $config['max_size'] = 2048; // 2MB
                 $config['file_name'] = 'cv_' . $user_id . '_' . time();
@@ -390,13 +390,13 @@ class Pelamar extends CI_Controller {
                         // Check if file was uploaded
                         if (isset($_FILES[$field_name]) && $_FILES[$field_name]['name']) {
                             // Configure upload
-                            $upload_path = FCPATH . 'uploads/documents/';
-                            if (!is_dir($upload_path)) {
-                                mkdir($upload_path, 0777, true);
+                            $upload_path_full = FCPATH . 'uploads/documents/';
+                            if (!is_dir($upload_path_full)) {
+                                mkdir($upload_path_full, 0777, true);
                             }
 
                             $config = [
-                                'upload_path' => $upload_path,
+                                'upload_path' => 'uploads/documents',
                                 'allowed_types' => $req->format_diizinkan,
                                 'max_size' => $req->ukuran_maksimal,
                                 'file_name' => $req->jenis_dokumen . '_' . $user_id . '_' . time()
