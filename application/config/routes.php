@@ -153,7 +153,7 @@ $route['admin/hasil-penilaian/(:num)'] = 'admin/hasilPenilaian/$1';
 $route['admin/save_question_options/(:num)'] = 'admin/simpanOpsiSoal/$1';
 $route['admin/simpan-opsi-soal/(:num)'] = 'admin/simpan_opsi_soal/$1';
 $route['admin/preview_assessment/(:num)'] = 'admin/previewPenilaian/$1';
-$route['admin/assign_assessment_to_applicants/(:num)'] = 'admin/tetapkanPenilaian/$1';
+$route['admin/assign_assessment_to_applicants/(:num)'] = 'admin/tetapkan_ke_pelamar/$1';
 
 // Rute tambahan untuk lowongan (alias)
 $route['admin/jobs'] = 'admin/lowongan';

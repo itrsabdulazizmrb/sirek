@@ -1228,10 +1228,12 @@ class Admin extends CI_Controller {
                         // Check if already assigned
                         if (!$this->model_penilaian->cek_penilaian_sudah_ditetapkan($application_id, $assessment_id)) {
                             $applicant_assessment_data = array(
-                                'application_id' => $application_id,
-                                'assessment_id' => $assessment_id,
-                                'status' => 'not_started',
-                                'created_at' => date('Y-m-d H:i:s')
+                                'id_lamaran' => $application_id,
+                                'id_penilaian' => $assessment_id,
+                                'status' => 'belum_mulai',
+                                'ditugaskan_pada' => date('Y-m-d H:i:s'),
+                                'ditugaskan_oleh' => $this->session->userdata('user_id'),
+                                'dibuat_pada' => date('Y-m-d H:i:s')
                             );
                             $this->model_penilaian->tambah_penilaian_pelamar($applicant_assessment_data);
                         }
@@ -1368,7 +1370,7 @@ class Admin extends CI_Controller {
         // First, get the job associated with this assessment (if any)
         $job_id = $this->model_penilaian->dapatkan_lowongan_penilaian($assessment_id);
 
-        if ($job_id) {
+        if ($job_id && isset($job_id->job_id)) {
             // If assessment is associated with a job, get applications for that job
             $data['applications'] = $this->model_lamaran->dapatkan_lamaran_lowongan($job_id->job_id);
             $data['job'] = $this->model_lowongan->dapatkan_lowongan($job_id->job_id);
@@ -1390,10 +1392,12 @@ class Admin extends CI_Controller {
                     // Check if already assigned
                     if (!$this->model_penilaian->cek_penilaian_sudah_ditetapkan($application_id, $assessment_id)) {
                         $applicant_assessment_data = array(
-                            'application_id' => $application_id,
-                            'assessment_id' => $assessment_id,
-                            'status' => 'not_started',
-                            'created_at' => date('Y-m-d H:i:s')
+                            'id_lamaran' => $application_id,
+                            'id_penilaian' => $assessment_id,
+                            'status' => 'belum_mulai',
+                            'ditugaskan_pada' => date('Y-m-d H:i:s'),
+                            'ditugaskan_oleh' => $this->session->userdata('user_id'),
+                            'dibuat_pada' => date('Y-m-d H:i:s')
                         );
                         $this->model_penilaian->tambah_penilaian_pelamar($applicant_assessment_data);
                         $success_count++;
@@ -1630,7 +1634,7 @@ class Admin extends CI_Controller {
     }
 
     public function tetapkan_ke_pelamar($assessment_id) {
-        return $this->assign_to_applicants($assessment_id);
+        return $this->tetapkanPenilaian($assessment_id);
     }
 
     // Manajemen Pengguna

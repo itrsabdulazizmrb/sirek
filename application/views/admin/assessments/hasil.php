@@ -3,7 +3,7 @@
     <div class="card mb-4">
       <div class="card-header pb-0">
         <div class="d-flex justify-content-between align-items-center">
-          <h6>Hasil Penilaian: <?= $assessment->title ?></h6>
+          <h6>Hasil Penilaian: <?= $assessment->judul ?></h6>
           <div>
             <a href="<?= base_url('admin/penilaian') ?>" class="btn btn-sm btn-outline-primary me-2">
               <i class="fas fa-arrow-left me-2"></i> Kembali ke Daftar Penilaian
@@ -91,27 +91,27 @@
                       </div>
                     </td>
                     <td>
-                      <p class="text-xs font-weight-bold mb-0"><?= $result->job_title ?? 'Tidak tersedia' ?></p>
+                      <p class="text-xs font-weight-bold mb-0"><?= isset($result->judul_lowongan) ? $result->judul_lowongan : (isset($result->job_title) ? $result->job_title : 'Tidak tersedia') ?></p>
                     </td>
                     <td class="align-middle text-center text-sm">
-                      <span class="badge badge-sm bg-gradient-<?= $result->status == 'not_started' ? 'secondary' : ($result->status == 'in_progress' ? 'warning' : ($result->status == 'completed' ? 'success' : 'info')) ?>"><?= $result->status == 'not_started' ? 'Belum Dimulai' : ($result->status == 'in_progress' ? 'Sedang Dikerjakan' : ($result->status == 'completed' ? 'Selesai' : 'Dinilai')) ?></span>
+                      <span class="badge badge-sm bg-gradient-<?= $result->status == 'belum_mulai' ? 'secondary' : ($result->status == 'sedang_berjalan' ? 'warning' : ($result->status == 'selesai' ? 'success' : 'info')) ?>"><?= $result->status == 'belum_mulai' ? 'Belum Dimulai' : ($result->status == 'sedang_berjalan' ? 'Sedang Dikerjakan' : ($result->status == 'selesai' ? 'Selesai' : 'Dinilai')) ?></span>
                     </td>
                     <td class="align-middle text-center">
-                      <?php if ($result->status == 'completed' || $result->status == 'graded') : ?>
-                        <span class="text-secondary text-xs font-weight-bold"><?= $result->score ?>%</span>
+                      <?php if ($result->status == 'selesai' || $result->status == 'dinilai') : ?>
+                        <span class="text-secondary text-xs font-weight-bold"><?= isset($result->skor) ? $result->skor : (isset($result->score) ? $result->score : 0) ?>%</span>
                       <?php else : ?>
                         <span class="text-secondary text-xs font-weight-bold">-</span>
                       <?php endif; ?>
                     </td>
                     <td class="align-middle text-center">
-                      <span class="text-secondary text-xs font-weight-bold"><?= $result->start_time ? date('d M Y H:i', strtotime($result->start_time)) : '-' ?></span>
+                      <span class="text-secondary text-xs font-weight-bold"><?= isset($result->waktu_mulai) ? date('d M Y H:i', strtotime($result->waktu_mulai)) : (isset($result->ditugaskan_pada) ? date('d M Y H:i', strtotime($result->ditugaskan_pada)) : '-') ?></span>
                     </td>
                     <td class="align-middle text-center">
-                      <span class="text-secondary text-xs font-weight-bold"><?= $result->end_time ? date('d M Y H:i', strtotime($result->end_time)) : '-' ?></span>
+                      <span class="text-secondary text-xs font-weight-bold"><?= isset($result->waktu_selesai) ? date('d M Y H:i', strtotime($result->waktu_selesai)) : (isset($result->diserahkan_pada) ? date('d M Y H:i', strtotime($result->diserahkan_pada)) : '-') ?></span>
                     </td>
                     <td class="align-middle">
-                      <?php if ($result->status == 'completed' || $result->status == 'graded') : ?>
-                        <a href="<?= base_url('admin/detail_lamaran/' . $result->application_id) ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Lihat Detail">
+                      <?php if ($result->status == 'selesai' || $result->status == 'dinilai') : ?>
+                        <a href="<?= base_url('admin/detail-lamaran/' . (isset($result->id_lamaran) ? $result->id_lamaran : $result->application_id)) ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Lihat Detail">
                           <i class="fas fa-eye"></i> Detail
                         </a>
                       <?php endif; ?>
@@ -158,7 +158,7 @@
   document.addEventListener('DOMContentLoaded', function() {
     // Score Distribution Chart
     var scoreCtx = document.getElementById('score-distribution-chart').getContext('2d');
-    
+
     // Count scores by range
     var scoreRanges = {
       '0-20': 0,
@@ -167,23 +167,25 @@
       '61-80': 0,
       '81-100': 0
     };
-    
+
     <?php foreach ($results as $result) : ?>
-      <?php if ($result->status == 'completed' || $result->status == 'graded') : ?>
-        <?php if ($result->score <= 20) : ?>
+      <?php if ($result->status == 'selesai' || $result->status == 'dinilai') : ?>
+        <?php
+        $score = isset($result->skor) ? $result->skor : (isset($result->score) ? $result->score : 0);
+        if ($score <= 20) : ?>
           scoreRanges['0-20']++;
-        <?php elseif ($result->score <= 40) : ?>
+        <?php elseif ($score <= 40) : ?>
           scoreRanges['21-40']++;
-        <?php elseif ($result->score <= 60) : ?>
+        <?php elseif ($score <= 60) : ?>
           scoreRanges['41-60']++;
-        <?php elseif ($result->score <= 80) : ?>
+        <?php elseif ($score <= 80) : ?>
           scoreRanges['61-80']++;
         <?php else : ?>
           scoreRanges['81-100']++;
         <?php endif; ?>
       <?php endif; ?>
     <?php endforeach; ?>
-    
+
     new Chart(scoreCtx, {
       type: 'bar',
       data: {
@@ -227,32 +229,32 @@
         }
       }
     });
-    
+
     // Assessment Status Chart
     var statusCtx = document.getElementById('assessment-status-chart').getContext('2d');
-    
+
     // Count by status
     var statusCounts = {
-      'not_started': 0,
-      'in_progress': 0,
-      'completed': 0,
-      'graded': 0
+      'belum_mulai': 0,
+      'sedang_berjalan': 0,
+      'selesai': 0,
+      'dinilai': 0
     };
-    
+
     <?php foreach ($results as $result) : ?>
       statusCounts['<?= $result->status ?>']++;
     <?php endforeach; ?>
-    
+
     new Chart(statusCtx, {
       type: 'pie',
       data: {
         labels: ['Belum Dimulai', 'Sedang Dikerjakan', 'Selesai', 'Dinilai'],
         datasets: [{
           data: [
-            statusCounts['not_started'],
-            statusCounts['in_progress'],
-            statusCounts['completed'],
-            statusCounts['graded']
+            statusCounts['belum_mulai'],
+            statusCounts['sedang_berjalan'],
+            statusCounts['selesai'],
+            statusCounts['dinilai']
           ],
           backgroundColor: [
             'rgba(133, 147, 176, 0.7)',

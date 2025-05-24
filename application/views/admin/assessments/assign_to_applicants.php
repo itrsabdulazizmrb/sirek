@@ -21,17 +21,17 @@
           <div class="col-md-12">
             <h6 class="text-uppercase text-sm">Informasi Penilaian</h6>
             <div class="p-3 border rounded">
-              <h5 class="mb-2"><?= $assessment->title ?></h5>
-              <p class="mb-2"><?= $assessment->description ?></p>
+              <h5 class="mb-2"><?= $assessment->judul ?></h5>
+              <p class="mb-2"><?= $assessment->deskripsi ?></p>
               <div class="row">
                 <div class="col-md-4">
                   <p class="mb-1"><strong>Jenis:</strong> <?= $assessment->type_name ?></p>
                 </div>
                 <div class="col-md-4">
-                  <p class="mb-1"><strong>Batas Waktu:</strong> <?= $assessment->time_limit ? $assessment->time_limit . ' menit' : 'Tidak ada' ?></p>
+                  <p class="mb-1"><strong>Batas Waktu:</strong> <?= $assessment->batas_waktu ? $assessment->batas_waktu . ' menit' : 'Tidak ada' ?></p>
                 </div>
                 <div class="col-md-4">
-                  <p class="mb-1"><strong>Nilai Kelulusan:</strong> <?= $assessment->passing_score ?>%</p>
+                  <p class="mb-1"><strong>Nilai Kelulusan:</strong> <?= $assessment->nilai_lulus ? $assessment->nilai_lulus . '%' : 'Tidak ditentukan' ?></p>
                 </div>
               </div>
             </div>
@@ -40,7 +40,7 @@
 
         <?php if ($job) : ?>
           <div class="alert alert-info" role="alert">
-            <strong>Info!</strong> Penilaian ini terkait dengan lowongan <strong><?= $job->title ?></strong>. Hanya pelamar untuk lowongan ini yang ditampilkan.
+            <strong>Info!</strong> Penilaian ini terkait dengan lowongan <strong><?= $job->judul ?></strong>. Hanya pelamar untuk lowongan ini yang ditampilkan.
           </div>
         <?php endif; ?>
 
@@ -99,7 +99,7 @@
                         <?php endif; ?>
                       </td>
                       <td>
-                        <span class="text-secondary text-xs font-weight-bold"><?= date('d M Y', strtotime($application->application_date)) ?></span>
+                        <span class="text-secondary text-xs font-weight-bold"><?= isset($application->tanggal_lamaran) ? date('d M Y', strtotime($application->tanggal_lamaran)) : (isset($application->dibuat_pada) ? date('d M Y', strtotime($application->dibuat_pada)) : 'Tidak tersedia') ?></span>
                       </td>
                     </tr>
                   <?php endforeach; ?>
