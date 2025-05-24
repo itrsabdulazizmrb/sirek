@@ -1443,7 +1443,7 @@ class Admin extends CI_Controller {
 
             if ($question_id) {
                 // If question type is multiple choice or true/false, add options
-                if ($this->input->post('question_type') == 'multiple_choice' || $this->input->post('question_type') == 'true_false') {
+                if ($this->input->post('question_type') == 'pilihan_ganda' || $this->input->post('question_type') == 'benar_salah') {
                     redirect('admin/opsi_soal/' . $question_id);
                 } else {
                     // Show success message
@@ -1499,7 +1499,7 @@ class Admin extends CI_Controller {
         }
 
         // Process based on question type
-        if ($question->jenis_soal == 'true_false') {
+        if ($question->jenis_soal == 'benar_salah') {
             // For true/false questions
             $correct_option = $this->input->post('correct_option');
 

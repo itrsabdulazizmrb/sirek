@@ -10,7 +10,7 @@
         </div>
         <p class="text-sm mb-0">
           <i class="fa fa-info-circle text-primary" aria-hidden="true"></i>
-          <span class="font-weight-bold">Tambahkan soal baru untuk penilaian: <?= $assessment->title ?></span>
+          <span class="font-weight-bold">Tambahkan soal baru untuk penilaian: <?= $assessment->judul ?></span>
         </p>
       </div>
       <div class="card-body">
@@ -32,10 +32,10 @@
                 <label for="question_type" class="form-control-label">Tipe Soal <span class="text-danger">*</span></label>
                 <select id="question_type" name="question_type" class="form-control">
                   <option value="">Pilih Tipe Soal</option>
-                  <option value="multiple_choice" <?= set_select('question_type', 'multiple_choice') ?>>Pilihan Ganda</option>
-                  <option value="true_false" <?= set_select('question_type', 'true_false') ?>>Benar/Salah</option>
-                  <option value="essay" <?= set_select('question_type', 'essay') ?>>Esai</option>
-                  <option value="file_upload" <?= set_select('question_type', 'file_upload') ?>>Unggah File</option>
+                  <option value="pilihan_ganda" <?= set_select('question_type', 'pilihan_ganda') ?>>Pilihan Ganda</option>
+                  <option value="benar_salah" <?= set_select('question_type', 'benar_salah') ?>>Benar/Salah</option>
+                  <option value="esai" <?= set_select('question_type', 'esai') ?>>Esai</option>
+                  <option value="unggah_file" <?= set_select('question_type', 'unggah_file') ?>>Unggah File</option>
                 </select>
                 <?= form_error('question_type', '<small class="text-danger">', '</small>') ?>
                 <small class="form-text text-muted">Pilih tipe soal yang sesuai.</small>
@@ -73,7 +73,7 @@
         <div class="row">
           <div class="col-md-6">
             <p class="text-xs text-secondary mb-1">Judul Penilaian:</p>
-            <p class="text-sm mb-2"><?= $assessment->title ?></p>
+            <p class="text-sm mb-2"><?= $assessment->judul ?></p>
           </div>
           <div class="col-md-6">
             <p class="text-xs text-secondary mb-1">Tipe Penilaian:</p>
@@ -81,11 +81,11 @@
           </div>
           <div class="col-md-6">
             <p class="text-xs text-secondary mb-1">Batas Waktu:</p>
-            <p class="text-sm mb-2"><?= $assessment->time_limit ? $assessment->time_limit . ' menit' : 'Tidak ada batas waktu' ?></p>
+            <p class="text-sm mb-2"><?= $assessment->batas_waktu ? $assessment->batas_waktu . ' menit' : 'Tidak ada batas waktu' ?></p>
           </div>
           <div class="col-md-6">
             <p class="text-xs text-secondary mb-1">Nilai Kelulusan:</p>
-            <p class="text-sm mb-2"><?= $assessment->passing_score ? $assessment->passing_score . ' poin' : 'Tidak ditentukan' ?></p>
+            <p class="text-sm mb-2"><?= $assessment->nilai_lulus ? $assessment->nilai_lulus . ' poin' : 'Tidak ditentukan' ?></p>
           </div>
         </div>
       </div>

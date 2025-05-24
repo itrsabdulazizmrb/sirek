@@ -3,7 +3,7 @@
     <div class="card mb-4">
       <div class="card-header pb-0">
         <div class="d-flex justify-content-between align-items-center">
-          <h6>Kelola Soal Penilaian: <?= $assessment->title ?></h6>
+          <h6>Kelola Soal Penilaian: <?= $assessment->judul ?></h6>
           <div>
             <a href="<?= base_url('admin/penilaian') ?>" class="btn btn-sm btn-outline-primary me-2">
               <i class="fas fa-arrow-left me-2"></i> Kembali ke Daftar Penilaian
@@ -33,17 +33,17 @@
               </div>
               <div class="col-md-6">
                 <p class="text-xs text-secondary mb-1">Batas Waktu:</p>
-                <p class="text-sm mb-2"><?= $assessment->time_limit ? $assessment->time_limit . ' menit' : 'Tidak ada batas waktu' ?></p>
+                <p class="text-sm mb-2"><?= $assessment->batas_waktu ? $assessment->batas_waktu . ' menit' : 'Tidak ada batas waktu' ?></p>
               </div>
               <div class="col-md-6">
                 <p class="text-xs text-secondary mb-1">Nilai Kelulusan:</p>
-                <p class="text-sm mb-2"><?= $assessment->passing_score ? $assessment->passing_score . ' poin' : 'Tidak ditentukan' ?></p>
+                <p class="text-sm mb-2"><?= $assessment->nilai_lulus ? $assessment->nilai_lulus . ' poin' : 'Tidak ditentukan' ?></p>
               </div>
               <div class="col-md-6">
                 <p class="text-xs text-secondary mb-1">Status:</p>
                 <p class="text-sm mb-2">
-                  <span class="badge badge-sm bg-gradient-<?= $assessment->is_active ? 'success' : 'secondary' ?>">
-                    <?= $assessment->is_active ? 'Aktif' : 'Tidak Aktif' ?>
+                  <span class="badge badge-sm bg-gradient-<?= $assessment->aktif ? 'success' : 'secondary' ?>">
+                    <?= $assessment->aktif ? 'Aktif' : 'Tidak Aktif' ?>
                   </span>
                 </p>
               </div>
@@ -51,7 +51,7 @@
           </div>
           <div class="col-md-6">
             <h6 class="text-uppercase text-sm">Deskripsi</h6>
-            <p class="text-sm"><?= $assessment->description ?></p>
+            <p class="text-sm"><?= $assessment->deskripsi ?></p>
           </div>
         </div>
 
@@ -91,37 +91,37 @@
                     <td>
                       <div class="d-flex px-2 py-1">
                         <div class="d-flex flex-column justify-content-center">
-                          <h6 class="mb-0 text-sm"><?= substr(strip_tags($question->question_text), 0, 100) . (strlen(strip_tags($question->question_text)) > 100 ? '...' : '') ?></h6>
+                          <h6 class="mb-0 text-sm"><?= substr(strip_tags($question->teks_soal), 0, 100) . (strlen(strip_tags($question->teks_soal)) > 100 ? '...' : '') ?></h6>
                         </div>
                       </div>
                     </td>
                     <td>
                       <p class="text-xs font-weight-bold mb-0">
                         <?php
-                        switch($question->question_type) {
-                          case 'multiple_choice':
+                        switch($question->jenis_soal) {
+                          case 'pilihan_ganda':
                             echo 'Pilihan Ganda';
                             break;
-                          case 'true_false':
+                          case 'benar_salah':
                             echo 'Benar/Salah';
                             break;
-                          case 'essay':
+                          case 'esai':
                             echo 'Esai';
                             break;
-                          case 'file_upload':
+                          case 'unggah_file':
                             echo 'Unggah File';
                             break;
                           default:
-                            echo ucfirst($question->question_type);
+                            echo ucfirst($question->jenis_soal);
                         }
                         ?>
                       </p>
                     </td>
                     <td class="align-middle text-center">
-                      <span class="text-secondary text-xs font-weight-bold"><?= $question->points ?></span>
+                      <span class="text-secondary text-xs font-weight-bold"><?= $question->poin ?></span>
                     </td>
                     <td class="align-middle text-center">
-                      <?php if ($question->question_type == 'multiple_choice' || $question->question_type == 'true_false') : ?>
+                      <?php if ($question->jenis_soal == 'pilihan_ganda' || $question->jenis_soal == 'benar_salah') : ?>
                         <?php
                         $options = $this->model_penilaian->dapatkan_opsi_soal($question->id);
                         $option_count = count($options);
