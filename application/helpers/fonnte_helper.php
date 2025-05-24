@@ -110,6 +110,11 @@ if (!function_exists('dapatkan_pesan_status_lamaran')) {
 
         // Isi pesan berdasarkan status
         $messages = [
+            'menunggu' => [
+                'title' => '📋 STATUS: DALAM PROSES PENINJAUAN',
+                'body' => "Halo *{$applicant_name}*,\n\nLamaran Anda untuk posisi *\"{$job_title}\"* telah kami terima dan saat ini sedang dalam proses peninjauan.\n\n*Tanggal Update:* {$current_date}\n\n*Langkah Selanjutnya:*\n1. Tim rekrutmen kami sedang meninjau lamaran Anda\n2. Kami akan menghubungi Anda kembali dalam 3-5 hari kerja\n3. Silakan periksa email dan WhatsApp Anda secara berkala"
+            ],
+
             'pending' => [
                 'title' => '📋 STATUS: DALAM PROSES PENINJAUAN',
                 'body' => "Halo *{$applicant_name}*,\n\nLamaran Anda untuk posisi *\"{$job_title}\"* telah kami terima dan saat ini sedang dalam proses peninjauan.\n\n*Tanggal Update:* {$current_date}\n\n*Langkah Selanjutnya:*\n1. Tim rekrutmen kami sedang meninjau lamaran Anda\n2. Kami akan menghubungi Anda kembali dalam 3-5 hari kerja\n3. Silakan periksa email dan WhatsApp Anda secara berkala"
@@ -171,8 +176,8 @@ if (!function_exists('dapatkan_pesan_status_lamaran')) {
             ]
         ];
 
-        // Jika status tidak ditemukan, gunakan status pending
-        $status_data = isset($messages[$status]) ? $messages[$status] : $messages['pending'];
+        // Jika status tidak ditemukan, gunakan status menunggu
+        $status_data = isset($messages[$status]) ? $messages[$status] : $messages['menunggu'];
 
         // Gabungkan semua bagian pesan
         $full_message = $header . $status_data['title'] . "\n\n" . $status_data['body'] . $footer;
