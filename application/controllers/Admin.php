@@ -1024,10 +1024,10 @@ class Admin extends CI_Controller {
                 'judul' => $this->input->post('title'),
                 'id_jenis' => $this->input->post('assessment_type_id'),
                 'deskripsi' => $this->input->post('description'),
-                'instruksi' => $this->input->post('instructions'),
+                'petunjuk' => $this->input->post('instructions'),
                 'batas_waktu' => $this->input->post('time_limit'),
                 'nilai_lulus' => $this->input->post('passing_score'),
-                'maks_percobaan' => $this->input->post('max_attempts'),
+                'maksimal_percobaan' => $this->input->post('max_attempts'),
                 'aktif' => $this->input->post('is_active') ? 1 : 0,
                 'dibuat_oleh' => $this->session->userdata('user_id'),
                 'dibuat_pada' => date('Y-m-d H:i:s')
@@ -1092,10 +1092,10 @@ class Admin extends CI_Controller {
                 'judul' => $this->input->post('title'),
                 'id_jenis' => $this->input->post('assessment_type_id'),
                 'deskripsi' => $this->input->post('description'),
-                'instruksi' => $this->input->post('instructions'),
+                'petunjuk' => $this->input->post('instructions'),
                 'batas_waktu' => $this->input->post('time_limit'),
                 'nilai_lulus' => $this->input->post('passing_score'),
-                'maks_percobaan' => $this->input->post('max_attempts'),
+                'maksimal_percobaan' => $this->input->post('max_attempts'),
                 'aktif' => $this->input->post('is_active') ? 1 : 0,
                 'diperbarui_pada' => date('Y-m-d H:i:s')
             );

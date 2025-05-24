@@ -55,7 +55,7 @@
                 <select class="form-control" id="job_id" name="job_id">
                   <option value="">Semua Lowongan</option>
                   <?php foreach ($jobs as $job) : ?>
-                    <option value="<?= $job->id ?>" <?= set_select('job_id', $job->id) ?>><?= $job->title ?></option>
+                    <option value="<?= $job->id ?>" <?= set_select('job_id', $job->id) ?>><?= $job->judul ?></option>
                   <?php endforeach; ?>
                 </select>
                 <small class="text-muted">Jika dipilih, penilaian ini hanya akan tersedia untuk lowongan tertentu.</small>

@@ -19,7 +19,7 @@
             <div class="col-md-6">
               <div class="form-group">
                 <label for="title" class="form-control-label">Judul Penilaian <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" id="title" name="title" value="<?= set_value('title', $assessment->title) ?>" required>
+                <input type="text" class="form-control" id="title" name="title" value="<?= set_value('title', $assessment->judul) ?>" required>
                 <?= form_error('title', '<small class="text-danger">', '</small>') ?>
               </div>
             </div>
@@ -29,7 +29,7 @@
                 <select class="form-control" id="assessment_type_id" name="assessment_type_id" required>
                   <option value="">Pilih Tipe Penilaian</option>
                   <?php foreach ($assessment_types as $type) : ?>
-                    <option value="<?= $type->id ?>" <?= set_select('assessment_type_id', $type->id, ($assessment->assessment_type_id == $type->id)) ?>><?= $type->nama ?></option>
+                    <option value="<?= $type->id ?>" <?= set_select('assessment_type_id', $type->id, ($assessment->id_jenis == $type->id)) ?>><?= $type->nama ?></option>
                   <?php endforeach; ?>
                 </select>
                 <?= form_error('assessment_type_id', '<small class="text-danger">', '</small>') ?>
@@ -41,7 +41,7 @@
             <div class="col-md-12">
               <div class="form-group">
                 <label for="description" class="form-control-label">Deskripsi Penilaian</label>
-                <textarea class="form-control" id="description" name="description" rows="4"><?= set_value('description', $assessment->description) ?></textarea>
+                <textarea class="form-control" id="description" name="description" rows="4"><?= set_value('description', $assessment->deskripsi) ?></textarea>
                 <?= form_error('description', '<small class="text-danger">', '</small>') ?>
                 <small class="text-muted">Jelaskan tujuan dan instruksi penilaian ini.</small>
               </div>
@@ -64,7 +64,7 @@
             <div class="col-md-6">
               <div class="form-group">
                 <label for="time_limit" class="form-control-label">Batas Waktu (menit)</label>
-                <input type="number" class="form-control" id="time_limit" name="time_limit" value="<?= set_value('time_limit', $assessment->time_limit) ?>" min="0">
+                <input type="number" class="form-control" id="time_limit" name="time_limit" value="<?= set_value('time_limit', $assessment->batas_waktu) ?>" min="0">
                 <small class="text-muted">Biarkan kosong jika tidak ada batas waktu.</small>
               </div>
             </div>
@@ -74,14 +74,14 @@
             <div class="col-md-6">
               <div class="form-group">
                 <label for="passing_score" class="form-control-label">Nilai Kelulusan</label>
-                <input type="number" class="form-control" id="passing_score" name="passing_score" value="<?= set_value('passing_score', $assessment->passing_score) ?>" min="0" max="100">
+                <input type="number" class="form-control" id="passing_score" name="passing_score" value="<?= set_value('passing_score', $assessment->nilai_lulus) ?>" min="0" max="100">
                 <small class="text-muted">Nilai minimum untuk lulus penilaian ini (0-100).</small>
               </div>
             </div>
             <div class="col-md-6">
               <div class="form-group">
                 <label for="max_attempts" class="form-control-label">Jumlah Percobaan Maksimum</label>
-                <input type="number" class="form-control" id="max_attempts" name="max_attempts" value="<?= set_value('max_attempts', $assessment->max_attempts) ?>" min="1">
+                <input type="number" class="form-control" id="max_attempts" name="max_attempts" value="<?= set_value('max_attempts', $assessment->maksimal_percobaan) ?>" min="1">
                 <small class="text-muted">Berapa kali pelamar dapat mengambil penilaian ini.</small>
               </div>
             </div>
@@ -91,7 +91,7 @@
             <div class="col-md-12">
               <div class="form-group">
                 <label for="instructions" class="form-control-label">Instruksi untuk Pelamar</label>
-                <textarea class="form-control" id="instructions" name="instructions" rows="4"><?= set_value('instructions', $assessment->instructions) ?></textarea>
+                <textarea class="form-control" id="instructions" name="instructions" rows="4"><?= set_value('instructions', $assessment->petunjuk) ?></textarea>
                 <?= form_error('instructions', '<small class="text-danger">', '</small>') ?>
                 <small class="text-muted">Instruksi yang akan ditampilkan kepada pelamar sebelum memulai penilaian.</small>
               </div>
@@ -101,7 +101,7 @@
           <div class="row">
             <div class="col-md-12">
               <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="is_active" name="is_active" value="1" <?= set_checkbox('is_active', '1', ($assessment->is_active == 1)) ?>>
+                <input class="form-check-input" type="checkbox" id="is_active" name="is_active" value="1" <?= set_checkbox('is_active', '1', ($assessment->aktif == 1)) ?>>
                 <label class="form-check-label" for="is_active">Aktifkan Penilaian</label>
               </div>
             </div>
