@@ -401,12 +401,24 @@ class Admin extends CI_Controller {
 
         if ($result) {
             // Send WhatsApp notification if requested
-            if ($notify && $applicant && $applicant->no_telepon) {
-                $this->kirim_notifikasi_whatsapp($applicant, $job, $status, $catatan);
-            }
+            if ($notify && $applicant && $applicant->telepon) {
+                $whatsapp_result = $this->kirim_notifikasi_whatsapp($applicant, $job, $status, $catatan);
 
-            // Show success message
-            $this->session->set_flashdata('success', 'Status lamaran berhasil diperbarui menjadi ' . ucfirst($status) . '.');
+                if ($whatsapp_result && isset($whatsapp_result['success']) && $whatsapp_result['success']) {
+                    $this->session->set_flashdata('success', 'Status lamaran berhasil diperbarui menjadi ' . ucfirst($status) . ' dan notifikasi WhatsApp telah dikirim.');
+                } else {
+                    $this->session->set_flashdata('success', 'Status lamaran berhasil diperbarui menjadi ' . ucfirst($status) . ', tetapi gagal mengirim notifikasi WhatsApp.');
+                    if ($whatsapp_result && isset($whatsapp_result['error'])) {
+                        $this->session->set_flashdata('error', 'Error WhatsApp: ' . $whatsapp_result['error']);
+                    }
+                }
+            } else {
+                if (!$applicant->telepon) {
+                    $this->session->set_flashdata('success', 'Status lamaran berhasil diperbarui menjadi ' . ucfirst($status) . '. Notifikasi WhatsApp tidak dikirim karena nomor telepon pelamar tidak tersedia.');
+                } else {
+                    $this->session->set_flashdata('success', 'Status lamaran berhasil diperbarui menjadi ' . ucfirst($status) . '.');
+                }
+            }
         } else {
             // If update fails, show error message
             $this->session->set_flashdata('error', 'Gagal memperbarui status lamaran. Silakan coba lagi.');
@@ -426,7 +438,7 @@ class Admin extends CI_Controller {
         }
 
         // Send WhatsApp notification
-        $whatsapp_result = kirim_whatsapp($applicant->no_telepon, $message);
+        $whatsapp_result = kirim_whatsapp($applicant->telepon, $message);
 
         return $whatsapp_result;
     }
