@@ -29,7 +29,7 @@
                 <select class="form-control" id="assessment_type_id" name="assessment_type_id" required>
                   <option value="">Pilih Tipe Penilaian</option>
                   <?php foreach ($assessment_types as $type) : ?>
-                    <option value="<?= $type->id ?>" <?= set_select('assessment_type_id', $type->id) ?>><?= $type->name ?></option>
+                    <option value="<?= $type->id ?>" <?= set_select('assessment_type_id', $type->id) ?>><?= $type->nama ?></option>
                   <?php endforeach; ?>
                 </select>
                 <?= form_error('assessment_type_id', '<small class="text-danger">', '</small>') ?>
