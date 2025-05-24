@@ -67,13 +67,7 @@
                     </td>
                     <td class="align-middle text-center">
                       <span class="text-secondary text-xs font-weight-bold">
-                        <?php
-                        // Get question count from model
-                        $question_count = 0;
-                        // Uncomment when method is implemented
-                        // $question_count = $this->model_penilaian->hitung_soal_penilaian($assessment->id);
-                        echo $question_count . ' Soal';
-                        ?>
+                        <?= $assessment->question_count ?> Soal
                       </span>
                     </td>
                     <td class="align-middle text-center">
@@ -81,12 +75,8 @@
                     </td>
                     <td class="align-middle text-center">
                       <?php
-                      // Temporarily set default values until the model methods are implemented
-                      $applicant_count = 0;
-                      $completed_count = 0;
-                      // Uncomment when methods are implemented
-                      // $applicant_count = $this->model_penilaian->hitung_pelamar_penilaian($assessment->id);
-                      // $completed_count = $this->model_penilaian->hitung_penyelesaian_penilaian($assessment->id);
+                      $applicant_count = $this->model_penilaian->hitung_pelamar_penilaian($assessment->id);
+                      $completed_count = $this->model_penilaian->hitung_penyelesaian_penilaian($assessment->id);
                       ?>
                       <a href="<?= base_url('admin/hasil-penilaian/' . $assessment->id) ?>" class="text-secondary font-weight-bold text-xs">
                         <?= $completed_count ?>/<?= $applicant_count ?> Selesai
@@ -155,11 +145,19 @@
     new Chart(ctx1, {
       type: "doughnut",
       data: {
-        labels: ["Tes Kepribadian", "Tes Teknis", "Tes Logika", "Tes Bahasa", "Tes Pengetahuan"],
+        labels: [
+          <?php foreach ($chart_data['type_stats'] as $index => $stat): ?>
+            "<?= $stat->type_name ?>"<?= $index < count($chart_data['type_stats']) - 1 ? ',' : '' ?>
+          <?php endforeach; ?>
+        ],
         datasets: [{
           label: "Penilaian",
-          backgroundColor: ["#5e72e4", "#2dce89", "#fb6340", "#11cdef", "#f5365c"],
-          data: [30, 25, 20, 15, 10],
+          backgroundColor: ["#5e72e4", "#2dce89", "#fb6340", "#11cdef", "#f5365c", "#6f42c1", "#fd7e14"],
+          data: [
+            <?php foreach ($chart_data['type_stats'] as $index => $stat): ?>
+              <?= $stat->count ?><?= $index < count($chart_data['type_stats']) - 1 ? ',' : '' ?>
+            <?php endforeach; ?>
+          ],
         }],
       },
       options: {
@@ -178,17 +176,29 @@
     new Chart(ctx2, {
       type: "bar",
       data: {
-        labels: ["Tes Kepribadian", "Tes Teknis", "Tes Logika", "Tes Bahasa", "Tes Pengetahuan"],
+        labels: [
+          <?php foreach ($chart_data['completion_stats'] as $index => $stat): ?>
+            "<?= substr($stat->judul, 0, 20) . (strlen($stat->judul) > 20 ? '...' : '') ?>"<?= $index < count($chart_data['completion_stats']) - 1 ? ',' : '' ?>
+          <?php endforeach; ?>
+        ],
         datasets: [
           {
             label: "Ditugaskan",
             backgroundColor: "#5e72e4",
-            data: [50, 40, 30, 20, 10],
+            data: [
+              <?php foreach ($chart_data['completion_stats'] as $index => $stat): ?>
+                <?= $stat->total_assigned ?><?= $index < count($chart_data['completion_stats']) - 1 ? ',' : '' ?>
+              <?php endforeach; ?>
+            ],
           },
           {
             label: "Selesai",
             backgroundColor: "#2dce89",
-            data: [45, 30, 25, 15, 8],
+            data: [
+              <?php foreach ($chart_data['completion_stats'] as $index => $stat): ?>
+                <?= $stat->completed ?><?= $index < count($chart_data['completion_stats']) - 1 ? ',' : '' ?>
+              <?php endforeach; ?>
+            ],
           }
         ],
       },

@@ -996,6 +996,9 @@ class Admin extends CI_Controller {
         // Get jobs for filter
         $data['jobs'] = $this->model_lowongan->dapatkan_lowongan_aktif(100, 0);
 
+        // Get chart data for assessment types
+        $data['chart_data'] = $this->dapatkan_data_chart_penilaian();
+
         // Load views
         $data['title'] = 'Manajemen Penilaian';
         $this->load->view('templates/admin_header', $data);
@@ -1412,7 +1415,7 @@ class Admin extends CI_Controller {
         // Get assessment questions with options
         $data['questions'] = $this->model_penilaian->dapatkan_soal_penilaian($assessment_id);
         foreach ($data['questions'] as &$question) {
-            if ($question->question_type == 'multiple_choice' || $question->question_type == 'true_false') {
+            if ($question->jenis_soal == 'pilihan_ganda' || $question->jenis_soal == 'benar_salah') {
                 $question->options = $this->model_penilaian->dapatkan_opsi_soal($question->id);
             }
         }
@@ -1421,7 +1424,7 @@ class Admin extends CI_Controller {
         $data['title'] = 'Pratinjau Penilaian';
         $data['preview_mode'] = true;
         $this->load->view('templates/admin_header', $data);
-        $this->load->view('admin/assessments/preview', $data);
+        $this->load->view('admin/penilaian/pratinjau', $data);
         $this->load->view('templates/admin_footer');
     }
 
@@ -1532,7 +1535,7 @@ class Admin extends CI_Controller {
                 // Define upload path using absolute path
                 $upload_dir = 'uploads/gambar_soal';
                 $upload_path = str_replace('\\', '/', realpath(FCPATH . $upload_dir));
-                
+
                 // Log path information for debugging
                 log_message('debug', 'FCPATH: ' . FCPATH);
                 log_message('debug', 'Upload directory: ' . $upload_dir);
@@ -1738,6 +1741,35 @@ class Admin extends CI_Controller {
     public function simpanOpsiSoal($question_id) {
         // Call the original method to avoid code duplication
         return $this->simpan_opsi_soal($question_id);
+    }
+
+    // Dapatkan data chart untuk penilaian
+    private function dapatkan_data_chart_penilaian() {
+        // Get assessment type statistics
+        $this->db->select('jenis_penilaian.nama as type_name, COUNT(penilaian.id) as count');
+        $this->db->from('penilaian');
+        $this->db->join('jenis_penilaian', 'jenis_penilaian.id = penilaian.id_jenis', 'left');
+        $this->db->group_by('penilaian.id_jenis');
+        $this->db->order_by('count', 'DESC');
+        $type_stats = $this->db->get()->result();
+
+        // Get completion statistics for each assessment
+        $this->db->select('penilaian.judul, jenis_penilaian.nama as type_name,
+                          COUNT(penilaian_pelamar.id) as total_assigned,
+                          SUM(CASE WHEN penilaian_pelamar.status = "selesai" THEN 1 ELSE 0 END) as completed');
+        $this->db->from('penilaian');
+        $this->db->join('jenis_penilaian', 'jenis_penilaian.id = penilaian.id_jenis', 'left');
+        $this->db->join('penilaian_pelamar', 'penilaian_pelamar.id_penilaian = penilaian.id', 'left');
+        $this->db->group_by('penilaian.id');
+        $this->db->having('total_assigned > 0');
+        $this->db->order_by('total_assigned', 'DESC');
+        $this->db->limit(5); // Top 5 assessments
+        $completion_stats = $this->db->get()->result();
+
+        return [
+            'type_stats' => $type_stats,
+            'completion_stats' => $completion_stats
+        ];
     }
 
     // ========== FUNCTION NAMES INDONESIA ==========
