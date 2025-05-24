@@ -111,6 +111,19 @@ $route['admin/soal-penilaian/(:num)'] = 'admin/soal_penilaian/$1';
 $route['admin/tambah-soal/(:num)'] = 'admin/tambah_soal/$1';
 $route['admin/edit-soal/(:num)'] = 'admin/edit_soal/$1';
 $route['admin/hapus-soal/(:num)'] = 'admin/hapus_soal/$1';
+$route['admin/opsi-soal/(:num)'] = 'admin/opsi_soal/$1';
+$route['admin/simpan-opsi-soal/(:num)'] = 'admin/simpan_opsi_soal/$1';
+$route['admin/pratinjau-penilaian/(:num)'] = 'admin/pratinjau_penilaian/$1';
+$route['admin/hasil-penilaian/(:num)'] = 'admin/hasil_penilaian/$1';
+$route['admin/tetapkan-ke-pelamar/(:num)'] = 'admin/tetapkan_ke_pelamar/$1';
+
+// Backward compatibility routes (English)
+$route['admin/assessments'] = 'admin/penilaian';
+$route['admin/add_question/(:num)'] = 'admin/tambah_soal/$1';
+$route['admin/edit_question/(:num)'] = 'admin/edit_soal/$1';
+$route['admin/delete_question/(:num)'] = 'admin/hapus_soal/$1';
+$route['admin/question_options/(:num)'] = 'admin/opsi_soal/$1';
+
 $route['admin/blog'] = 'admin/blog';
 $route['admin/tambah-artikel'] = 'admin/tambah_artikel';
 $route['admin/edit-artikel/(:num)'] = 'admin/edit_artikel/$1';

@@ -982,7 +982,13 @@ class Admin extends CI_Controller {
     // Manajemen Penilaian
     public function penilaian() {
         // Get all assessments
-        $data['assessments'] = $this->model_penilaian->dapatkan_semua_penilaian();
+        $assessments = $this->model_penilaian->dapatkan_semua_penilaian();
+
+        // Add question count for each assessment
+        foreach ($assessments as &$assessment) {
+            $assessment->question_count = $this->model_penilaian->hitung_soal_penilaian($assessment->id);
+        }
+        $data['assessments'] = $assessments;
 
         // Get assessment types for filter
         $data['assessment_types'] = $this->model_penilaian->dapatkan_jenis_penilaian();
@@ -993,7 +999,7 @@ class Admin extends CI_Controller {
         // Load views
         $data['title'] = 'Manajemen Penilaian';
         $this->load->view('templates/admin_header', $data);
-        $this->load->view('admin/assessments/index', $data);
+        $this->load->view('admin/penilaian/index', $data);
         $this->load->view('templates/admin_footer');
     }
 
@@ -1016,7 +1022,7 @@ class Admin extends CI_Controller {
             // If validation fails, show form with errors
             $data['title'] = 'Tambah Penilaian Baru';
             $this->load->view('templates/admin_header', $data);
-            $this->load->view('admin/assessments/add', $data);
+            $this->load->view('admin/penilaian/tambah', $data);
             $this->load->view('templates/admin_footer');
         } else {
             // Get form data
@@ -1084,7 +1090,7 @@ class Admin extends CI_Controller {
             // If validation fails, show form with errors
             $data['title'] = 'Edit Penilaian';
             $this->load->view('templates/admin_header', $data);
-            $this->load->view('admin/assessments/edit', $data);
+            $this->load->view('admin/penilaian/edit', $data);
             $this->load->view('templates/admin_footer');
         } else {
             // Get form data
@@ -1278,10 +1284,20 @@ class Admin extends CI_Controller {
         // Get assessment questions
         $data['questions'] = $this->model_penilaian->dapatkan_soal_penilaian($assessment_id);
 
+        // Add option count for each question
+        foreach ($data['questions'] as &$question) {
+            if ($question->jenis_soal == 'pilihan_ganda' || $question->jenis_soal == 'benar_salah') {
+                $options = $this->model_penilaian->dapatkan_opsi_soal($question->id);
+                $question->option_count = count($options);
+            } else {
+                $question->option_count = 0;
+            }
+        }
+
         // Load views
         $data['title'] = 'Kelola Soal Penilaian';
         $this->load->view('templates/admin_header', $data);
-        $this->load->view('admin/assessments/questions', $data);
+        $this->load->view('admin/penilaian/soal', $data);
         $this->load->view('templates/admin_footer');
     }
 
@@ -1426,7 +1442,7 @@ class Admin extends CI_Controller {
             // If validation fails, show form with errors
             $data['title'] = 'Tambah Soal Baru';
             $this->load->view('templates/admin_header', $data);
-            $this->load->view('admin/assessments/add_question', $data);
+            $this->load->view('admin/penilaian/tambah_soal', $data);
             $this->load->view('templates/admin_footer');
         } else {
             // Get form data
@@ -1479,7 +1495,7 @@ class Admin extends CI_Controller {
         // Load views
         $data['title'] = 'Kelola Opsi Soal';
         $this->load->view('templates/admin_header', $data);
-        $this->load->view('admin/assessments/options', $data);
+        $this->load->view('admin/penilaian/opsi', $data);
         $this->load->view('templates/admin_footer');
     }
 
@@ -1585,6 +1601,36 @@ class Admin extends CI_Controller {
     public function simpanOpsiSoal($question_id) {
         // Call the original method to avoid code duplication
         return $this->simpan_opsi_soal($question_id);
+    }
+
+    // ========== FUNCTION NAMES INDONESIA ==========
+
+    // Note: Function yang sudah ada tidak perlu duplikasi:
+    // - penilaian() sudah ada di line 983
+    // - tambah_soal() sudah ada di line 1411
+    // - hasilPenilaian() sudah ada di line 1289
+    // - hapus_penilaian() sudah ada di line 1136
+    // - soal_penilaian() sudah ada di line 1269
+    // - opsi_soal() sudah ada di line 1462
+
+    public function edit_soal($question_id) {
+        return $this->edit_question($question_id);
+    }
+
+    public function hapus_soal($question_id) {
+        return $this->delete_question($question_id);
+    }
+
+    public function pratinjau_penilaian($assessment_id) {
+        return $this->preview_assessment($assessment_id);
+    }
+
+    public function hasil_penilaian($assessment_id) {
+        return $this->hasilPenilaian($assessment_id);
+    }
+
+    public function tetapkan_ke_pelamar($assessment_id) {
+        return $this->assign_to_applicants($assessment_id);
     }
 
     // Manajemen Pengguna

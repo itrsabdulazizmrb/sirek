@@ -41,8 +41,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   };
 
-  // Initialize all tables with class 'table'
-  const tables = document.querySelectorAll('table.table');
+  // Initialize all tables with class 'table' but exclude 'manual-init'
+  const tables = document.querySelectorAll('table.table:not(.manual-init)');
 
   tables.forEach(function(table) {
     // Skip tables that don't have a thead element
