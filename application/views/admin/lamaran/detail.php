@@ -343,7 +343,7 @@
         <div class="form-group">
           <label for="status" class="form-control-label">Ubah Status</label>
           <select class="form-control" id="status" onchange="perbaruiStatus(this.value)">
-            <option value="pending" <?= $application->status == 'pending' ? 'selected' : '' ?>>Pending</option>
+            <option value="menunggu" <?= $application->status == 'menunggu' ? 'selected' : '' ?>>Pending</option>
             <option value="direview" <?= $application->status == 'direview' ? 'selected' : '' ?>>Direview</option>
             <option value="seleksi" <?= $application->status == 'seleksi' ? 'selected' : '' ?>>Seleksi</option>
             <option value="wawancara" <?= $application->status == 'wawancara' ? 'selected' : '' ?>>Wawancara</option>
@@ -411,7 +411,7 @@
     const statusSelect = document.getElementById('status');
     statusSelect.className = 'form-control';
 
-    if (status === 'pending') {
+    if (status === 'menunggu') {
       statusSelect.classList.add('border-warning', 'text-warning');
     } else if (status === 'direview') {
       statusSelect.classList.add('border-info', 'text-info');
