@@ -209,13 +209,13 @@
                   <p class="text-xs font-weight-bold mb-0"><?= $application->job_title ?></p>
                 </td>
                 <td class="align-middle text-center">
-                  <span class="text-secondary text-xs font-weight-bold"><?= date('d M Y', strtotime($application->application_date)) ?></span>
+                  <span class="text-secondary text-xs font-weight-bold"><?= date('d M Y', strtotime($application->tanggal_lamaran)) ?></span>
                 </td>
                 <td class="align-middle text-center text-sm">
-                  <span class="badge badge-sm bg-gradient-<?= $application->status == 'pending' ? 'warning' : ($application->status == 'reviewed' ? 'info' : ($application->status == 'shortlisted' ? 'success' : ($application->status == 'interviewed' ? 'primary' : ($application->status == 'offered' ? 'warning' : ($application->status == 'hired' ? 'success' : 'danger'))))) ?>"><?= ucfirst($application->status) ?></span>
+                  <span class="badge badge-sm bg-gradient-<?= $application->status == 'menunggu' ? 'warning' : ($application->status == 'direview' ? 'info' : ($application->status == 'seleksi' ? 'success' : ($application->status == 'wawancara' ? 'primary' : ($application->status == 'diterima' ? 'success' : 'danger')))) ?>"><?= ucfirst($application->status) ?></span>
                 </td>
                 <td class="align-middle">
-                  <a href="<?= base_url('admin/application_details/' . $application->id) ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
+                  <a href="<?= base_url('admin/detail_lamaran/' . $application->id) ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Lihat detail">
                     Detail
                   </a>
                 </td>
@@ -243,8 +243,8 @@
                   <i class="ni ni-tag text-white opacity-10"></i>
                 </div>
                 <div class="d-flex flex-column">
-                  <h6 class="mb-1 text-dark text-sm"><?= $category->name ?></h6>
-                  <span class="text-xs"><?= $category->job_count ?? 0 ?> Lowongan</span>
+                  <h6 class="mb-1 text-dark text-sm"><?= $category->nama ?></h6>
+                  <span class="text-xs"><?= $category->jumlah_lowongan ?? 0 ?> Lowongan</span>
                 </div>
               </div>
               <div class="d-flex">
@@ -406,7 +406,7 @@
       data: {
         labels: [
           <?php foreach ($job_categories ?? [] as $category) : ?>
-            "<?= $category->name ?>",
+            "<?= $category->nama ?>",
           <?php endforeach; ?>
         ],
         datasets: [{
@@ -416,7 +416,7 @@
           ],
           data: [
             <?php foreach ($job_categories ?? [] as $category) : ?>
-              <?= $category->job_count ?? 0 ?>,
+              <?= $category->jumlah_lowongan ?? 0 ?>,
             <?php endforeach; ?>
           ],
         }],
@@ -444,18 +444,16 @@
     new Chart(ctx3, {
       type: "pie",
       data: {
-        labels: ["Pending", "Reviewed", "Shortlisted", "Interviewed", "Offered", "Hired", "Rejected"],
+        labels: ["Menunggu", "Direview", "Seleksi", "Wawancara", "Diterima"],
         datasets: [{
           label: "Pelamar",
-          backgroundColor: ["#fb6340", "#11cdef", "#2dce89", "#5e72e4", "#ffd600", "#2dce89", "#f5365c"],
+          backgroundColor: ["#fb6340", "#11cdef", "#2dce89", "#5e72e4", "#2dce89"],
           data: [
-            <?= $application_status_stats['pending'] ?? 0 ?>,
-            <?= $application_status_stats['reviewed'] ?? 0 ?>,
-            <?= $application_status_stats['shortlisted'] ?? 0 ?>,
-            <?= $application_status_stats['interviewed'] ?? 0 ?>,
-            <?= $application_status_stats['offered'] ?? 0 ?>,
-            <?= $application_status_stats['hired'] ?? 0 ?>,
-            <?= $application_status_stats['rejected'] ?? 0 ?>
+            <?= $application_status_stats['menunggu'] ?? 0 ?>,
+            <?= $application_status_stats['direview'] ?? 0 ?>,
+            <?= $application_status_stats['seleksi'] ?? 0 ?>,
+            <?= $application_status_stats['wawancara'] ?? 0 ?>,
+            <?= $application_status_stats['diterima'] ?? 0 ?>
           ],
         }],
       },
@@ -483,7 +481,7 @@
       data: {
         labels: [
           <?php foreach ($applications_per_job ?? [] as $job) : ?>
-            "<?= substr($job->title, 0, 20) . (strlen($job->title) > 20 ? '...' : '') ?>",
+            "<?= substr($job->judul, 0, 20) . (strlen($job->judul) > 20 ? '...' : '') ?>",
           <?php endforeach; ?>
         ],
         datasets: [{
@@ -491,7 +489,7 @@
           backgroundColor: "#5e72e4",
           data: [
             <?php foreach ($applications_per_job ?? [] as $job) : ?>
-              <?= $job->application_count ?? 0 ?>,
+              <?= $job->jumlah_lamaran ?? 0 ?>,
             <?php endforeach; ?>
           ],
         }],

@@ -39,7 +39,7 @@
                   </span>
                   <div class="timeline-content">
                     <h6 class="text-dark text-sm font-weight-bold mb-0">Lamaran Ditinjau</h6>
-                    <p class="text-secondary font-weight-bold text-xs mt-1 mb-0"><?= date('d M Y', strtotime($application->updated_at)) ?></p>
+                    <p class="text-secondary font-weight-bold text-xs mt-1 mb-0"><?= date('d M Y', strtotime($application->diperbarui_pada)) ?></p>
                   </div>
                 </div>
               <?php endif; ?>
@@ -51,7 +51,7 @@
                   </span>
                   <div class="timeline-content">
                     <h6 class="text-dark text-sm font-weight-bold mb-0">Masuk Seleksi</h6>
-                    <p class="text-secondary font-weight-bold text-xs mt-1 mb-0"><?= date('d M Y', strtotime($application->updated_at)) ?></p>
+                    <p class="text-secondary font-weight-bold text-xs mt-1 mb-0"><?= date('d M Y', strtotime($application->diperbarui_pada)) ?></p>
                   </div>
                 </div>
               <?php endif; ?>
@@ -63,7 +63,7 @@
                   </span>
                   <div class="timeline-content">
                     <h6 class="text-dark text-sm font-weight-bold mb-0">Wawancara</h6>
-                    <p class="text-secondary font-weight-bold text-xs mt-1 mb-0"><?= date('d M Y', strtotime($application->updated_at)) ?></p>
+                    <p class="text-secondary font-weight-bold text-xs mt-1 mb-0"><?= date('d M Y', strtotime($application->diperbarui_pada)) ?></p>
                   </div>
                 </div>
               <?php endif; ?>
@@ -75,7 +75,7 @@
                   </span>
                   <div class="timeline-content">
                     <h6 class="text-dark text-sm font-weight-bold mb-0">Pekerjaan Ditawarkan</h6>
-                    <p class="text-secondary font-weight-bold text-xs mt-1 mb-0"><?= date('d M Y', strtotime($application->updated_at)) ?></p>
+                    <p class="text-secondary font-weight-bold text-xs mt-1 mb-0"><?= date('d M Y', strtotime($application->diperbarui_pada)) ?></p>
                   </div>
                 </div>
               <?php endif; ?>
@@ -87,7 +87,7 @@
                   </span>
                   <div class="timeline-content">
                     <h6 class="text-dark text-sm font-weight-bold mb-0">Diterima</h6>
-                    <p class="text-secondary font-weight-bold text-xs mt-1 mb-0"><?= date('d M Y', strtotime($application->updated_at)) ?></p>
+                    <p class="text-secondary font-weight-bold text-xs mt-1 mb-0"><?= date('d M Y', strtotime($application->diperbarui_pada)) ?></p>
                   </div>
                 </div>
               <?php endif; ?>
@@ -99,7 +99,7 @@
                   </span>
                   <div class="timeline-content">
                     <h6 class="text-dark text-sm font-weight-bold mb-0">Lamaran Ditolak</h6>
-                    <p class="text-secondary font-weight-bold text-xs mt-1 mb-0"><?= date('d M Y', strtotime($application->updated_at)) ?></p>
+                    <p class="text-secondary font-weight-bold text-xs mt-1 mb-0"><?= date('d M Y', strtotime($application->diperbarui_pada)) ?></p>
                     <p class="text-sm mt-2 mb-0">Terima kasih atas minat Anda. Kami mendorong Anda untuk melamar posisi lain yang sesuai dengan keterampilan dan pengalaman Anda.</p>
                   </div>
                 </div>
@@ -166,8 +166,8 @@
                 </table>
               </div>
             <?php elseif ($application->cv) : ?>
-              <!-- Legacy support for old applications with just a resume -->
-              <a href="<?= base_url('uploads/resumes/' . $application->cv) ?>" class="btn btn-outline-primary btn-sm" target="_blank">
+              <!-- Legacy support for old applications with just a CV -->
+              <a href="<?= base_url('uploads/cv/' . $application->cv) ?>" class="btn btn-outline-primary btn-sm" target="_blank">
                 <i class="ni ni-single-copy-04 me-2"></i> Lihat CV
               </a>
             <?php else : ?>

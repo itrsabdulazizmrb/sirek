@@ -557,17 +557,36 @@ class Admin extends CI_Controller {
         // Get application details
         $application = $this->model_lamaran->dapatkan_lamaran($id);
 
-        // If application not found or CV not found, show 404
-        if (!$application || !$application->cv) {
+        // If application not found, show 404
+        if (!$application) {
             show_404();
         }
 
-        // Set file path
-        $file_path = './uploads/cv/' . $application->cv;
+        $cv_file = null;
+        $file_path = null;
+
+        // First, try to get CV from application
+        if ($application->cv) {
+            $cv_file = $application->cv;
+            $file_path = './uploads/cv/' . $cv_file;
+        } else {
+            // If no CV in application, try to get from profile
+            $profile = $this->model_pelamar->dapatkan_profil($application->id_pelamar);
+            if ($profile && $profile->cv) {
+                $cv_file = $profile->cv;
+                $file_path = './uploads/cv/' . $cv_file;
+            }
+        }
+
+        // If no CV found, show 404
+        if (!$cv_file || !$file_path) {
+            $this->session->set_flashdata('error', 'CV tidak ditemukan untuk lamaran ini.');
+            redirect('admin/detail_lamaran/' . $id);
+        }
 
         // Check if file exists
         if (!file_exists($file_path)) {
-            $this->session->set_flashdata('error', 'File CV tidak ditemukan.');
+            $this->session->set_flashdata('error', 'File CV tidak ditemukan di server.');
             redirect('admin/detail_lamaran/' . $id);
         }
 
@@ -821,8 +840,13 @@ class Admin extends CI_Controller {
             show_404();
         }
 
-        // Set file path
-        $file_path = './uploads/documents/' . $document->nama_file;
+        // Set file path based on document type
+        $file_path = '';
+        if ($document->jenis_dokumen == 'cv') {
+            $file_path = './uploads/cv/' . $document->nama_file;
+        } else {
+            $file_path = './uploads/documents/' . $document->nama_file;
+        }
 
         // Check if file exists
         if (!file_exists($file_path)) {

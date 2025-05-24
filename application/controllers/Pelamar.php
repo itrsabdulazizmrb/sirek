@@ -504,8 +504,13 @@ class Pelamar extends CI_Controller {
             show_404();
         }
 
-        // Set file path
-        $file_path = './uploads/documents/' . $document->nama_file;
+        // Set file path based on document type
+        $file_path = '';
+        if ($document->jenis_dokumen == 'cv') {
+            $file_path = './uploads/cv/' . $document->nama_file;
+        } else {
+            $file_path = './uploads/documents/' . $document->nama_file;
+        }
 
         // Check if file exists
         if (!file_exists($file_path)) {
@@ -586,7 +591,7 @@ class Pelamar extends CI_Controller {
         // Set file path
         $file_path = '';
         if ($document->jenis_dokumen == 'cv') {
-            $file_path = './uploads/resumes/' . $document->nama_file;
+            $file_path = './uploads/cv/' . $document->nama_file;
 
             // Update profile to remove CV reference
             $this->model_pelamar->perbarui_profil($user_id, ['cv' => null]);

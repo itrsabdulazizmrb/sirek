@@ -162,6 +162,18 @@
               <a href="<?= base_url('admin/unduhCV/' . $application->id) ?>" class="btn btn-outline-info btn-sm">
                 <i class="ni ni-cloud-download-95 me-2"></i> Unduh CV
               </a>
+            <?php elseif (isset($profile->cv) && $profile->cv) : ?>
+              <!-- CV from profile -->
+              <div class="alert alert-info" role="alert">
+                <i class="ni ni-single-copy-04 me-2"></i>
+                <strong>CV dari Profil Pelamar:</strong>
+              </div>
+              <a href="<?= base_url('uploads/cv/' . $profile->cv) ?>" class="btn btn-outline-primary btn-sm" target="_blank">
+                <i class="ni ni-single-copy-04 me-2"></i> Lihat CV
+              </a>
+              <a href="<?= base_url('admin/unduhCV/' . $application->id) ?>" class="btn btn-outline-info btn-sm">
+                <i class="ni ni-cloud-download-95 me-2"></i> Unduh CV
+              </a>
             <?php else : ?>
               <p class="text-muted">Tidak ada dokumen yang dilampirkan.</p>
             <?php endif; ?>

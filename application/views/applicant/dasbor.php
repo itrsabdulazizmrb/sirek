@@ -42,7 +42,7 @@
                 <?php
                 $pending = 0;
                 foreach ($applications as $app) {
-                  if ($app->status == 'pending') $pending++;
+                  if ($app->status == 'menunggu') $pending++;
                 }
                 ?>
                 <span class="text-warning text-sm font-weight-bolder"><?= $pending ?></span>
@@ -119,19 +119,19 @@
                           <img src="<?= base_url('assets/img/small-logos/logo-company.svg') ?>" class="avatar avatar-sm me-3" alt="job">
                         </div>
                         <div class="d-flex flex-column justify-content-center">
-                          <h6 class="mb-0 text-sm"><?= $job->title ?></h6>
-                          <p class="text-xs text-secondary mb-0"><?= $job->category_name ?></p>
+                          <h6 class="mb-0 text-sm"><?= $job->judul ?></h6>
+                          <p class="text-xs text-secondary mb-0"><?= $job->nama_kategori ?></p>
                         </div>
                       </div>
                     </td>
                     <td>
-                      <p class="text-xs font-weight-bold mb-0"><?= $job->location ?></p>
+                      <p class="text-xs font-weight-bold mb-0"><?= $job->lokasi ?></p>
                     </td>
                     <td class="align-middle text-center text-sm">
-                      <span class="badge badge-sm bg-gradient-<?= $job->job_type == 'full-time' ? 'success' : ($job->job_type == 'part-time' ? 'info' : ($job->job_type == 'contract' ? 'warning' : 'secondary')) ?>"><?= ucfirst(str_replace('-', ' ', $job->job_type)) ?></span>
+                      <span class="badge badge-sm bg-gradient-<?= $job->jenis_pekerjaan == 'penuh_waktu' ? 'success' : ($job->jenis_pekerjaan == 'paruh_waktu' ? 'info' : ($job->jenis_pekerjaan == 'kontrak' ? 'warning' : 'secondary')) ?>"><?= ucfirst(str_replace('_', ' ', $job->jenis_pekerjaan)) ?></span>
                     </td>
                     <td class="align-middle text-center">
-                      <span class="text-secondary text-xs font-weight-bold"><?= date('d M Y', strtotime($job->deadline)) ?></span>
+                      <span class="text-secondary text-xs font-weight-bold"><?= date('d M Y', strtotime($job->batas_waktu)) ?></span>
                     </td>
                     <td class="align-middle">
                       <a href="<?= base_url('lowongan/detail/' . $job->id) ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Lihat pekerjaan">
@@ -177,12 +177,12 @@
             ?>
               <div class="timeline-block mb-3">
                 <span class="timeline-step">
-                  <i class="ni ni-<?= $app->status == 'pending' ? 'bell-55 text-warning' : ($app->status == 'reviewed' ? 'check-bold text-info' : ($app->status == 'shortlisted' ? 'trophy text-success' : ($app->status == 'interviewed' ? 'chat-round text-primary' : ($app->status == 'offered' ? 'tie-bow text-warning' : ($app->status == 'hired' ? 'check-bold text-success' : 'fat-remove text-danger'))))) ?>"></i>
+                  <i class="ni ni-<?= $app->status == 'menunggu' ? 'bell-55 text-warning' : ($app->status == 'direview' ? 'check-bold text-info' : ($app->status == 'seleksi' ? 'trophy text-success' : ($app->status == 'wawancara' ? 'chat-round text-primary' : ($app->status == 'diterima' ? 'check-bold text-success' : 'fat-remove text-danger')))) ?>"></i>
                 </span>
                 <div class="timeline-content">
                   <h6 class="text-dark text-sm font-weight-bold mb-0"><?= $app->job_title ?></h6>
-                  <p class="text-secondary font-weight-bold text-xs mt-1 mb-0"><?= date('d M Y', strtotime($app->application_date)) ?></p>
-                  <span class="badge badge-sm bg-gradient-<?= $app->status == 'pending' ? 'warning' : ($app->status == 'reviewed' ? 'info' : ($app->status == 'shortlisted' ? 'success' : ($app->status == 'interviewed' ? 'primary' : ($app->status == 'offered' ? 'warning' : ($app->status == 'hired' ? 'success' : 'danger'))))) ?> mt-2"><?= ucfirst($app->status) ?></span>
+                  <p class="text-secondary font-weight-bold text-xs mt-1 mb-0"><?= date('d M Y', strtotime($app->tanggal_lamaran)) ?></p>
+                  <span class="badge badge-sm bg-gradient-<?= $app->status == 'menunggu' ? 'warning' : ($app->status == 'direview' ? 'info' : ($app->status == 'seleksi' ? 'success' : ($app->status == 'wawancara' ? 'primary' : ($app->status == 'diterima' ? 'success' : 'danger')))) ?> mt-2"><?= ucfirst($app->status) ?></span>
                   <a href="<?= base_url('pelamar/detail_lamaran/' . $app->id) ?>" class="btn btn-link text-primary text-sm mb-0 ps-0 ms-0 mt-2">Lihat Detail</a>
                 </div>
               </div>
