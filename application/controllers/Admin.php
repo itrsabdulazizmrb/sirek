@@ -1361,20 +1361,22 @@ class Admin extends CI_Controller {
 
     // Update nilai jawaban pelamar (untuk soal esai)
     public function update_nilai_jawaban() {
-        // Check if request is AJAX
-        if (!$this->input->is_ajax_request()) {
-            show_404();
-        }
+        // Set JSON response header
+        header('Content-Type: application/json');
 
-        // Get JSON input
-        $json_input = json_decode(file_get_contents('php://input'), true);
-
-        $answer_id = $json_input['answer_id'] ?? null;
-        $nilai = $json_input['nilai'] ?? null;
+        // Get form data
+        $answer_id = $this->input->post('answer_id');
+        $nilai = $this->input->post('nilai');
 
         // Validate input
-        if (!$answer_id || $nilai === null) {
+        if (!$answer_id || $nilai === null || $nilai === '') {
             echo json_encode(['status' => 'error', 'message' => 'Data tidak lengkap']);
+            return;
+        }
+
+        // Validate numeric input
+        if (!is_numeric($nilai) || $nilai < 0) {
+            echo json_encode(['status' => 'error', 'message' => 'Nilai harus berupa angka positif']);
             return;
         }
 

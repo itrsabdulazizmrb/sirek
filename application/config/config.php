@@ -462,7 +462,7 @@ $config['csrf_token_name'] = 'csrf_test_name';
 $config['csrf_cookie_name'] = 'csrf_cookie_name';
 $config['csrf_expire'] = 7200; // 2 jam
 $config['csrf_regenerate'] = FALSE; // Jangan regenerasi token CSRF pada setiap submit
-$config['csrf_exclude_uris'] = array('api/.*');
+$config['csrf_exclude_uris'] = array('api/.*', 'admin/update_nilai_jawaban');
 
 /*
 |--------------------------------------------------------------------------

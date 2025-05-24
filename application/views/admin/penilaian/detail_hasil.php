@@ -267,48 +267,47 @@ function updateScore(answerId, questionId, maxScore) {
         cancelButtonText: 'Batal'
     }).then((result) => {
         if (result.isConfirmed) {
-            // Kirim request AJAX
-            fetch('<?= base_url('admin/update_nilai_jawaban') ?>', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: JSON.stringify({
+            // Kirim request AJAX menggunakan jQuery
+            $.ajax({
+                url: '<?= base_url('admin/update_nilai_jawaban') ?>',
+                type: 'POST',
+                dataType: 'json',
+                data: {
                     answer_id: answerId,
                     nilai: score
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Berhasil',
-                        text: 'Nilai berhasil disimpan',
-                        timer: 1500,
-                        showConfirmButton: false
-                    }).then(() => {
-                        // Reload halaman untuk update skor total
-                        location.reload();
-                    });
-                } else {
+                },
+                success: function(data) {
+                    if (data.status === 'success') {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil',
+                            text: 'Nilai berhasil disimpan',
+                            timer: 1500,
+                            showConfirmButton: false
+                        }).then(() => {
+                            // Reload halaman untuk update skor total
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal',
+                            text: data.message || 'Terjadi kesalahan saat menyimpan nilai',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                    console.error('Status:', status);
+                    console.error('Response:', xhr.responseText);
                     Swal.fire({
                         icon: 'error',
-                        title: 'Gagal',
-                        text: data.message || 'Terjadi kesalahan saat menyimpan nilai',
+                        title: 'Error',
+                        text: 'Terjadi kesalahan koneksi: ' + error,
                         confirmButtonText: 'OK'
                     });
                 }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Terjadi kesalahan koneksi',
-                    confirmButtonText: 'OK'
-                });
             });
         }
     });
