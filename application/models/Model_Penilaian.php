@@ -125,10 +125,11 @@ class Model_Penilaian extends CI_Model {
 
     // Dapatkan penilaian pelamar spesifik
     public function dapatkan_penilaian_pelamar_spesifik($application_id, $assessment_id) {
-        $this->db->select('penilaian_pelamar.*, penilaian.judul as assessment_title, penilaian.deskripsi as description, penilaian.nilai_lulus as passing_score, jenis_penilaian.nama as type_name');
+        $this->db->select('penilaian_pelamar.*, penilaian.judul as assessment_title, penilaian.deskripsi as description, penilaian.nilai_lulus as passing_score, jenis_penilaian.nama as type_name, lamaran_pekerjaan.id_pelamar');
         $this->db->from('penilaian_pelamar');
         $this->db->join('penilaian', 'penilaian.id = penilaian_pelamar.id_penilaian', 'left');
         $this->db->join('jenis_penilaian', 'jenis_penilaian.id = penilaian.id_jenis', 'left');
+        $this->db->join('lamaran_pekerjaan', 'lamaran_pekerjaan.id = penilaian_pelamar.id_lamaran', 'left');
         $this->db->where('penilaian_pelamar.id_lamaran', $application_id);
         $this->db->where('penilaian_pelamar.id_penilaian', $assessment_id);
         $query = $this->db->get();
