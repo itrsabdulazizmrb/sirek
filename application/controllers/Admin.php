@@ -362,23 +362,73 @@ class Admin extends CI_Controller {
         $this->load->view('templates/admin_footer');
     }
 
-    public function perbarui_status_lamaran() {
-        // Get form data
-        $application_id = $this->input->post('application_id');
-        $status = $this->input->post('status');
+    public function perbarui_status_lamaran($id, $status) {
+        // Load fonnte helper
+        $this->load->helper('fonnte');
+
+        // Get notify parameter
+        $notify = $this->input->get('notify') === '1';
+
+        // Get catatan parameter
+        $catatan = $this->input->get('catatan');
+
+        // Get application details
+        $application = $this->model_lamaran->dapatkan_lamaran($id);
+
+        // If application not found, show 404
+        if (!$application) {
+            show_404();
+        }
+
+        // Get job details
+        $job = $this->model_lowongan->dapatkan_lowongan($application->id_pekerjaan);
+
+        // Get applicant details
+        $applicant = $this->model_pengguna->dapatkan_pengguna($application->id_pelamar);
 
         // Update application status
-        $result = $this->model_lamaran->perbarui_status($application_id, $status);
+        $data = [
+            'status' => $status,
+            'diperbarui_pada' => date('Y-m-d H:i:s')
+        ];
+
+        // Add catatan if provided
+        if (!empty($catatan)) {
+            $data['catatan_admin'] = $catatan;
+        }
+
+        $result = $this->model_lamaran->perbarui_lamaran($id, $data);
 
         if ($result) {
+            // Send WhatsApp notification if requested
+            if ($notify && $applicant && $applicant->no_telepon) {
+                $this->kirim_notifikasi_whatsapp($applicant, $job, $status, $catatan);
+            }
+
             // Show success message
-            $this->session->set_flashdata('success', 'Status lamaran berhasil diperbarui.');
+            $this->session->set_flashdata('success', 'Status lamaran berhasil diperbarui menjadi ' . ucfirst($status) . '.');
         } else {
             // If update fails, show error message
             $this->session->set_flashdata('error', 'Gagal memperbarui status lamaran. Silakan coba lagi.');
         }
 
-        redirect('admin/detail_lamaran/' . $application_id);
+        redirect('admin/detail_lamaran/' . $id);
+    }
+
+    // Kirim notifikasi WhatsApp
+    private function kirim_notifikasi_whatsapp($applicant, $job, $status, $catatan = '') {
+        // Get message based on status with complete information
+        $message = dapatkan_pesan_status_lamaran($status, $job->judul, $applicant->nama_lengkap);
+
+        // Add catatan if provided
+        if (!empty($catatan)) {
+            $message .= "\n\n*Catatan dari HR:*\n" . $catatan;
+        }
+
+        // Send WhatsApp notification
+        $whatsapp_result = kirim_whatsapp($applicant->no_telepon, $message);
+
+        return $whatsapp_result;
     }
 
     // Update status pelamar via URL
