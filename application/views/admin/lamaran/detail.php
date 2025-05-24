@@ -344,23 +344,41 @@
           <label for="status" class="form-control-label">Ubah Status</label>
           <select class="form-control" id="status" onchange="perbaruiStatus(this.value)">
             <option value="pending" <?= $application->status == 'pending' ? 'selected' : '' ?>>Pending</option>
-            <option value="reviewed" <?= $application->status == 'reviewed' ? 'selected' : '' ?>>Direview</option>
-            <option value="interview" <?= $application->status == 'interview' ? 'selected' : '' ?>>Wawancara</option>
+            <option value="direview" <?= $application->status == 'direview' ? 'selected' : '' ?>>Direview</option>
+            <option value="seleksi" <?= $application->status == 'seleksi' ? 'selected' : '' ?>>Seleksi</option>
+            <option value="wawancara" <?= $application->status == 'wawancara' ? 'selected' : '' ?>>Wawancara</option>
             <option value="diterima" <?= $application->status == 'diterima' ? 'selected' : '' ?>>Diterima</option>
             <option value="ditolak" <?= $application->status == 'ditolak' ? 'selected' : '' ?>>Ditolak</option>
           </select>
         </div>
 
         <div class="form-group mt-3">
+          <label for="catatan_status" class="form-control-label">Catatan Perubahan Status (Opsional)</label>
+          <textarea class="form-control" id="catatan_status" rows="3" placeholder="Tambahkan catatan untuk perubahan status ini..."></textarea>
+        </div>
+
+        <div class="form-group mt-3">
           <div class="form-check form-switch">
             <input class="form-check-input" type="checkbox" id="notify_applicant" checked>
-            <label class="form-check-label" for="notify_applicant">Kirim notifikasi ke pelamar</label>
+            <label class="form-check-label" for="notify_applicant">Kirim notifikasi WhatsApp ke pelamar</label>
           </div>
         </div>
 
         <div class="d-flex justify-content-center mt-4">
           <button type="button" class="btn btn-primary" onclick="simpanStatus()">Simpan Status</button>
         </div>
+
+        <?php if ($application->status == 'seleksi') : ?>
+          <div class="alert alert-info mt-3" role="alert">
+            <i class="fas fa-info-circle me-2"></i>
+            <strong>Status Seleksi:</strong> Pelamar ini sedang dalam tahap seleksi. Anda dapat mengatur penilaian atau tes untuk pelamar ini.
+          </div>
+          <div class="d-flex justify-content-center mt-3">
+            <a href="<?= base_url('admin/atur_penilaian/' . $application->id_pekerjaan . '/' . $application->id) ?>" class="btn btn-success">
+              <i class="fas fa-tasks me-2"></i> Atur Proses Seleksi
+            </a>
+          </div>
+        <?php endif; ?>
       </div>
     </div>
 
@@ -395,10 +413,12 @@
 
     if (status === 'pending') {
       statusSelect.classList.add('border-warning', 'text-warning');
-    } else if (status === 'reviewed') {
+    } else if (status === 'direview') {
       statusSelect.classList.add('border-info', 'text-info');
-    } else if (status === 'interview') {
+    } else if (status === 'seleksi') {
       statusSelect.classList.add('border-primary', 'text-primary');
+    } else if (status === 'wawancara') {
+      statusSelect.classList.add('border-secondary', 'text-secondary');
     } else if (status === 'diterima') {
       statusSelect.classList.add('border-success', 'text-success');
     } else if (status === 'ditolak') {
@@ -409,9 +429,45 @@
   function simpanStatus() {
     const status = document.getElementById('status').value;
     const notifyApplicant = document.getElementById('notify_applicant').checked;
+    const catatan = document.getElementById('catatan_status').value;
 
-    // Redirect to the update status URL with the notify parameter
-    window.location.href = '<?= base_url('admin/perbarui_status_lamaran/' . $application->id) ?>/' + status + '?notify=' + (notifyApplicant ? '1' : '0');
+    // Show confirmation dialog using SweetAlert2
+    Swal.fire({
+      title: 'Konfirmasi Perubahan Status',
+      html: `
+        <p>Apakah Anda yakin ingin mengubah status lamaran menjadi <strong>${status.toUpperCase()}</strong>?</p>
+        ${catatan ? `<p><strong>Catatan:</strong> ${catatan}</p>` : ''}
+        ${notifyApplicant ? '<p><i class="fas fa-whatsapp text-success"></i> Notifikasi WhatsApp akan dikirim ke pelamar</p>' : ''}
+      `,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Ya, Ubah Status',
+      cancelButtonText: 'Batal'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Show loading
+        Swal.fire({
+          title: 'Memproses...',
+          text: 'Sedang memperbarui status lamaran',
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+          }
+        });
+
+        // Build URL with parameters
+        let url = '<?= base_url('admin/perbarui-status-lamaran/' . $application->id) ?>/' + status;
+        url += '?notify=' + (notifyApplicant ? '1' : '0');
+        if (catatan) {
+          url += '&catatan=' + encodeURIComponent(catatan);
+        }
+
+        // Redirect to the update status URL
+        window.location.href = url;
+      }
+    });
   }
 
   // Initialize status color on page load
