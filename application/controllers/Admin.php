@@ -1527,6 +1527,70 @@ class Admin extends CI_Controller {
                 'dibuat_pada' => date('Y-m-d H:i:s')
             );
 
+            // Handle image upload if provided
+            if (!empty($_FILES['question_image']['name'])) {
+                // Define upload path using absolute path
+                $upload_dir = 'uploads/gambar_soal';
+                $upload_path = str_replace('\\', '/', realpath(FCPATH . $upload_dir));
+                
+                // Log path information for debugging
+                log_message('debug', 'FCPATH: ' . FCPATH);
+                log_message('debug', 'Upload directory: ' . $upload_dir);
+                log_message('debug', 'Full upload path: ' . $upload_path);
+                log_message('debug', 'Directory exists: ' . (is_dir($upload_path) ? 'Yes' : 'No'));
+                log_message('debug', 'Directory writable: ' . (is_writable($upload_path) ? 'Yes' : 'No'));
+
+                // Create directory if it doesn't exist
+                if (!is_dir($upload_path)) {
+                    if (!mkdir($upload_path, 0777, true)) {
+                        log_message('error', 'Failed to create directory: ' . $upload_path);
+                        $this->session->set_flashdata('error', 'Gagal membuat direktori upload: ' . $upload_path);
+                        redirect('admin/tambah_soal/' . $assessment_id);
+                        return;
+                    }
+                }
+
+                // Ensure directory is writable
+                if (!is_writable($upload_path)) {
+                    if (!chmod($upload_path, 0777)) {
+                        log_message('error', 'Failed to set directory permissions: ' . $upload_path);
+                        $this->session->set_flashdata('error', 'Direktori tidak dapat ditulis: ' . $upload_path);
+                        redirect('admin/tambah_soal/' . $assessment_id);
+                        return;
+                    }
+                }
+
+                // Load upload library
+                $this->load->library('upload');
+
+                // Configure upload
+                $config = array(
+                    'upload_path' => $upload_path,
+                    'allowed_types' => 'gif|jpg|jpeg|png',
+                    'max_size' => 4096, // 4MB
+                    'file_name' => 'question_' . time() . '_' . rand(1000, 9999),
+                    'overwrite' => FALSE,
+                    'remove_spaces' => TRUE,
+                    'encrypt_name' => FALSE
+                );
+
+                // Initialize upload configuration
+                $this->upload->initialize($config);
+
+                // Attempt upload
+                if ($this->upload->do_upload('question_image')) {
+                    $upload_data = $this->upload->data();
+                    $question_data['gambar_soal'] = $upload_data['file_name'];
+                } else {
+                    $error = $this->upload->display_errors();
+                    log_message('error', 'Upload error: ' . $error);
+                    log_message('error', 'Upload path used: ' . $config['upload_path']);
+                    $this->session->set_flashdata('error', 'Gagal mengunggah gambar: ' . $error);
+                    redirect('admin/tambah_soal/' . $assessment_id);
+                    return;
+                }
+            }
+
             // Insert question data
             $question_id = $this->model_penilaian->tambah_soal($question_data);
 
@@ -1702,6 +1766,150 @@ class Admin extends CI_Controller {
         return $this->hasilPenilaian($assessment_id);
     }
 
+    public function edit_question($question_id) {
+        // Get question details
+        $this->db->select('soal.*, penilaian.judul as assessment_title, penilaian.id as assessment_id');
+        $this->db->from('soal');
+        $this->db->join('penilaian', 'penilaian.id = soal.id_penilaian', 'left');
+        $this->db->where('soal.id', $question_id);
+        $query = $this->db->get();
+        $data['question'] = $query->row();
+
+        // If question not found, show 404
+        if (!$data['question']) {
+            show_404();
+        }
+
+        // Form validation rules
+        $this->form_validation->set_rules('question_text', 'Teks Pertanyaan', 'trim|required');
+        $this->form_validation->set_rules('question_type', 'Jenis Pertanyaan', 'trim|required');
+        $this->form_validation->set_rules('points', 'Poin', 'trim|required|numeric');
+
+        if ($this->form_validation->run() == FALSE) {
+            // If validation fails, show form with errors
+            $data['title'] = 'Edit Soal';
+            $this->load->view('templates/admin_header', $data);
+            $this->load->view('admin/penilaian/edit_soal', $data);
+            $this->load->view('templates/admin_footer');
+        } else {
+            // Get form data
+            $question_data = array(
+                'teks_soal' => $this->input->post('question_text'),
+                'jenis_soal' => $this->input->post('question_type'),
+                'poin' => $this->input->post('points'),
+                'diperbarui_pada' => date('Y-m-d H:i:s')
+            );
+
+            // Handle image upload if provided
+            if ($_FILES['question_image']['name']) {
+                // Get current question data to delete old image
+                $current_question = $this->model_penilaian->dapatkan_soal($question_id);
+
+                // Make sure the directory exists and is writable (same as other uploads)
+                $upload_path_full = FCPATH . 'uploads/gambar_soal/';
+
+                if (!is_dir($upload_path_full)) {
+                    if (!mkdir($upload_path_full, 0777, true)) {
+                        $this->session->set_flashdata('error', 'Gagal membuat folder upload: ' . $upload_path_full);
+                        redirect('admin/edit_question/' . $question_id);
+                        return;
+                    }
+                }
+
+                // Check if directory is writable
+                if (!is_writable($upload_path_full)) {
+                    $this->session->set_flashdata('error', 'Folder tidak dapat ditulis: ' . $upload_path_full);
+                    redirect('admin/edit_question/' . $question_id);
+                    return;
+                }
+
+                // Use absolute path for CodeIgniter upload library
+                $config['upload_path'] = $upload_path_full;
+                $config['allowed_types'] = 'gif|jpg|jpeg|png';
+                $config['max_size'] = 4096; // 4MB
+                $config['file_name'] = 'question_' . time() . '_' . rand(1000, 9999);
+                $config['encrypt_name'] = FALSE;
+
+                $this->load->library('upload', $config);
+
+                if ($this->upload->do_upload('question_image')) {
+                    $upload_data = $this->upload->data();
+                    $question_data['gambar_soal'] = $upload_data['file_name'];
+
+                    // Delete old image if exists
+                    if ($current_question && $current_question->gambar_soal) {
+                        $old_file_path = $upload_path_full . $current_question->gambar_soal;
+                        if (file_exists($old_file_path)) {
+                            unlink($old_file_path);
+                        }
+                    }
+                } else {
+                    $this->session->set_flashdata('error', 'Gagal mengunggah gambar: ' . $this->upload->display_errors());
+                    redirect('admin/edit_question/' . $question_id);
+                    return;
+                }
+            }
+
+            // Update question data
+            $result = $this->model_penilaian->perbarui_soal($question_id, $question_data);
+
+            if ($result) {
+                // Show success message
+                $this->session->set_flashdata('success', 'Soal berhasil diperbarui.');
+                redirect('admin/soal_penilaian/' . $data['question']->assessment_id);
+            } else {
+                // If update fails, show error message
+                $this->session->set_flashdata('error', 'Gagal memperbarui soal. Silakan coba lagi.');
+                redirect('admin/edit_question/' . $question_id);
+            }
+        }
+    }
+
+    public function delete_question($question_id) {
+        // Check if user is logged in and is admin
+        if (!$this->session->userdata('logged_in') || $this->session->userdata('role') != 'admin') {
+            redirect('auth/login');
+        }
+
+        // Get question details for redirect
+        $this->db->select('soal.*, penilaian.id as assessment_id');
+        $this->db->from('soal');
+        $this->db->join('penilaian', 'penilaian.id = soal.id_penilaian', 'left');
+        $this->db->where('soal.id', $question_id);
+        $query = $this->db->get();
+        $question = $query->row();
+
+        if (!$question) {
+            show_404();
+        }
+
+        // Delete question (this will also delete the image file via model)
+        $result = $this->model_penilaian->hapus_soal($question_id);
+
+        if ($result) {
+            $this->session->set_flashdata('success', 'Soal berhasil dihapus.');
+        } else {
+            $this->session->set_flashdata('error', 'Gagal menghapus soal.');
+        }
+
+        redirect('admin/soal_penilaian/' . $question->assessment_id);
+    }
+
+    public function hapus_gambar_soal($question_id) {
+        // Check if user is logged in and is admin
+        if (!$this->session->userdata('logged_in') || $this->session->userdata('role') != 'admin') {
+            redirect('auth/login');
+        }
+
+        $result = $this->model_penilaian->hapus_gambar_soal($question_id);
+
+        if ($result) {
+            echo json_encode(['status' => 'success', 'message' => 'Gambar soal berhasil dihapus.']);
+        } else {
+            echo json_encode(['status' => 'error', 'message' => 'Gagal menghapus gambar soal.']);
+        }
+    }
+
     public function tetapkan_ke_pelamar($assessment_id) {
         return $this->tetapkanPenilaian($assessment_id);
     }
@@ -1758,12 +1966,12 @@ class Admin extends CI_Controller {
             // Upload profile picture if provided
             if ($_FILES['profile_picture']['name']) {
                 // Make sure the directory exists and is writable
-                $upload_path = FCPATH . 'uploads/profile_pictures/';
-                if (!is_dir($upload_path)) {
-                    mkdir($upload_path, 0777, true);
+                $upload_path_full = FCPATH . 'uploads/profile_pictures/';
+                if (!is_dir($upload_path_full)) {
+                    mkdir($upload_path_full, 0777, true);
                 }
 
-                $config['upload_path'] = $upload_path;
+                $config['upload_path'] = realpath($upload_path_full) . '/';
                 $config['allowed_types'] = 'gif|jpg|jpeg|png';
                 $config['max_size'] = 2048; // 2MB
                 $config['file_name'] = 'profile_' . time();
@@ -1841,12 +2049,12 @@ class Admin extends CI_Controller {
             // Upload profile picture if provided
             if ($_FILES['profile_picture']['name']) {
                 // Make sure the directory exists and is writable
-                $upload_path = FCPATH . 'uploads/profile_pictures/';
-                if (!is_dir($upload_path)) {
-                    mkdir($upload_path, 0777, true);
+                $upload_path_full = FCPATH . 'uploads/profile_pictures/';
+                if (!is_dir($upload_path_full)) {
+                    mkdir($upload_path_full, 0777, true);
                 }
 
-                $config['upload_path'] = $upload_path;
+                $config['upload_path'] = realpath($upload_path_full) . '/';
                 $config['allowed_types'] = 'gif|jpg|jpeg|png';
                 $config['max_size'] = 2048; // 2MB
                 $config['file_name'] = 'profile_' . time();
@@ -1856,7 +2064,7 @@ class Admin extends CI_Controller {
                 if ($this->upload->do_upload('profile_picture')) {
                     // Delete old profile picture if exists
                     if ($data['user']->profile_picture) {
-                        $old_file = $upload_path . $data['user']->profile_picture;
+                        $old_file = $upload_path_full . $data['user']->profile_picture;
                         if (file_exists($old_file)) {
                             unlink($old_file);
                         }
@@ -2249,7 +2457,12 @@ class Admin extends CI_Controller {
                     redirect('admin/tambah_artikel');
                 }
 
-                $config['upload_path'] = './uploads/blog_images/';
+                $upload_path_full = FCPATH . 'uploads/blog_images/';
+                if (!is_dir($upload_path_full)) {
+                    mkdir($upload_path_full, 0777, true);
+                }
+
+                $config['upload_path'] = realpath($upload_path_full) . '/';
                 $config['allowed_types'] = 'gif|jpg|jpeg|png';
                 $config['max_size'] = 2048; // 2MB
                 $config['file_name'] = 'blog_' . time();
