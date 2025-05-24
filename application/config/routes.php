@@ -102,6 +102,7 @@ $route['admin/edit-lowongan/(:num)'] = 'admin/edit_lowongan/$1';
 $route['admin/hapus-lowongan/(:num)'] = 'admin/hapus_lowongan/$1';
 $route['admin/lamaran'] = 'admin/lamaran';
 $route['admin/detail-lamaran/(:num)'] = 'admin/detail_lamaran/$1';
+$route['admin/perbarui-status-lamaran/(:num)/(:any)'] = 'admin/perbarui_status_lamaran/$1/$2';
 $route['admin/penilaian'] = 'admin/penilaian';
 $route['admin/tambah-penilaian'] = 'admin/tambah_penilaian';
 $route['admin/edit-penilaian/(:num)'] = 'admin/edit_penilaian/$1';
