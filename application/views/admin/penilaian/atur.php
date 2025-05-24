@@ -93,7 +93,7 @@
                         <p class="text-xs font-weight-bold mb-0"><?= $assessment->batas_waktu ? $assessment->batas_waktu . ' menit' : 'Tidak ada' ?></p>
                       </td>
                       <td>
-                        <p class="text-xs font-weight-bold mb-0"><?= $assessment->nilai_kelulusan ? $assessment->nilai_kelulusan . '%' : 'Tidak ada' ?></p>
+                        <p class="text-xs font-weight-bold mb-0"><?= $assessment->nilai_lulus ? $assessment->nilai_lulus . '%' : 'Tidak ada' ?></p>
                       </td>
                     </tr>
                   <?php endforeach; ?>

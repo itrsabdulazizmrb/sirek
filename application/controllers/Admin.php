@@ -1267,7 +1267,7 @@ class Admin extends CI_Controller {
         // Load views
         $data['title'] = 'Atur Penilaian';
         $this->load->view('templates/admin_header', $data);
-        $this->load->view('admin/assessments/assign', $data);
+        $this->load->view('admin/penilaian/atur', $data);
         $this->load->view('templates/admin_footer');
     }
 
@@ -1329,7 +1329,7 @@ class Admin extends CI_Controller {
         // Load views
         $data['title'] = 'Hasil Penilaian';
         $this->load->view('templates/admin_header', $data);
-        $this->load->view('admin/assessments/hasil', $data);
+        $this->load->view('admin/penilaian/hasil', $data);
         $this->load->view('templates/admin_footer');
     }
 
@@ -1355,7 +1355,7 @@ class Admin extends CI_Controller {
         // Load views
         $data['title'] = 'Detail Hasil Penilaian Pelamar';
         $this->load->view('templates/admin_header', $data);
-        $this->load->view('admin/assessments/detail_hasil', $data);
+        $this->load->view('admin/penilaian/detail_hasil', $data);
         $this->load->view('templates/admin_footer');
     }
 
@@ -1495,7 +1495,7 @@ class Admin extends CI_Controller {
         // Load views
         $data['title'] = 'Tetapkan Penilaian ke Pelamar';
         $this->load->view('templates/admin_header', $data);
-        $this->load->view('admin/assessments/assign_to_applicants', $data);
+        $this->load->view('admin/penilaian/tetapkan', $data);
         $this->load->view('templates/admin_footer');
     }
 

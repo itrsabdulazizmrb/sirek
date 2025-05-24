@@ -91,26 +91,26 @@
                       </div>
                     </td>
                     <td>
-                      <p class="text-xs font-weight-bold mb-0"><?= isset($result->judul_lowongan) ? $result->judul_lowongan : (isset($result->job_title) ? $result->job_title : 'Tidak tersedia') ?></p>
+                      <p class="text-xs font-weight-bold mb-0"><?= isset($result->job_title) ? $result->job_title : 'Tidak tersedia' ?></p>
                     </td>
                     <td class="align-middle text-center text-sm">
-                      <span class="badge badge-sm bg-gradient-<?= $result->status == 'belum_mulai' ? 'secondary' : ($result->status == 'sedang_berjalan' ? 'warning' : ($result->status == 'selesai' ? 'success' : 'info')) ?>"><?= $result->status == 'belum_mulai' ? 'Belum Dimulai' : ($result->status == 'sedang_berjalan' ? 'Sedang Dikerjakan' : ($result->status == 'selesai' ? 'Selesai' : 'Dinilai')) ?></span>
+                      <span class="badge badge-sm bg-gradient-<?= $result->status == 'belum_mulai' ? 'secondary' : ($result->status == 'sedang_berlangsung' ? 'warning' : ($result->status == 'selesai' ? 'success' : 'info')) ?>"><?= $result->status == 'belum_mulai' ? 'Belum Dimulai' : ($result->status == 'sedang_berlangsung' ? 'Sedang Dikerjakan' : ($result->status == 'selesai' ? 'Selesai' : 'Sudah Dinilai')) ?></span>
                     </td>
                     <td class="align-middle text-center">
-                      <?php if ($result->status == 'selesai' || $result->status == 'dinilai') : ?>
-                        <span class="text-secondary text-xs font-weight-bold"><?= isset($result->skor) ? $result->skor : (isset($result->score) ? $result->score : 0) ?>%</span>
+                      <?php if ($result->status == 'selesai' || $result->status == 'sudah_dinilai') : ?>
+                        <span class="text-secondary text-xs font-weight-bold"><?= $result->nilai ?? 0 ?>%</span>
                       <?php else : ?>
                         <span class="text-secondary text-xs font-weight-bold">-</span>
                       <?php endif; ?>
                     </td>
                     <td class="align-middle text-center">
-                      <span class="text-secondary text-xs font-weight-bold"><?= isset($result->waktu_mulai) ? date('d M Y H:i', strtotime($result->waktu_mulai)) : (isset($result->ditugaskan_pada) ? date('d M Y H:i', strtotime($result->ditugaskan_pada)) : '-') ?></span>
+                      <span class="text-secondary text-xs font-weight-bold"><?= $result->waktu_mulai ? date('d M Y H:i', strtotime($result->waktu_mulai)) : '-' ?></span>
                     </td>
                     <td class="align-middle text-center">
-                      <span class="text-secondary text-xs font-weight-bold"><?= isset($result->waktu_selesai) ? date('d M Y H:i', strtotime($result->waktu_selesai)) : (isset($result->diserahkan_pada) ? date('d M Y H:i', strtotime($result->diserahkan_pada)) : '-') ?></span>
+                      <span class="text-secondary text-xs font-weight-bold"><?= $result->waktu_selesai ? date('d M Y H:i', strtotime($result->waktu_selesai)) : '-' ?></span>
                     </td>
                     <td class="align-middle">
-                      <?php if ($result->status == 'selesai' || $result->status == 'dinilai') : ?>
+                      <?php if ($result->status == 'selesai' || $result->status == 'sudah_dinilai') : ?>
                         <a href="<?= base_url('admin/detail-hasil-penilaian/' . $result->id) ?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Lihat Detail Hasil Penilaian">
                           <i class="fas fa-eye"></i> Detail
                         </a>
@@ -169,9 +169,9 @@
     };
 
     <?php foreach ($results as $result) : ?>
-      <?php if ($result->status == 'selesai' || $result->status == 'dinilai') : ?>
+      <?php if ($result->status == 'selesai' || $result->status == 'sudah_dinilai') : ?>
         <?php
-        $score = isset($result->skor) ? $result->skor : (isset($result->score) ? $result->score : 0);
+        $score = $result->nilai ?? 0;
         if ($score <= 20) : ?>
           scoreRanges['0-20']++;
         <?php elseif ($score <= 40) : ?>
@@ -236,9 +236,9 @@
     // Count by status
     var statusCounts = {
       'belum_mulai': 0,
-      'sedang_berjalan': 0,
+      'sedang_berlangsung': 0,
       'selesai': 0,
-      'dinilai': 0
+      'sudah_dinilai': 0
     };
 
     <?php foreach ($results as $result) : ?>
@@ -248,13 +248,13 @@
     new Chart(statusCtx, {
       type: 'pie',
       data: {
-        labels: ['Belum Dimulai', 'Sedang Dikerjakan', 'Selesai', 'Dinilai'],
+        labels: ['Belum Dimulai', 'Sedang Dikerjakan', 'Selesai', 'Sudah Dinilai'],
         datasets: [{
           data: [
             statusCounts['belum_mulai'],
-            statusCounts['sedang_berjalan'],
+            statusCounts['sedang_berlangsung'],
             statusCounts['selesai'],
-            statusCounts['dinilai']
+            statusCounts['sudah_dinilai']
           ],
           backgroundColor: [
             'rgba(133, 147, 176, 0.7)',
