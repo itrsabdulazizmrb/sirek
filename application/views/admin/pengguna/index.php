@@ -41,28 +41,28 @@
                     <td>
                       <div class="d-flex px-2 py-1">
                         <div>
-                          <?php if ($user->profile_picture) : ?>
-                            <img src="<?= base_url('uploads/profile_pictures/' . $user->profile_picture) ?>" class="avatar avatar-sm me-3" alt="user1">
+                          <?php if (isset($user->foto_profil) && $user->foto_profil) : ?>
+                            <img src="<?= base_url('uploads/profile_pictures/' . $user->foto_profil) ?>" class="avatar avatar-sm me-3" alt="user1">
                           <?php else : ?>
                             <img src="<?= base_url('assets/img/team-2.jpg') ?>" class="avatar avatar-sm me-3" alt="user1">
                           <?php endif; ?>
                         </div>
                         <div class="d-flex flex-column justify-content-center">
-                          <h6 class="mb-0 text-sm"><?= $user->full_name ?></h6>
+                          <h6 class="mb-0 text-sm"><?= $user->nama_lengkap ?></h6>
                           <p class="text-xs text-secondary mb-0"><?= $user->email ?></p>
                         </div>
                       </div>
                     </td>
                     <td>
                       <p class="text-xs font-weight-bold mb-0">
-                        <?= $user->role == 'admin' ? 'Admin' : ($user->role == 'applicant' ? 'Pelamar' : 'Rekruter') ?>
+                        <?= $user->role == 'admin' ? 'Admin' : ($user->role == 'pelamar' ? 'Pelamar' : 'Staff') ?>
                       </p>
                     </td>
                     <td class="align-middle text-center">
-                      <span class="text-secondary text-xs font-weight-bold"><?= date('d M Y', strtotime($user->created_at)) ?></span>
+                      <span class="text-secondary text-xs font-weight-bold"><?= date('d M Y', strtotime($user->dibuat_pada)) ?></span>
                     </td>
                     <td class="align-middle text-center text-sm">
-                      <span class="badge badge-sm bg-gradient-<?= $user->status == 'active' ? 'success' : 'secondary' ?>"><?= $user->status == 'active' ? 'Aktif' : 'Tidak Aktif' ?></span>
+                      <span class="badge badge-sm bg-gradient-<?= $user->status == 'aktif' ? 'success' : 'secondary' ?>"><?= $user->status == 'aktif' ? 'Aktif' : 'Tidak Aktif' ?></span>
                     </td>
                     <td class="align-middle text-center">
                       <span class="text-secondary text-xs font-weight-bold"><?= $user->login_terakhir ? date('d M Y H:i', strtotime($user->login_terakhir)) : 'Belum Pernah' ?></span>
@@ -74,11 +74,11 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end px-2 py-3" aria-labelledby="dropdownMenuButton">
                           <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/edit_pengguna/' . $user->id) ?>"><i class="fas fa-edit me-2"></i> Edit</a></li>
-                          <?php if ($user->role == 'applicant') : ?>
+                          <?php if ($user->role == 'pelamar') : ?>
                             <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/profil_pelamar/' . $user->id) ?>"><i class="fas fa-user me-2"></i> Lihat Profil</a></li>
                             <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/lamaran_pelamar/' . $user->id) ?>"><i class="fas fa-file-alt me-2"></i> Lihat Lamaran</a></li>
                           <?php endif; ?>
-                          <?php if ($user->status == 'active') : ?>
+                          <?php if ($user->status == 'aktif') : ?>
                             <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/nonaktifkan_pengguna/' . $user->id) ?>"><i class="fas fa-user-slash me-2"></i> Nonaktifkan</a></li>
                           <?php else : ?>
                             <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/aktifkan_pengguna/' . $user->id) ?>"><i class="fas fa-user-check me-2"></i> Aktifkan</a></li>
@@ -88,7 +88,7 @@
                             <hr class="dropdown-divider">
                           </li>
                           <li>
-                            <a class="dropdown-item border-radius-md text-danger btn-delete" href="javascript:void(0)" data-id="<?= $user->id ?>" data-name="<?= $user->full_name ?>">
+                            <a class="dropdown-item border-radius-md text-danger btn-delete" href="javascript:void(0)" data-id="<?= $user->id ?>" data-name="<?= $user->nama_lengkap ?>">
                               <i class="fas fa-trash me-2"></i> Hapus
                             </a>
                           </li>

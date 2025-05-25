@@ -1,20 +1,6 @@
-# Protect directory from direct access
+# Prevent direct access to uploaded files
 Options -Indexes
-
-# Allow access to specific file types
-<FilesMatch ".(jpg|jpeg|png|gif|pdf|doc|docx)$">
-    Order Allow,Deny
-    Allow from all
-</FilesMatch>
-
-# Deny access to PHP files
-<FilesMatch ".(php|php5|phtml)$">
-    Order Deny,Allow
+<Files ~ "\.(php|php3|php4|php5|phtml|pl|py|jsp|asp|sh|cgi)$">
+    Order allow,deny
     Deny from all
-</FilesMatch>
-
-# Deny access to hidden files
-<FilesMatch "^\.">
-    Order Deny,Allow
-    Deny from all
-</FilesMatch>
+</Files>

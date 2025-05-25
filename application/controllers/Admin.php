@@ -1973,76 +1973,86 @@ class Admin extends CI_Controller {
 
     // Tambah Pengguna
     public function tambah_pengguna() {
+        // Load upload configuration
+        $this->load->config('upload');
+        
         // Form validation rules
-        $this->form_validation->set_rules('username', 'Username', 'trim|required|is_unique[users.username]');
-        $this->form_validation->set_rules('email', 'Email', 'trim|required|valid_email|is_unique[users.email]');
+        $this->form_validation->set_rules('username', 'Username', 'trim|required|is_unique[pengguna.nama_pengguna]');
+        $this->form_validation->set_rules('email', 'Email', 'trim|required|valid_email|is_unique[pengguna.email]');
         $this->form_validation->set_rules('password', 'Password', 'trim|required|min_length[6]');
-        $this->form_validation->set_rules('confirm_password', 'Confirm Password', 'trim|required|matches[password]');
-        $this->form_validation->set_rules('full_name', 'Full Name', 'trim|required');
         $this->form_validation->set_rules('role', 'Role', 'trim|required');
 
         if ($this->form_validation->run() == FALSE) {
-            // If validation fails, show form with errors
             $data['title'] = 'Tambah Pengguna Baru';
             $this->load->view('templates/admin_header', $data);
             $this->load->view('admin/pengguna/tambah', $data);
             $this->load->view('templates/admin_footer');
         } else {
-            // Get form data
-            $user_data = array(
-                'username' => $this->input->post('username'),
-                'email' => $this->input->post('email'),
-                'password' => password_hash($this->input->post('password'), PASSWORD_DEFAULT),
-                'full_name' => $this->input->post('full_name'),
-                'phone' => $this->input->post('phone'),
-                'address' => $this->input->post('address'),
-                'role' => $this->input->post('role'),
-                'status' => $this->input->post('is_active') ? 'active' : 'inactive',
-                'dibuat_pada' => date('Y-m-d H:i:s')
-            );
-
-            // Upload profile picture if provided
-            if ($_FILES['profile_picture']['name']) {
-                // Make sure the directory exists and is writable
-                $upload_path_full = FCPATH . 'uploads/profile_pictures/';
-                if (!is_dir($upload_path_full)) {
-                    mkdir($upload_path_full, 0777, true);
+            // Handle profile picture upload
+            $profile_picture = '';
+            if (!empty($_FILES['profile_picture']['name'])) {
+                // Define upload path using absolute path
+                $upload_dir = 'uploads/profile_pictures';
+                $upload_path = str_replace('\\', '/', realpath(FCPATH . $upload_dir));
+                
+                // Create directory if it doesn't exist
+                if (!is_dir($upload_path)) {
+                    if (!mkdir($upload_path, 0777, true)) {
+                        $this->session->set_flashdata('error', 'Gagal membuat direktori upload: ' . $upload_path);
+                        redirect('admin/tambah_pengguna');
+                        return;
+                    }
                 }
 
-                $config['upload_path'] = realpath($upload_path_full) . '/';
-                $config['allowed_types'] = 'gif|jpg|jpeg|png';
-                $config['max_size'] = 2048; // 2MB
-                $config['file_name'] = 'profile_' . time();
+                // Ensure directory is writable
+                if (!is_writable($upload_path)) {
+                    if (!chmod($upload_path, 0777)) {
+                        $this->session->set_flashdata('error', 'Direktori tidak dapat ditulis: ' . $upload_path);
+                        redirect('admin/tambah_pengguna');
+                        return;
+                    }
+                }
 
-                $this->load->library('upload', $config);
+                // Load upload library
+                $this->load->library('upload');
 
+                // Get upload config and update path
+                $config = $this->config->item('upload_config');
+                $config['upload_path'] = $upload_path;
+
+                // Initialize upload configuration
+                $this->upload->initialize($config);
+
+                // Attempt upload
                 if ($this->upload->do_upload('profile_picture')) {
                     $upload_data = $this->upload->data();
-                    $user_data['profile_picture'] = $upload_data['file_name'];
+                    $profile_picture = $upload_data['file_name'];
                 } else {
-                    $this->session->set_flashdata('error', $this->upload->display_errors());
+                    $error = $this->upload->display_errors();
+                    $this->session->set_flashdata('error', 'Gagal mengunggah gambar: ' . $error);
                     redirect('admin/tambah_pengguna');
+                    return;
                 }
             }
+
+            // Prepare user data
+            $user_data = array(
+                'nama_pengguna' => $this->input->post('username'),
+                'email' => $this->input->post('email'),
+                'password' => password_hash($this->input->post('password'), PASSWORD_DEFAULT),
+                'role' => $this->input->post('role'),
+                'status' => 'active',
+                'foto_profil' => $profile_picture,
+                'dibuat_pada' => date('Y-m-d H:i:s')
+            );
 
             // Insert user data
             $user_id = $this->model_pengguna->tambah_pengguna($user_data);
 
             if ($user_id) {
-                // If user is applicant, create applicant profile
-                if ($user_data['role'] == 'applicant') {
-                    $profile_data = array(
-                        'user_id' => $user_id,
-                        'created_at' => date('Y-m-d H:i:s')
-                    );
-                    $this->model_pelamar->tambah_profil($profile_data);
-                }
-
-                // Show success message
-                $this->session->set_flashdata('success', 'Pengguna baru berhasil ditambahkan.');
+                $this->session->set_flashdata('success', 'Pengguna berhasil ditambahkan.');
                 redirect('admin/pengguna');
             } else {
-                // If insertion fails, show error message
                 $this->session->set_flashdata('error', 'Gagal menambahkan pengguna. Silakan coba lagi.');
                 redirect('admin/tambah_pengguna');
             }
@@ -2074,25 +2084,27 @@ class Admin extends CI_Controller {
         } else {
             // Get form data
             $user_data = array(
-                'username' => $this->input->post('username'),
+                'nama_pengguna' => $this->input->post('username'),
                 'email' => $this->input->post('email'),
-                'full_name' => $this->input->post('full_name'),
-                'phone' => $this->input->post('phone'),
-                'address' => $this->input->post('address'),
+                'nama_lengkap' => $this->input->post('full_name'),
+                'telepon' => $this->input->post('phone'),
+                'alamat' => $this->input->post('address'),
                 'role' => $this->input->post('role'),
-                'status' => $this->input->post('is_active') ? 'active' : 'inactive',
+                'status' => $this->input->post('is_active') ? 'aktif' : 'nonaktif',
                 'diperbarui_pada' => date('Y-m-d H:i:s')
             );
 
             // Upload profile picture if provided
             if ($_FILES['profile_picture']['name']) {
-                // Make sure the directory exists and is writable
-                $upload_path_full = FCPATH . 'uploads/profile_pictures/';
-                if (!is_dir($upload_path_full)) {
-                    mkdir($upload_path_full, 0777, true);
+                // Simple approach - use relative path
+                $upload_path = './uploads/profile_pictures/';
+
+                // Create directory if not exists
+                if (!is_dir($upload_path)) {
+                    mkdir($upload_path, 0755, true);
                 }
 
-                $config['upload_path'] = realpath($upload_path_full) . '/';
+                $config['upload_path'] = $upload_path;
                 $config['allowed_types'] = 'gif|jpg|jpeg|png';
                 $config['max_size'] = 2048; // 2MB
                 $config['file_name'] = 'profile_' . time();
@@ -2101,15 +2113,15 @@ class Admin extends CI_Controller {
 
                 if ($this->upload->do_upload('profile_picture')) {
                     // Delete old profile picture if exists
-                    if ($data['user']->profile_picture) {
-                        $old_file = $upload_path_full . $data['user']->profile_picture;
+                    if (isset($data['user']->foto_profil) && $data['user']->foto_profil) {
+                        $old_file = $upload_path_full . $data['user']->foto_profil;
                         if (file_exists($old_file)) {
                             unlink($old_file);
                         }
                     }
 
                     $upload_data = $this->upload->data();
-                    $user_data['profile_picture'] = $upload_data['file_name'];
+                    $user_data['foto_profil'] = $upload_data['file_name'];
                 } else {
                     $this->session->set_flashdata('error', $this->upload->display_errors());
                     redirect('admin/edit_pengguna/' . $id);
@@ -2121,12 +2133,12 @@ class Admin extends CI_Controller {
 
             if ($result) {
                 // If user role changed to applicant, create applicant profile if not exists
-                if ($user_data['role'] == 'applicant') {
+                if ($user_data['role'] == 'pelamar') {
                     $profile = $this->model_pelamar->dapatkan_profil($id);
 
                     if (!$profile) {
                         $profile_data = array(
-                            'user_id' => $id,
+                            'id_pengguna' => $id,
                             'dibuat_pada' => date('Y-m-d H:i:s')
                         );
                         $this->model_pelamar->tambah_profil($profile_data);
@@ -2162,7 +2174,7 @@ class Admin extends CI_Controller {
 
     // Aktifkan Pengguna
     public function aktifkan_pengguna($id) {
-        $result = $this->model_pengguna->perbarui_pengguna($id, array('status' => 'active'));
+        $result = $this->model_pengguna->perbarui_pengguna($id, array('status' => 'aktif'));
 
         if ($result) {
             $this->session->set_flashdata('success', 'Pengguna berhasil diaktifkan.');
@@ -2175,7 +2187,7 @@ class Admin extends CI_Controller {
 
     // Nonaktifkan Pengguna
     public function nonaktifkan_pengguna($id) {
-        $result = $this->model_pengguna->perbarui_pengguna($id, array('status' => 'inactive'));
+        $result = $this->model_pengguna->perbarui_pengguna($id, array('status' => 'nonaktif'));
 
         if ($result) {
             $this->session->set_flashdata('success', 'Pengguna berhasil dinonaktifkan.');
@@ -2293,7 +2305,7 @@ class Admin extends CI_Controller {
         $user = $this->model_pengguna->dapatkan_pengguna($id);
 
         // If user not found or not an applicant, show 404
-        if (!$user || $user->role != 'applicant') {
+        if (!$user || $user->role != 'pelamar') {
             show_404();
         }
 
@@ -2314,9 +2326,9 @@ class Admin extends CI_Controller {
         $spreadsheet->getProperties()
             ->setCreator('Sistem Rekrutmen')
             ->setLastModifiedBy('Admin')
-            ->setTitle('Daftar Lamaran ' . $user->full_name)
+            ->setTitle('Daftar Lamaran ' . $user->nama_lengkap)
             ->setSubject('Daftar Lamaran Pelamar')
-            ->setDescription('Daftar lamaran yang diajukan oleh ' . $user->full_name);
+            ->setDescription('Daftar lamaran yang diajukan oleh ' . $user->nama_lengkap);
 
         // Set column headers
         $sheet->setCellValue('A1', 'No');
@@ -2405,12 +2417,12 @@ class Admin extends CI_Controller {
         // Set title above the table
         $sheet->insertNewRowBefore(1, 2);
         $sheet->mergeCells('A1:G1');
-        $sheet->setCellValue('A1', 'DAFTAR LAMARAN ' . strtoupper($user->full_name));
+        $sheet->setCellValue('A1', 'DAFTAR LAMARAN ' . strtoupper($user->nama_lengkap));
         $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(14);
         $sheet->getStyle('A1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
 
         // Download the file
-        $filename = 'Lamaran_' . str_replace(' ', '_', $user->full_name) . '_' . date('Y-m-d') . '.xlsx';
+        $filename = 'Lamaran_' . str_replace(' ', '_', $user->nama_lengkap) . '_' . date('Y-m-d') . '.xlsx';
         download_excel_file($spreadsheet, $filename);
     }
 

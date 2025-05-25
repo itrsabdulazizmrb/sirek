@@ -18,9 +18,9 @@
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
-                <label for="nama_lengkap" class="form-control-label">Nama Lengkap <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" id="nama_lengkap" name="nama_lengkap" value="<?= set_value('nama_lengkap') ?>" required>
-                <?= form_error('nama_lengkap', '<small class="text-danger">', '</small>') ?>
+                <label for="full_name" class="form-control-label">Nama Lengkap <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="full_name" name="full_name" value="<?= set_value('full_name') ?>" required>
+                <?= form_error('full_name', '<small class="text-danger">', '</small>') ?>
               </div>
             </div>
             <div class="col-md-6">
@@ -31,83 +31,83 @@
               </div>
             </div>
           </div>
-          
+
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
-                <label for="nama_pengguna" class="form-control-label">Nama Pengguna <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" id="nama_pengguna" name="nama_pengguna" value="<?= set_value('nama_pengguna') ?>" required>
-                <?= form_error('nama_pengguna', '<small class="text-danger">', '</small>') ?>
+                <label for="username" class="form-control-label">Nama Pengguna <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="username" name="username" value="<?= set_value('username') ?>" required>
+                <?= form_error('username', '<small class="text-danger">', '</small>') ?>
               </div>
             </div>
             <div class="col-md-6">
               <div class="form-group">
                 <label for="peran" class="form-control-label">Peran <span class="text-danger">*</span></label>
-                <select class="form-control" id="peran" name="peran" required>
+                <select class="form-control" id="role" name="role" required>
                   <option value="">Pilih Peran</option>
-                  <option value="admin" <?= set_select('peran', 'admin') ?>>Admin</option>
-                  <option value="applicant" <?= set_select('peran', 'applicant') ?>>Pelamar</option>
-                  <option value="recruiter" <?= set_select('peran', 'recruiter') ?>>Rekruter</option>
+                  <option value="admin" <?= set_select('role', 'admin') ?>>Admin</option>
+                  <option value="pelamar" <?= set_select('role', 'pelamar') ?>>Pelamar</option>
+                  <option value="staff" <?= set_select('role', 'staff') ?>>Staff</option>
                 </select>
-                <?= form_error('peran', '<small class="text-danger">', '</small>') ?>
+                <?= form_error('role', '<small class="text-danger">', '</small>') ?>
               </div>
             </div>
           </div>
-          
+
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
-                <label for="kata_sandi" class="form-control-label">Kata Sandi <span class="text-danger">*</span></label>
-                <input type="password" class="form-control" id="kata_sandi" name="kata_sandi" required>
-                <?= form_error('kata_sandi', '<small class="text-danger">', '</small>') ?>
+                <label for="password" class="form-control-label">Kata Sandi <span class="text-danger">*</span></label>
+                <input type="password" class="form-control" id="password" name="password" required>
+                <?= form_error('password', '<small class="text-danger">', '</small>') ?>
                 <small class="text-muted">Minimal 6 karakter, kombinasi huruf dan angka.</small>
               </div>
             </div>
             <div class="col-md-6">
               <div class="form-group">
-                <label for="konfirmasi_kata_sandi" class="form-control-label">Konfirmasi Kata Sandi <span class="text-danger">*</span></label>
-                <input type="password" class="form-control" id="konfirmasi_kata_sandi" name="konfirmasi_kata_sandi" required>
-                <?= form_error('konfirmasi_kata_sandi', '<small class="text-danger">', '</small>') ?>
+                <label for="confirm_password" class="form-control-label">Konfirmasi Kata Sandi <span class="text-danger">*</span></label>
+                <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                <?= form_error('confirm_password', '<small class="text-danger">', '</small>') ?>
               </div>
             </div>
           </div>
-          
+
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
-                <label for="telepon" class="form-control-label">Nomor Telepon</label>
-                <input type="text" class="form-control" id="telepon" name="telepon" value="<?= set_value('telepon') ?>">
-                <?= form_error('telepon', '<small class="text-danger">', '</small>') ?>
+                <label for="phone" class="form-control-label">Nomor Telepon</label>
+                <input type="text" class="form-control" id="phone" name="phone" value="<?= set_value('phone') ?>">
+                <?= form_error('phone', '<small class="text-danger">', '</small>') ?>
               </div>
             </div>
             <div class="col-md-6">
               <div class="form-group">
-                <label for="foto_profil" class="form-control-label">Foto Profil</label>
-                <input type="file" class="form-control" id="foto_profil" name="foto_profil" accept="image/*">
+                <label for="profile_picture" class="form-control-label">Foto Profil</label>
+                <input type="file" class="form-control" id="profile_picture" name="profile_picture" accept="image/*">
                 <small class="text-muted">Format yang diizinkan: JPG, JPEG, PNG. Maks 1MB.</small>
               </div>
             </div>
           </div>
-          
+
           <div class="row">
             <div class="col-md-12">
               <div class="form-group">
-                <label for="alamat" class="form-control-label">Alamat</label>
-                <textarea class="form-control" id="alamat" name="alamat" rows="3"><?= set_value('alamat') ?></textarea>
-                <?= form_error('alamat', '<small class="text-danger">', '</small>') ?>
+                <label for="address" class="form-control-label">Alamat</label>
+                <textarea class="form-control" id="address" name="address" rows="3"><?= set_value('address') ?></textarea>
+                <?= form_error('address', '<small class="text-danger">', '</small>') ?>
               </div>
             </div>
           </div>
-          
+
           <div class="row">
             <div class="col-md-12">
               <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="aktif" name="aktif" value="1" <?= set_checkbox('aktif', '1', true) ?>>
-                <label class="form-check-label" for="aktif">Aktifkan Pengguna</label>
+                <input class="form-check-input" type="checkbox" id="is_active" name="is_active" value="1" <?= set_checkbox('is_active', '1', true) ?>>
+                <label class="form-check-label" for="is_active">Aktifkan Pengguna</label>
               </div>
             </div>
           </div>
-          
+
           <div class="row">
             <div class="col-md-12">
               <div class="form-check form-switch">
@@ -116,7 +116,7 @@
               </div>
             </div>
           </div>
-          
+
           <div class="row mt-4">
             <div class="col-md-12">
               <button type="submit" class="btn btn-primary">Simpan Pengguna</button>
@@ -156,7 +156,7 @@
             </ul>
           </div>
         </div>
-        
+
         <div class="alert alert-info mt-3" role="alert">
           <strong>Catatan:</strong> Saat membuat pengguna baru, pastikan untuk memberitahu mereka tentang kredensial login mereka melalui saluran yang aman. Jika Anda mengaktifkan opsi "Kirim Email Notifikasi", sistem akan secara otomatis mengirimkan email dengan informasi login ke alamat email yang ditentukan.
         </div>
@@ -169,8 +169,8 @@
   document.addEventListener('DOMContentLoaded', function() {
     // Auto-generate username from email
     const emailInput = document.getElementById('email');
-    const usernameInput = document.getElementById('nama_pengguna');
-    
+    const usernameInput = document.getElementById('username');
+
     emailInput.addEventListener('blur', function() {
       if (!usernameInput.value && this.value) {
         // Extract username from email (part before @)
@@ -180,47 +180,47 @@
         }
       }
     });
-    
+
     // Password strength meter
-    const passwordInput = document.getElementById('kata_sandi');
-    const confirmPasswordInput = document.getElementById('konfirmasi_kata_sandi');
-    
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('confirm_password');
+
     if (passwordInput) {
       const strengthMeter = document.createElement('div');
       strengthMeter.classList.add('progress', 'mt-2');
       strengthMeter.style.height = '5px';
-      
+
       const strengthBar = document.createElement('div');
       strengthBar.classList.add('progress-bar');
       strengthBar.style.width = '0%';
-      
+
       strengthMeter.appendChild(strengthBar);
-      
+
       const strengthText = document.createElement('small');
       strengthText.classList.add('text-muted', 'mt-1', 'd-block');
-      
+
       passwordInput.parentNode.insertBefore(strengthMeter, passwordInput.nextSibling);
       passwordInput.parentNode.insertBefore(strengthText, strengthMeter.nextSibling);
-      
+
       passwordInput.addEventListener('input', function() {
         const password = this.value;
         let strength = 0;
-        
+
         // Length check
         if (password.length >= 6) strength += 25;
-        
+
         // Uppercase check
         if (/[A-Z]/.test(password)) strength += 25;
-        
+
         // Lowercase check
         if (/[a-z]/.test(password)) strength += 25;
-        
+
         // Number/special char check
         if (/[0-9!@#$%^&*]/.test(password)) strength += 25;
-        
+
         // Update UI
         strengthBar.style.width = strength + '%';
-        
+
         if (strength < 25) {
           strengthBar.className = 'progress-bar bg-danger';
           strengthText.textContent = 'Sangat Lemah';
@@ -235,7 +235,7 @@
           strengthText.textContent = 'Kuat';
         }
       });
-      
+
       // Password match check
       confirmPasswordInput.addEventListener('input', function() {
         if (this.value === passwordInput.value) {
