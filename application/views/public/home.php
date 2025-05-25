@@ -6,11 +6,11 @@
         <div class="text-center">
           <h1 class="text-white">Find Your Dream Job</h1>
           <p class="lead text-white">Discover opportunities that match your skills and career goals</p>
-          
+
           <div class="row mt-5">
             <div class="col-md-12">
               <div class="card card-body blur shadow-blur mx-3 mx-md-4">
-                <form action="<?= base_url('home/search') ?>" method="get">
+                <form action="<?= base_url('cari') ?>" method="get">
                   <div class="row">
                     <div class="col-md-10">
                       <div class="input-group">
@@ -42,7 +42,7 @@
           </div>
           <h5 class="mt-3 mb-0">Find Jobs</h5>
           <p>Search and apply for jobs that match your skills and experience.</p>
-          <a href="<?= base_url('home/jobs') ?>" class="btn btn-outline-primary mt-3">Browse Jobs</a>
+          <a href="<?= base_url('lowongan') ?>" class="btn btn-outline-primary mt-3">Browse Jobs</a>
         </div>
       </div>
     </div>
@@ -71,13 +71,13 @@
       </div>
     </div>
   </div>
-  
+
   <div class="row mt-5">
     <div class="col-12">
       <div class="card card-body border-0 shadow-xl mt-n5">
         <h3 class="text-center">Featured Job Opportunities</h3>
         <p class="text-center">Explore our latest job openings</p>
-        
+
         <div class="row mt-4">
           <?php if (empty($featured_jobs)) : ?>
             <div class="col-12 text-center">
@@ -94,11 +94,11 @@
                     <div class="colored-shadow" style="background-image: url('<?= base_url('assets/img/company-logo.jpg') ?>');"></div>
                   </div>
                   <div class="card-body pt-3">
-                    <span class="badge bg-gradient-<?= $job->job_type == 'full-time' ? 'success' : ($job->job_type == 'part-time' ? 'info' : ($job->job_type == 'contract' ? 'warning' : 'secondary')) ?> mb-2"><?= ucfirst(str_replace('-', ' ', $job->job_type)) ?></span>
-                    <h5><?= $job->title ?></h5>
-                    <p class="mb-0 text-sm"><i class="fas fa-map-marker-alt me-1"></i> <?= $job->location ?></p>
+                    <span class="badge bg-gradient-<?= $job->jenis_pekerjaan == 'full-time' ? 'success' : ($job->jenis_pekerjaan == 'part-time' ? 'info' : ($job->jenis_pekerjaan == 'contract' ? 'warning' : 'secondary')) ?> mb-2"><?= ucfirst(str_replace('-', ' ', $job->jenis_pekerjaan)) ?></span>
+                    <h5><?= $job->judul ?></h5>
+                    <p class="mb-0 text-sm"><i class="fas fa-map-marker-alt me-1"></i> <?= $job->lokasi ?></p>
                     <p class="mb-0 text-sm"><i class="fas fa-tag me-1"></i> <?= $job->category_name ?></p>
-                    <p class="mb-0 text-sm"><i class="fas fa-calendar me-1"></i> Deadline: <?= date('d M Y', strtotime($job->deadline)) ?></p>
+                    <p class="mb-0 text-sm"><i class="fas fa-calendar me-1"></i> Deadline: <?= date('d M Y', strtotime($job->batas_waktu)) ?></p>
                     <div class="d-flex align-items-center mt-3">
                       <a href="<?= base_url('home/job_details/' . $job->id) ?>" class="btn btn-outline-primary btn-sm mb-0">View Details</a>
                       <a href="<?= base_url('applicant/apply/' . $job->id) ?>" class="btn btn-primary btn-sm ms-auto mb-0">Apply Now</a>
@@ -109,14 +109,14 @@
             <?php endforeach; ?>
           <?php endif; ?>
         </div>
-        
+
         <div class="text-center mt-4">
           <a href="<?= base_url('home/jobs') ?>" class="btn bg-gradient-primary">View All Jobs</a>
         </div>
       </div>
     </div>
   </div>
-  
+
   <div class="row mt-5">
     <div class="col-md-6">
       <div class="card">
@@ -146,14 +146,14 @@
               <hr class="horizontal dark">
             <?php endforeach; ?>
           <?php endif; ?>
-          
+
           <div class="text-center mt-4">
             <a href="<?= base_url('home/blog') ?>" class="btn btn-outline-primary btn-sm mb-0">View All Posts</a>
           </div>
         </div>
       </div>
     </div>
-    
+
     <div class="col-md-6">
       <div class="card">
         <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
@@ -202,7 +202,7 @@
               </div>
             </div>
           </div>
-          
+
           <div class="text-center mt-4">
             <a href="<?= base_url('home/about') ?>" class="btn btn-outline-primary btn-sm mb-0">Learn More</a>
           </div>

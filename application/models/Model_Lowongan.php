@@ -53,20 +53,79 @@ class Model_Lowongan extends CI_Model {
     }
 
     // Hitung lowongan aktif
-    public function hitung_lowongan_aktif() {
-        $this->db->where('status', 'aktif');
-        $query = $this->db->get('lowongan_pekerjaan');
-        return $query->num_rows();
+    public function hitung_lowongan_aktif($filters = []) {
+        $this->db->from('lowongan_pekerjaan');
+        $this->db->join('kategori_pekerjaan', 'kategori_pekerjaan.id = lowongan_pekerjaan.id_kategori', 'left');
+        $this->db->where('lowongan_pekerjaan.status', 'aktif');
+        $this->db->where('lowongan_pekerjaan.batas_waktu >=', date('Y-m-d'));
+
+        // Apply filters
+        if (!empty($filters['category'])) {
+            $this->db->where('lowongan_pekerjaan.id_kategori', $filters['category']);
+        }
+        if (!empty($filters['location'])) {
+            $this->db->where('lowongan_pekerjaan.lokasi', $filters['location']);
+        }
+        if (!empty($filters['job_type'])) {
+            $this->db->where('lowongan_pekerjaan.jenis_pekerjaan', $filters['job_type']);
+        }
+        if (!empty($filters['search'])) {
+            $this->db->group_start();
+            $this->db->like('lowongan_pekerjaan.judul', $filters['search']);
+            $this->db->or_like('lowongan_pekerjaan.deskripsi', $filters['search']);
+            $this->db->or_like('lowongan_pekerjaan.persyaratan', $filters['search']);
+            $this->db->or_like('kategori_pekerjaan.nama', $filters['search']);
+            $this->db->group_end();
+        }
+
+        return $this->db->count_all_results();
     }
 
     // Dapatkan lowongan aktif dengan paginasi
-    public function dapatkan_lowongan_aktif($limit, $start) {
+    public function dapatkan_lowongan_aktif($limit, $start, $filters = []) {
         $this->db->select('lowongan_pekerjaan.*, kategori_pekerjaan.nama as category_name');
         $this->db->from('lowongan_pekerjaan');
         $this->db->join('kategori_pekerjaan', 'kategori_pekerjaan.id = lowongan_pekerjaan.id_kategori', 'left');
         $this->db->where('lowongan_pekerjaan.status', 'aktif');
         $this->db->where('lowongan_pekerjaan.batas_waktu >=', date('Y-m-d'));
-        $this->db->order_by('lowongan_pekerjaan.id', 'DESC');
+
+        // Apply filters
+        if (!empty($filters['category'])) {
+            $this->db->where('lowongan_pekerjaan.id_kategori', $filters['category']);
+        }
+        if (!empty($filters['location'])) {
+            $this->db->where('lowongan_pekerjaan.lokasi', $filters['location']);
+        }
+        if (!empty($filters['job_type'])) {
+            $this->db->where('lowongan_pekerjaan.jenis_pekerjaan', $filters['job_type']);
+        }
+        if (!empty($filters['search'])) {
+            $this->db->group_start();
+            $this->db->like('lowongan_pekerjaan.judul', $filters['search']);
+            $this->db->or_like('lowongan_pekerjaan.deskripsi', $filters['search']);
+            $this->db->or_like('lowongan_pekerjaan.persyaratan', $filters['search']);
+            $this->db->or_like('kategori_pekerjaan.nama', $filters['search']);
+            $this->db->group_end();
+        }
+
+        // Apply sorting
+        $sort = isset($filters['sort']) ? $filters['sort'] : 'newest';
+        switch ($sort) {
+            case 'oldest':
+                $this->db->order_by('lowongan_pekerjaan.dibuat_pada', 'ASC');
+                break;
+            case 'deadline':
+                $this->db->order_by('lowongan_pekerjaan.batas_waktu', 'ASC');
+                break;
+            case 'title':
+                $this->db->order_by('lowongan_pekerjaan.judul', 'ASC');
+                break;
+            case 'newest':
+            default:
+                $this->db->order_by('lowongan_pekerjaan.dibuat_pada', 'DESC');
+                break;
+        }
+
         $this->db->limit($limit, $start);
         $query = $this->db->get();
         return $query->result();
@@ -82,6 +141,20 @@ class Model_Lowongan extends CI_Model {
         $this->db->where('lowongan_pekerjaan.batas_waktu >=', date('Y-m-d'));
         $this->db->order_by('lowongan_pekerjaan.id', 'DESC');
         $this->db->limit($limit);
+        $query = $this->db->get();
+        return $query->result();
+    }
+
+    // Dapatkan lokasi unik dari lowongan aktif
+    public function dapatkan_lokasi_unik() {
+        $this->db->select('lokasi');
+        $this->db->from('lowongan_pekerjaan');
+        $this->db->where('status', 'aktif');
+        $this->db->where('batas_waktu >=', date('Y-m-d'));
+        $this->db->where('lokasi !=', '');
+        $this->db->where('lokasi IS NOT NULL');
+        $this->db->distinct();
+        $this->db->order_by('lokasi', 'ASC');
         $query = $this->db->get();
         return $query->result();
     }

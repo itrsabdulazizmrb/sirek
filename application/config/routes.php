@@ -64,6 +64,11 @@ $route['tentang'] = 'beranda/tentang';
 $route['kontak'] = 'beranda/kontak';
 $route['cari'] = 'beranda/cari';
 
+// Backward compatibility routes
+$route['home/jobs'] = 'beranda/lowongan';
+$route['home/search'] = 'beranda/cari';
+$route['jobs'] = 'beranda/lowongan';
+
 // Rute untuk otentikasi
 $route['login'] = 'auth/login';
 $route['daftar'] = 'auth/daftar';

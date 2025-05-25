@@ -3,7 +3,7 @@
     <div class="col-lg-8">
       <div class="card">
         <div class="card-body p-4">
-          <h2 class="mb-3"><?= $post->title ?></h2>
+          <h2 class="mb-3"><?= $post->judul ?></h2>
 
           <div class="d-flex align-items-center mb-4">
             <div class="avatar avatar-sm rounded-circle bg-gradient-primary">
@@ -12,13 +12,13 @@
             <div class="ms-2">
               <span class="text-sm"><?= $post->author_name ?></span>
               <span class="text-sm text-secondary ms-2">|</span>
-              <span class="text-sm text-secondary ms-2"><?= date('d M Y', strtotime($post->created_at)) ?></span>
+              <span class="text-sm text-secondary ms-2"><?= date('d M Y', strtotime($post->dibuat_pada)) ?></span>
             </div>
           </div>
 
-          <?php if ($post->featured_image) : ?>
+          <?php if ($post->gambar_unggulan) : ?>
             <div class="mb-4">
-              <img src="<?= base_url('uploads/blog_images/' . $post->featured_image) ?>" class="img-fluid rounded" alt="<?= $post->title ?>">
+              <img src="<?= base_url('uploads/blog_images/' . $post->gambar_unggulan) ?>" class="img-fluid rounded" alt="<?= $post->judul ?>">
             </div>
           <?php endif; ?>
 
@@ -26,13 +26,13 @@
             <?php if (!empty($post_categories)) : ?>
               <div class="mb-3">
                 <?php foreach ($post_categories as $category) : ?>
-                  <a href="<?= base_url('blog?category=' . $category->id) ?>" class="badge bg-gradient-primary me-2"><?= $category->name ?></a>
+                  <a href="<?= base_url('blog?category=' . $category->id) ?>" class="badge bg-gradient-primary me-2"><?= $category->nama ?></a>
                 <?php endforeach; ?>
               </div>
             <?php endif; ?>
 
             <div class="blog-content">
-              <?= $post->content ?>
+              <?= $post->konten ?>
             </div>
           </div>
 
@@ -43,16 +43,16 @@
               <a href="https://www.facebook.com/sharer/sharer.php?u=<?= current_url() ?>" target="_blank" class="btn btn-facebook btn-icon-only me-2">
                 <span class="btn-inner--icon"><i class="fab fa-facebook"></i></span>
               </a>
-              <a href="https://twitter.com/intent/tweet?url=<?= current_url() ?>&text=<?= $post->title ?> - SIREK" target="_blank" class="btn btn-twitter btn-icon-only me-2">
+              <a href="https://twitter.com/intent/tweet?url=<?= current_url() ?>&text=<?= $post->judul ?> - SIREK" target="_blank" class="btn btn-twitter btn-icon-only me-2">
                 <span class="btn-inner--icon"><i class="fab fa-twitter"></i></span>
               </a>
               <a href="https://www.linkedin.com/sharing/share-offsite/?url=<?= current_url() ?>" target="_blank" class="btn btn-linkedin btn-icon-only me-2">
                 <span class="btn-inner--icon"><i class="fab fa-linkedin"></i></span>
               </a>
-              <a href="https://wa.me/?text=<?= $post->title ?> - <?= current_url() ?>" target="_blank" class="btn btn-whatsapp btn-icon-only me-2">
+              <a href="https://wa.me/?text=<?= $post->judul ?> - <?= current_url() ?>" target="_blank" class="btn btn-whatsapp btn-icon-only me-2">
                 <span class="btn-inner--icon"><i class="fab fa-whatsapp"></i></span>
               </a>
-              <a href="mailto:?subject=<?= $post->title ?> - SIREK&body=Baca artikel ini: <?= current_url() ?>" class="btn btn-google-plus btn-icon-only">
+              <a href="mailto:?subject=<?= $post->judul ?> - SIREK&body=Baca artikel ini: <?= current_url() ?>" class="btn btn-google-plus btn-icon-only">
                 <span class="btn-inner--icon"><i class="fas fa-envelope"></i></span>
               </a>
             </div>
@@ -191,10 +191,10 @@
                   <div class="icon icon-shape icon-sm bg-gradient-primary shadow text-center me-2">
                     <i class="fas fa-tag text-white opacity-10"></i>
                   </div>
-                  <a href="<?= base_url('blog?category=' . $category->id) ?>" class="text-dark"><?= $category->name ?></a>
+                  <a href="<?= base_url('blog?category=' . $category->id) ?>" class="text-dark"><?= $category->nama ?></a>
                 </div>
                 <div>
-                  <span class="badge badge-sm bg-gradient-primary"><?= $this->blog_model->count_posts_by_category($category->id) ?></span>
+                  <span class="badge badge-sm bg-gradient-primary">0</span>
                 </div>
               </li>
             <?php endforeach; ?>
@@ -220,9 +220,9 @@
                 </div>
                 <div class="ms-3">
                   <a href="<?= base_url('blog/' . $related_post->slug) ?>" class="text-dark">
-                    <h6 class="mb-0 text-sm"><?= $related_post->title ?></h6>
+                    <h6 class="mb-0 text-sm"><?= $related_post->judul ?></h6>
                   </a>
-                  <p class="text-xs text-secondary mb-0"><?= date('d M Y', strtotime($related_post->created_at)) ?></p>
+                  <p class="text-xs text-secondary mb-0"><?= date('d M Y', strtotime($related_post->dibuat_pada)) ?></p>
                 </div>
               </div>
               <hr class="horizontal dark my-3">

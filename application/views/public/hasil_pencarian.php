@@ -32,7 +32,7 @@
       </div>
     </div>
   </div>
-  
+
   <div class="row mt-4">
     <div class="col-md-12">
       <div class="card">
@@ -60,20 +60,20 @@
                   <div class="card job-card h-100">
                     <div class="card-body">
                       <div class="d-flex justify-content-between mb-2">
-                        <span class="badge bg-gradient-<?= $job->job_type == 'full-time' ? 'success' : ($job->job_type == 'part-time' ? 'info' : ($job->job_type == 'contract' ? 'warning' : 'secondary')) ?> job-badge"><?= $job->job_type == 'full-time' ? 'Full Time' : ($job->job_type == 'part-time' ? 'Part Time' : ($job->job_type == 'contract' ? 'Kontrak' : 'Magang')) ?></span>
-                        <?php if ($job->featured) : ?>
+                        <span class="badge bg-gradient-<?= $job->jenis_pekerjaan == 'full-time' ? 'success' : ($job->jenis_pekerjaan == 'part-time' ? 'info' : ($job->jenis_pekerjaan == 'contract' ? 'warning' : 'secondary')) ?> job-badge"><?= $job->jenis_pekerjaan == 'full-time' ? 'Full Time' : ($job->jenis_pekerjaan == 'part-time' ? 'Part Time' : ($job->jenis_pekerjaan == 'contract' ? 'Kontrak' : 'Magang')) ?></span>
+                        <?php if ($job->unggulan) : ?>
                           <span class="badge bg-gradient-primary job-badge">Unggulan</span>
                         <?php endif; ?>
                       </div>
-                      <h5 class="card-title"><?= $job->title ?></h5>
+                      <h5 class="card-title"><?= $job->judul ?></h5>
                       <p class="card-text text-sm mb-1"><i class="fas fa-building me-1"></i> <?= $job->company_name ?? 'SIREK Company' ?></p>
-                      <p class="card-text text-sm mb-1"><i class="fas fa-map-marker-alt me-1"></i> <?= $job->location ?></p>
+                      <p class="card-text text-sm mb-1"><i class="fas fa-map-marker-alt me-1"></i> <?= $job->lokasi ?></p>
                       <p class="card-text text-sm mb-1"><i class="fas fa-tag me-1"></i> <?= $job->category_name ?></p>
-                      <?php if ($job->salary_range) : ?>
-                        <p class="card-text text-sm mb-1"><i class="fas fa-money-bill-wave me-1"></i> <?= $job->salary_range ?></p>
+                      <?php if ($job->rentang_gaji) : ?>
+                        <p class="card-text text-sm mb-1"><i class="fas fa-money-bill-wave me-1"></i> <?= $job->rentang_gaji ?></p>
                       <?php endif; ?>
-                      <p class="card-text text-sm mb-3"><i class="fas fa-calendar me-1"></i> Batas: <?= date('d M Y', strtotime($job->deadline)) ?></p>
-                      
+                      <p class="card-text text-sm mb-3"><i class="fas fa-calendar me-1"></i> Batas: <?= date('d M Y', strtotime($job->batas_waktu)) ?></p>
+
                       <div class="d-flex justify-content-between align-items-center mt-3">
                         <a href="<?= base_url('lowongan/' . $job->id) ?>" class="btn btn-outline-primary btn-sm">Lihat Detail</a>
                         <?php if ($this->session->userdata('logged_in') && $this->session->userdata('role') == 'applicant') : ?>
@@ -92,7 +92,7 @@
       </div>
     </div>
   </div>
-  
+
   <div class="row mt-4">
     <div class="col-md-12">
       <div class="card">

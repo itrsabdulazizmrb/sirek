@@ -16,7 +16,7 @@
   <div class="row mt-n6">
     <div class="col-md-12">
       <div class="card card-body blur shadow-blur mx-3 mx-md-4">
-        <form id="job-filter-form" action="<?= base_url('home/jobs') ?>" method="get">
+        <form id="job-filter-form" action="<?= base_url('lowongan') ?>" method="get">
           <div class="row">
             <div class="col-md-3">
               <div class="input-group">
@@ -28,7 +28,7 @@
               <select class="form-control" id="filter-category" name="category">
                 <option value="">Semua Kategori</option>
                 <?php foreach ($categories as $category) : ?>
-                  <option value="<?= $category->id ?>" <?= $this->input->get('category') == $category->id ? 'selected' : '' ?>><?= $category->name ?></option>
+                  <option value="<?= $category->id ?>" <?= $this->input->get('category') == $category->id ? 'selected' : '' ?>><?= $category->nama ?></option>
                 <?php endforeach; ?>
               </select>
             </div>
@@ -60,7 +60,7 @@
       </div>
     </div>
   </div>
-  
+
   <div class="row mt-4">
     <div class="col-md-12">
       <div class="card">
@@ -100,7 +100,7 @@
                         <p class="card-text text-sm mb-1"><i class="fas fa-money-bill-wave me-1"></i> <?= $job->salary_range ?></p>
                       <?php endif; ?>
                       <p class="card-text text-sm mb-3"><i class="fas fa-calendar me-1"></i> Batas: <?= date('d M Y', strtotime($job->deadline)) ?></p>
-                      
+
                       <div class="d-flex justify-content-between align-items-center mt-3">
                         <a href="<?= base_url('home/job_details/' . $job->id) ?>" class="btn btn-outline-primary btn-sm">Lihat Detail</a>
                         <?php if ($this->session->userdata('logged_in') && $this->session->userdata('role') == 'applicant') : ?>
@@ -114,7 +114,7 @@
                 </div>
               <?php endforeach; ?>
             </div>
-            
+
             <!-- Pagination -->
             <div class="row mt-4">
               <div class="col-md-12">
@@ -128,7 +128,7 @@
       </div>
     </div>
   </div>
-  
+
   <div class="row mt-4">
     <div class="col-md-12">
       <div class="card">

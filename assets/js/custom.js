@@ -108,7 +108,7 @@ document.addEventListener('DOMContentLoaded', function() {
       if (jobType) queryParams.push('job_type=' + jobType);
 
       // Redirect to filtered results
-      window.location.href = baseUrl + 'home/jobs?' + queryParams.join('&');
+      window.location.href = baseUrl + 'lowongan?' + queryParams.join('&');
     });
   }
 

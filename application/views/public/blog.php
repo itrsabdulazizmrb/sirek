@@ -51,21 +51,21 @@
               <div class="card blog-card h-100">
                 <div class="card-header p-0 mx-3 mt-3 position-relative z-index-1">
                   <a href="<?= base_url('blog/' . $post->slug) ?>" class="d-block">
-                    <?php if ($post->featured_image) : ?>
-                      <img src="<?= base_url('uploads/blog_images/' . $post->featured_image) ?>" class="img-fluid border-radius-lg blog-featured-image" alt="<?= $post->title ?>">
+                    <?php if ($post->gambar_unggulan) : ?>
+                      <img src="<?= base_url('uploads/blog_images/' . $post->gambar_unggulan) ?>" class="img-fluid border-radius-lg blog-featured-image" alt="<?= $post->judul ?>">
                     <?php else : ?>
-                      <img src="<?= base_url('assets/img/blog-placeholder.jpg') ?>" class="img-fluid border-radius-lg blog-featured-image" alt="<?= $post->title ?>">
+                      <img src="<?= base_url('assets/img/blog-placeholder.jpg') ?>" class="img-fluid border-radius-lg blog-featured-image" alt="<?= $post->judul ?>">
                     <?php endif; ?>
                   </a>
                 </div>
                 <div class="card-body pt-3">
-                  <h5 class="mb-0"><a href="<?= base_url('blog/' . $post->slug) ?>" class="text-dark"><?= $post->title ?></a></h5>
+                  <h5 class="mb-0"><a href="<?= base_url('blog/' . $post->slug) ?>" class="text-dark"><?= $post->judul ?></a></h5>
                   <p class="text-sm mt-2 mb-0">
                     <i class="fas fa-user me-1"></i> <?= $post->author_name ?>
                     <span class="mx-2">|</span>
-                    <i class="fas fa-calendar me-1"></i> <?= date('d M Y', strtotime($post->created_at)) ?>
+                    <i class="fas fa-calendar me-1"></i> <?= date('d M Y', strtotime($post->dibuat_pada)) ?>
                   </p>
-                  <p class="text-sm mt-3 mb-3"><?= character_limiter(strip_tags($post->content), 150) ?></p>
+                  <p class="text-sm mt-3 mb-3"><?= character_limiter(strip_tags($post->konten), 150) ?></p>
                   <a href="<?= base_url('blog/' . $post->slug) ?>" class="text-primary text-sm font-weight-bold">Baca selengkapnya</a>
                 </div>
               </div>
@@ -98,10 +98,10 @@
                   <div class="icon icon-shape icon-sm bg-gradient-primary shadow text-center me-2">
                     <i class="fas fa-tag text-white opacity-10"></i>
                   </div>
-                  <a href="<?= base_url('blog?category=' . $category->id) ?>" class="text-dark"><?= $category->name ?></a>
+                  <a href="<?= base_url('blog?category=' . $category->id) ?>" class="text-dark"><?= $category->nama ?></a>
                 </div>
                 <div>
-                  <span class="badge badge-sm bg-gradient-primary"><?= $this->blog_model->count_posts_by_category($category->id) ?></span>
+                  <span class="badge badge-sm bg-gradient-primary">0</span>
                 </div>
               </li>
             <?php endforeach; ?>
@@ -116,8 +116,9 @@
         </div>
         <div class="card-body pt-2">
           <?php
-          $recent_posts = $this->blog_model->get_latest_posts(5);
-          foreach ($recent_posts as $recent_post) :
+          // Get recent posts from controller data instead of calling model directly
+          if (isset($recent_posts) && !empty($recent_posts)) :
+            foreach ($recent_posts as $recent_post) :
           ?>
             <div class="d-flex mt-3">
               <div>
@@ -127,13 +128,18 @@
               </div>
               <div class="ms-3">
                 <a href="<?= base_url('blog/' . $recent_post->slug) ?>" class="text-dark">
-                  <h6 class="mb-0 text-sm"><?= $recent_post->title ?></h6>
+                  <h6 class="mb-0 text-sm"><?= $recent_post->judul ?></h6>
                 </a>
-                <p class="text-xs text-secondary mb-0"><?= date('d M Y', strtotime($recent_post->created_at)) ?></p>
+                <p class="text-xs text-secondary mb-0"><?= date('d M Y', strtotime($recent_post->dibuat_pada)) ?></p>
               </div>
             </div>
             <hr class="horizontal dark my-3">
-          <?php endforeach; ?>
+          <?php
+            endforeach;
+          else :
+          ?>
+            <p class="text-sm text-muted">Belum ada artikel terbaru.</p>
+          <?php endif; ?>
         </div>
       </div>
 

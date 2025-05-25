@@ -27,11 +27,33 @@ class Beranda extends CI_Controller {
     }
 
     public function lowongan() {
+        // Get filter parameters
+        $filters = [
+            'category' => $this->input->get('category'),
+            'location' => $this->input->get('location'),
+            'job_type' => $this->input->get('job_type'),
+            'search' => $this->input->get('q'),
+            'sort' => $this->input->get('sort') ?: 'newest'
+        ];
+
         // Get pagination config
         $config['base_url'] = base_url('lowongan');
-        $config['total_rows'] = $this->model_lowongan->hitung_lowongan_aktif();
+        $config['total_rows'] = $this->model_lowongan->hitung_lowongan_aktif($filters);
         $config['per_page'] = 10;
-        $config['uri_segment'] = 3;
+        $config['uri_segment'] = 2;
+
+        // Add query string for filters
+        $query_string = '';
+        if (!empty($filters['category'])) $query_string .= '&category=' . $filters['category'];
+        if (!empty($filters['location'])) $query_string .= '&location=' . $filters['location'];
+        if (!empty($filters['job_type'])) $query_string .= '&job_type=' . $filters['job_type'];
+        if (!empty($filters['search'])) $query_string .= '&q=' . $filters['search'];
+        if (!empty($filters['sort']) && $filters['sort'] != 'newest') $query_string .= '&sort=' . $filters['sort'];
+
+        if ($query_string) {
+            $config['suffix'] = '?' . ltrim($query_string, '&');
+            $config['first_url'] = $config['base_url'] . '?' . ltrim($query_string, '&');
+        }
 
         // Pagination styling
         $config['full_tag_open'] = '<ul class="pagination">';
@@ -58,12 +80,15 @@ class Beranda extends CI_Controller {
         $this->pagination->initialize($config);
 
         // Get jobs for current page
-        $page = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0;
-        $data['jobs'] = $this->model_lowongan->dapatkan_lowongan_aktif($config['per_page'], $page);
+        $page = ($this->uri->segment(2)) ? $this->uri->segment(2) : 0;
+        $data['jobs'] = $this->model_lowongan->dapatkan_lowongan_aktif($config['per_page'], $page, $filters);
 
         // Get job categories for filter
         $this->load->model('model_kategori');
         $data['categories'] = $this->model_kategori->dapatkan_kategori_lowongan();
+
+        // Get unique locations for filter
+        $data['locations'] = $this->model_lowongan->dapatkan_lokasi_unik();
 
         // Load views
         $data['title'] = 'Daftar Lowongan';
@@ -132,6 +157,9 @@ class Beranda extends CI_Controller {
         $this->load->model('model_kategori');
         $data['categories'] = $this->model_kategori->dapatkan_kategori_blog();
 
+        // Get recent posts for sidebar
+        $data['recent_posts'] = $this->model_blog->dapatkan_artikel_terbaru(5);
+
         // Load views
         $data['title'] = 'Blog';
         $data['pagination'] = $this->pagination->create_links();
@@ -165,8 +193,11 @@ class Beranda extends CI_Controller {
         $this->load->model('model_kategori');
         $data['categories'] = $this->model_kategori->dapatkan_kategori_blog();
 
+        // Get recent posts for sidebar
+        $data['recent_posts'] = $this->model_blog->dapatkan_artikel_terbaru(5);
+
         // Load views
-        $data['title'] = $data['post']->title;
+        $data['title'] = $data['post']->judul;
         $this->load->view('templates/public_header', $data);
         $this->load->view('public/artikel', $data);
         $this->load->view('templates/public_footer');

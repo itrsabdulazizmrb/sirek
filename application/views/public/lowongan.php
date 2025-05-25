@@ -21,39 +21,52 @@
             <div class="col-md-3">
               <div class="input-group">
                 <span class="input-group-text"><i class="fas fa-search"></i></span>
-                <input type="text" class="form-control" name="q" placeholder="Cari lowongan..." value="<?= $this->input->get('q') ?>">
+                <input type="text" class="form-control" name="q" id="search-input"
+                       placeholder="Cari lowongan, posisi, perusahaan..."
+                       value="<?= $this->input->get('q') ?>"
+                       autocomplete="off">
+              </div>
+              <!-- Search suggestions dropdown -->
+              <div id="search-suggestions" class="dropdown-menu w-100" style="display: none; max-height: 200px; overflow-y: auto;">
+                <!-- Suggestions will be populated by JavaScript -->
               </div>
             </div>
             <div class="col-md-3">
               <select class="form-control" id="filter-category" name="category">
                 <option value="">Semua Kategori</option>
                 <?php foreach ($categories as $category) : ?>
-                  <option value="<?= $category->id ?>" <?= $this->input->get('category') == $category->id ? 'selected' : '' ?>><?= $category->name ?></option>
+                  <option value="<?= $category->id ?>" <?= $this->input->get('category') == $category->id ? 'selected' : '' ?>><?= $category->nama ?></option>
                 <?php endforeach; ?>
               </select>
             </div>
             <div class="col-md-2">
               <select class="form-control" id="filter-location" name="location">
                 <option value="">Semua Lokasi</option>
-                <option value="Jakarta" <?= $this->input->get('location') == 'Jakarta' ? 'selected' : '' ?>>Jakarta</option>
-                <option value="Bandung" <?= $this->input->get('location') == 'Bandung' ? 'selected' : '' ?>>Bandung</option>
-                <option value="Surabaya" <?= $this->input->get('location') == 'Surabaya' ? 'selected' : '' ?>>Surabaya</option>
-                <option value="Medan" <?= $this->input->get('location') == 'Medan' ? 'selected' : '' ?>>Medan</option>
-                <option value="Makassar" <?= $this->input->get('location') == 'Makassar' ? 'selected' : '' ?>>Makassar</option>
-                <option value="Remote" <?= $this->input->get('location') == 'Remote' ? 'selected' : '' ?>>Remote</option>
+                <?php if (!empty($locations)) : ?>
+                  <?php foreach ($locations as $location) : ?>
+                    <option value="<?= $location->lokasi ?>" <?= $this->input->get('location') == $location->lokasi ? 'selected' : '' ?>><?= $location->lokasi ?></option>
+                  <?php endforeach; ?>
+                <?php endif; ?>
               </select>
             </div>
             <div class="col-md-2">
               <select class="form-control" id="filter-job-type" name="job_type">
                 <option value="">Semua Tipe</option>
-                <option value="full-time" <?= $this->input->get('job_type') == 'full-time' ? 'selected' : '' ?>>Full Time</option>
-                <option value="part-time" <?= $this->input->get('job_type') == 'part-time' ? 'selected' : '' ?>>Part Time</option>
-                <option value="contract" <?= $this->input->get('job_type') == 'contract' ? 'selected' : '' ?>>Kontrak</option>
-                <option value="internship" <?= $this->input->get('job_type') == 'internship' ? 'selected' : '' ?>>Magang</option>
+                <option value="penuh_waktu" <?= $this->input->get('job_type') == 'penuh_waktu' ? 'selected' : '' ?>>Full Time</option>
+                <option value="paruh_waktu" <?= $this->input->get('job_type') == 'paruh_waktu' ? 'selected' : '' ?>>Part Time</option>
+                <option value="kontrak" <?= $this->input->get('job_type') == 'kontrak' ? 'selected' : '' ?>>Kontrak</option>
+                <option value="magang" <?= $this->input->get('job_type') == 'magang' ? 'selected' : '' ?>>Magang</option>
               </select>
             </div>
-            <div class="col-md-2">
-              <button type="submit" class="btn bg-gradient-primary w-100">Filter</button>
+            <div class="col-md-1">
+              <button type="submit" class="btn bg-gradient-primary w-100">
+                <i class="fas fa-search"></i>
+              </button>
+            </div>
+            <div class="col-md-1">
+              <button type="button" id="reset-filter" class="btn btn-outline-secondary w-100" title="Reset Filter">
+                <i class="fas fa-times"></i>
+              </button>
             </div>
           </div>
         </form>
@@ -65,14 +78,64 @@
     <div class="col-md-12">
       <div class="card">
         <div class="card-header p-3">
-          <h5 class="mb-0">Daftar Lowongan Pekerjaan</h5>
-          <p class="text-sm mb-0">
-            <?php if (!empty($jobs)) : ?>
-              Menampilkan <?= count($jobs) ?> dari <?= $total_jobs ?> lowongan
-            <?php else : ?>
-              Tidak ada lowongan yang tersedia
-            <?php endif; ?>
-          </p>
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h5 class="mb-0">Daftar Lowongan Pekerjaan</h5>
+              <p class="text-sm mb-0">
+                <?php if (!empty($jobs)) : ?>
+                  Menampilkan <?= count($jobs) ?> dari <?= $total_jobs ?> lowongan
+                <?php else : ?>
+                  Tidak ada lowongan yang tersedia
+                <?php endif; ?>
+              </p>
+            </div>
+
+            <!-- Active Filters -->
+            <?php
+            $active_filters = [];
+            if ($this->input->get('q')) $active_filters[] = 'Pencarian: "' . $this->input->get('q') . '"';
+            if ($this->input->get('category')) {
+              foreach ($categories as $cat) {
+                if ($cat->id == $this->input->get('category')) {
+                  $active_filters[] = 'Kategori: ' . $cat->nama;
+                  break;
+                }
+              }
+            }
+            if ($this->input->get('location')) $active_filters[] = 'Lokasi: ' . $this->input->get('location');
+            if ($this->input->get('job_type')) {
+              $job_type_labels = [
+                'penuh_waktu' => 'Full Time',
+                'paruh_waktu' => 'Part Time',
+                'kontrak' => 'Kontrak',
+                'magang' => 'Magang'
+              ];
+              $active_filters[] = 'Tipe: ' . $job_type_labels[$this->input->get('job_type')];
+            }
+            ?>
+
+            <div class="text-end">
+              <!-- Sorting dropdown -->
+              <div class="mb-2">
+                <small class="text-muted me-2">Urutkan:</small>
+                <select class="form-select form-select-sm d-inline-block w-auto" id="sort-select" onchange="applySorting()">
+                  <option value="newest" <?= $this->input->get('sort') == 'newest' ? 'selected' : '' ?>>Terbaru</option>
+                  <option value="oldest" <?= $this->input->get('sort') == 'oldest' ? 'selected' : '' ?>>Terlama</option>
+                  <option value="deadline" <?= $this->input->get('sort') == 'deadline' ? 'selected' : '' ?>>Deadline Terdekat</option>
+                  <option value="title" <?= $this->input->get('sort') == 'title' ? 'selected' : '' ?>>Nama A-Z</option>
+                </select>
+              </div>
+
+              <?php if (!empty($active_filters)) : ?>
+                <div>
+                  <small class="text-muted">Filter aktif:</small><br>
+                  <?php foreach ($active_filters as $filter) : ?>
+                    <span class="badge bg-gradient-info me-1 mb-1"><?= $filter ?></span>
+                  <?php endforeach; ?>
+                </div>
+              <?php endif; ?>
+            </div>
+          </div>
         </div>
         <div class="card-body p-3">
           <?php if (empty($jobs)) : ?>
@@ -121,6 +184,18 @@
                 <nav aria-label="Page navigation">
                   <?= $pagination ?>
                 </nav>
+
+                <!-- Load More Button (Alternative to pagination) -->
+                <?php if (count($jobs) >= 10 && count($jobs) < $total_jobs) : ?>
+                  <div class="text-center mt-3">
+                    <button type="button" id="load-more-btn" class="btn btn-outline-primary"
+                            data-page="<?= ($this->uri->segment(2) ?: 0) + 10 ?>"
+                            data-loading="false">
+                      <i class="fas fa-plus me-2"></i>Muat Lebih Banyak
+                    </button>
+                    <div id="loading-spinner" class="spinner-border spinner-border-sm ms-2" style="display: none;"></div>
+                  </div>
+                <?php endif; ?>
               </div>
             </div>
           <?php endif; ?>
@@ -201,3 +276,167 @@
     </div>
   </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Reset filter functionality
+    const resetButton = document.getElementById('reset-filter');
+    if (resetButton) {
+        resetButton.addEventListener('click', function() {
+            // Clear all form inputs
+            const form = document.getElementById('job-filter-form');
+            const inputs = form.querySelectorAll('input[type="text"], select');
+
+            inputs.forEach(function(input) {
+                if (input.tagName === 'SELECT') {
+                    input.selectedIndex = 0;
+                } else {
+                    input.value = '';
+                }
+            });
+
+            // Redirect to clean URL
+            window.location.href = '<?= base_url('lowongan') ?>';
+        });
+    }
+
+    // Auto-submit on filter change (optional - uncomment if needed)
+    /*
+    const filterSelects = document.querySelectorAll('#filter-category, #filter-location, #filter-job-type');
+    filterSelects.forEach(function(select) {
+        select.addEventListener('change', function() {
+            document.getElementById('job-filter-form').submit();
+        });
+    });
+    */
+
+    // Search functionality
+    const searchInput = document.getElementById('search-input');
+    const suggestionsDiv = document.getElementById('search-suggestions');
+
+    if (searchInput && suggestionsDiv) {
+        // Search suggestions data
+        const searchSuggestions = [
+            'Programmer', 'Developer', 'Software Engineer', 'Web Developer',
+            'Mobile Developer', 'Frontend Developer', 'Backend Developer',
+            'UI/UX Designer', 'Graphic Designer', 'Digital Marketing',
+            'Content Writer', 'Social Media Specialist', 'SEO Specialist',
+            'Data Analyst', 'Business Analyst', 'Project Manager',
+            'HR Manager', 'Sales Executive', 'Customer Service',
+            'Accounting', 'Finance', 'Admin', 'Secretary'
+        ];
+
+        // Show suggestions on input
+        searchInput.addEventListener('input', function() {
+            const query = this.value.toLowerCase().trim();
+
+            if (query.length >= 2) {
+                const matches = searchSuggestions.filter(item =>
+                    item.toLowerCase().includes(query)
+                ).slice(0, 5);
+
+                if (matches.length > 0) {
+                    suggestionsDiv.innerHTML = matches.map(item =>
+                        `<a href="#" class="dropdown-item" data-value="${item}">
+                            <i class="fas fa-search me-2"></i>${item}
+                        </a>`
+                    ).join('');
+                    suggestionsDiv.style.display = 'block';
+                } else {
+                    suggestionsDiv.style.display = 'none';
+                }
+            } else {
+                suggestionsDiv.style.display = 'none';
+            }
+        });
+
+        // Handle suggestion clicks
+        suggestionsDiv.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (e.target.classList.contains('dropdown-item')) {
+                const value = e.target.getAttribute('data-value');
+                searchInput.value = value;
+                suggestionsDiv.style.display = 'none';
+                document.getElementById('job-filter-form').submit();
+            }
+        });
+
+        // Hide suggestions when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!searchInput.contains(e.target) && !suggestionsDiv.contains(e.target)) {
+                suggestionsDiv.style.display = 'none';
+            }
+        });
+
+        // Search on Enter key
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                suggestionsDiv.style.display = 'none';
+                document.getElementById('job-filter-form').submit();
+            }
+        });
+
+        // Handle arrow keys for suggestion navigation
+        let selectedIndex = -1;
+        searchInput.addEventListener('keydown', function(e) {
+            const suggestions = suggestionsDiv.querySelectorAll('.dropdown-item');
+
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                selectedIndex = Math.min(selectedIndex + 1, suggestions.length - 1);
+                updateSelection(suggestions);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                selectedIndex = Math.max(selectedIndex - 1, -1);
+                updateSelection(suggestions);
+            } else if (e.key === 'Enter' && selectedIndex >= 0) {
+                e.preventDefault();
+                suggestions[selectedIndex].click();
+            }
+        });
+
+        function updateSelection(suggestions) {
+            suggestions.forEach((item, index) => {
+                if (index === selectedIndex) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+        }
+    }
+
+    // Highlight search terms in results
+    const searchTerm = '<?= $this->input->get('q') ?>';
+    if (searchTerm) {
+        const jobCards = document.querySelectorAll('.job-card');
+        jobCards.forEach(function(card) {
+            const title = card.querySelector('.card-title');
+            const content = card.querySelector('.card-text');
+
+            if (title) {
+                title.innerHTML = highlightText(title.innerHTML, searchTerm);
+            }
+        });
+    }
+
+    function highlightText(text, term) {
+        if (!term) return text;
+        const regex = new RegExp(`(${term})`, 'gi');
+        return text.replace(regex, '<mark class="bg-warning">$1</mark>');
+    }
+});
+
+// Sorting functionality
+function applySorting() {
+    const sortValue = document.getElementById('sort-select').value;
+    const currentUrl = new URL(window.location.href);
+
+    // Add or update sort parameter
+    currentUrl.searchParams.set('sort', sortValue);
+
+    // Redirect with new sort parameter
+    window.location.href = currentUrl.toString();
+}
+</script>
