@@ -470,7 +470,10 @@ $config['csrf_exclude_uris'] = array(
     'pelamar/tandai-ragu-cat',
     'pelamar/get-question-cat',
     'pelamar/dapatkan-status-navigasi-cat',
-    'pelamar/log-security-violation'
+    'pelamar/log-security-violation',
+    'pelamar/mulai-ujian/.*',
+    'pelamar/test-mulai-ujian/.*',
+    'pelamar/perbarui_status_penilaian/.*'
 );
 
 /*

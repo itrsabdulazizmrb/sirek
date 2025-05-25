@@ -211,16 +211,9 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // Mark assessment as in progress
-    <?php if ($applicant_assessment->status == 'belum_mulai' || $applicant_assessment->status == 'not_started') : ?>
-      fetch('<?= base_url('pelamar/perbarui_status_penilaian/' . $applicant_assessment->id . '/sedang_berlangsung') ?>', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest'
-        }
-      });
-    <?php endif; ?>
+    // Status sudah diupdate saat tombol "Mulai Ujian" ditekan
+    // Tidak perlu auto-update lagi di sini
+    console.log('Halaman ujian dimuat. Status: <?= $applicant_assessment->status ?>');
 
     // Assessment timer
     const assessmentTimer = document.getElementById('assessment-timer');

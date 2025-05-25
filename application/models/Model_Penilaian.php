@@ -201,8 +201,9 @@ class Model_Penilaian extends CI_Model {
         $update_data = array('status' => $status);
 
         // Set waktu_mulai when starting assessment
-        if ($status == 'sedang_berlangsung') {
+        if ($status == 'sedang_berlangsung' || $status == 'sedang_mengerjakan') {
             $update_data['waktu_mulai'] = date('Y-m-d H:i:s');
+            $update_data['status'] = 'sedang_mengerjakan'; // Normalize to database enum
         }
 
         // Set waktu_selesai when completing assessment
@@ -211,7 +212,33 @@ class Model_Penilaian extends CI_Model {
         }
 
         $this->db->where('id', $id);
-        return $this->db->update('penilaian_pelamar', $update_data);
+        $result = $this->db->update('penilaian_pelamar', $update_data);
+
+        // Log untuk debugging
+        if (!$result) {
+            log_message('error', 'Failed to update penilaian_pelamar status for ID: ' . $id . ' with status: ' . $status);
+        } else {
+            log_message('info', 'Successfully updated penilaian_pelamar ID: ' . $id . ' to status: ' . $status . ' with waktu_mulai: ' . (isset($update_data['waktu_mulai']) ? $update_data['waktu_mulai'] : 'not set'));
+        }
+
+        return $result;
+    }
+
+    // Perbaiki data waktu_mulai yang kosong untuk status sedang_mengerjakan
+    public function perbaiki_waktu_mulai_kosong() {
+        // Update records yang status sedang_mengerjakan tapi waktu_mulai kosong
+        $this->db->set('waktu_mulai', 'dibuat_pada', FALSE);
+        $this->db->where('status', 'sedang_mengerjakan');
+        $this->db->where('waktu_mulai IS NULL');
+        $result1 = $this->db->update('penilaian_pelamar');
+
+        // Update records yang status selesai tapi waktu_mulai kosong
+        $this->db->set('waktu_mulai', 'dibuat_pada', FALSE);
+        $this->db->where('status', 'selesai');
+        $this->db->where('waktu_mulai IS NULL');
+        $result2 = $this->db->update('penilaian_pelamar');
+
+        return ['sedang_mengerjakan' => $this->db->affected_rows(), 'selesai' => $result2 ? $this->db->affected_rows() : 0];
     }
 
     // Tambah jawaban pelamar

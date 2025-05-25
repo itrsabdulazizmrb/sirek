@@ -84,6 +84,10 @@ $route['pelamar/lamar/(:num)'] = 'pelamar/lamar/$1';
 $route['pelamar/detail-lamaran/(:num)'] = 'pelamar/detail_lamaran/$1';
 $route['pelamar/penilaian'] = 'pelamar/penilaian';
 $route['pelamar/ikuti-penilaian/(:num)/(:num)'] = 'pelamar/ikuti_penilaian/$1/$2';
+$route['pelamar/ikuti-ujian/(:num)/(:num)'] = 'pelamar/ikuti_ujian/$1/$2';
+$route['pelamar/mulai-ujian/(:num)'] = 'pelamar/mulai_ujian/$1';
+$route['pelamar/test-mulai-ujian/(:num)'] = 'pelamar/test_mulai_ujian/$1';
+$route['pelamar/test-json'] = 'pelamar/test_json';
 $route['pelamar/detail_lamaran/(:num)'] = 'pelamar/detail_lamaran/$1';
 $route['pelamar/kirim-penilaian'] = 'pelamar/kirim_penilaian';
 $route['pelamar/kirim-penilaian-cat'] = 'pelamar/kirim_penilaian_cat';
@@ -151,6 +155,11 @@ $route['admin/edit-kategori-blog'] = 'admin/edit_kategori_blog';
 $route['admin/hapus-kategori-blog/(:num)'] = 'admin/hapus_kategori_blog/$1';
 $route['admin/kategori'] = 'admin/kategori';
 $route['admin/laporan'] = 'admin/laporan';
+$route['admin/laporan-lowongan'] = 'admin/laporan_lowongan';
+$route['admin/laporan-lamaran'] = 'admin/laporan_lamaran';
+$route['admin/laporan-pelamar'] = 'admin/laporan_pelamar';
+$route['admin/laporan-penilaian'] = 'admin/laporan_penilaian';
+$route['admin/export-laporan'] = 'admin/export_laporan';
 
 // Rute untuk impor
 $route['impor'] = 'impor/index';

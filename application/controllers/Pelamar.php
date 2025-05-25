@@ -648,20 +648,60 @@ class Pelamar extends CI_Controller {
         $data['cat_mode'] = $cat_settings->mode_cat;
         $data['acak_soal'] = $cat_settings->acak_soal;
 
-        if ($data['cat_mode']) {
-            // Redirect to CAT interface
-            redirect('pelamar/cat-penilaian/' . $assessment_id . '/' . $application_id);
-        } else {
-            // Get assessment questions (traditional mode)
+        // If status is 'belum_mulai', show confirmation page
+        if ($data['applicant_assessment']->status == 'belum_mulai') {
+            // Get assessment questions for info
             $data['questions'] = $this->model_penilaian->dapatkan_soal_penilaian($assessment_id);
 
-            // Load views
-            $data['title'] = 'Ikuti Penilaian';
+            // Load confirmation page
+            $data['title'] = 'Konfirmasi Mulai Ujian';
             $data['application_id'] = $application_id;
             $this->load->view('templates/applicant_header', $data);
-            $this->load->view('applicant/ikuti_penilaian', $data);
+            $this->load->view('applicant/konfirmasi_mulai_ujian', $data);
             $this->load->view('templates/applicant_footer');
+        } else {
+            // If already started, redirect to appropriate interface
+            if ($data['cat_mode']) {
+                redirect('pelamar/cat-penilaian/' . $assessment_id . '/' . $application_id . '/1');
+            } else {
+                redirect('pelamar/ikuti-ujian/' . $assessment_id . '/' . $application_id);
+            }
         }
+    }
+
+    // Method baru untuk halaman ujian setelah dimulai
+    public function ikuti_ujian($assessment_id, $application_id) {
+        // Get assessment details
+        $data['assessment'] = $this->model_penilaian->dapatkan_penilaian($assessment_id);
+
+        // If assessment not found, show 404
+        if (!$data['assessment']) {
+            show_404();
+        }
+
+        // Get applicant assessment
+        $user_id = $this->session->userdata('user_id');
+        $data['applicant_assessment'] = $this->model_penilaian->dapatkan_penilaian_pelamar_spesifik($application_id, $assessment_id);
+
+        // If applicant assessment not found or not owned by current user, show 404
+        if (!$data['applicant_assessment'] || $data['applicant_assessment']->id_pelamar != $user_id) {
+            show_404();
+        }
+
+        // If status is still 'belum_mulai', redirect to confirmation
+        if ($data['applicant_assessment']->status == 'belum_mulai') {
+            redirect('pelamar/ikuti-penilaian/' . $assessment_id . '/' . $application_id);
+        }
+
+        // Get assessment questions (traditional mode)
+        $data['questions'] = $this->model_penilaian->dapatkan_soal_penilaian($assessment_id);
+
+        // Load views
+        $data['title'] = 'Ikuti Penilaian';
+        $data['application_id'] = $application_id;
+        $this->load->view('templates/applicant_header', $data);
+        $this->load->view('applicant/ikuti_penilaian', $data);
+        $this->load->view('templates/applicant_footer');
     }
 
     public function cat_penilaian($assessment_id, $application_id, $question_number = 1) {
@@ -686,6 +726,11 @@ class Pelamar extends CI_Controller {
         $cat_settings = $this->model_penilaian->cek_mode_cat($assessment_id);
         if (!$cat_settings->mode_cat) {
             // Redirect to traditional mode if CAT is not enabled
+            redirect('pelamar/ikuti-penilaian/' . $assessment_id . '/' . $application_id);
+        }
+
+        // If status is still 'belum_mulai', redirect to confirmation
+        if ($data['applicant_assessment']->status == 'belum_mulai') {
             redirect('pelamar/ikuti-penilaian/' . $assessment_id . '/' . $application_id);
         }
 
@@ -944,6 +989,157 @@ class Pelamar extends CI_Controller {
             $this->output->set_status_header(500);
             echo json_encode(['status' => 'error', 'message' => 'Gagal memperbarui status']);
         }
+    }
+
+    // Method khusus untuk memulai ujian dengan record waktu mulai
+    public function mulai_ujian($applicant_assessment_id) {
+        // Set headers immediately
+        header('Cache-Control: no-cache, must-revalidate');
+        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+        header('Content-Type: application/json; charset=utf-8');
+
+        try {
+            // Validasi AJAX request (lebih permisif)
+            if (!$this->input->is_ajax_request() && !isset($_POST['test_mulai_ujian'])) {
+                throw new Exception('Request tidak valid');
+            }
+
+            // Validasi input
+            if (!$applicant_assessment_id || !is_numeric($applicant_assessment_id)) {
+                throw new Exception('Parameter ID tidak valid');
+            }
+
+            // Validasi session
+            $user_id = $this->session->userdata('user_id');
+            if (!$user_id) {
+                throw new Exception('Session tidak valid. Silakan login kembali.');
+            }
+
+            // Load models
+            $this->load->model('model_penilaian');
+            $this->load->model('model_lamaran');
+
+            // Validasi ownership
+            $applicant_assessment = $this->model_penilaian->dapatkan_penilaian_pelamar_by_id($applicant_assessment_id);
+
+            if (!$applicant_assessment) {
+                throw new Exception('Penilaian tidak ditemukan');
+            }
+
+            $lamaran = $this->model_lamaran->dapatkan_lamaran($applicant_assessment->id_lamaran);
+            if (!$lamaran || $lamaran->id_pelamar != $user_id) {
+                throw new Exception('Akses ditolak. Anda tidak memiliki izin untuk ujian ini.');
+            }
+
+            // Cek apakah status masih belum_mulai
+            if ($applicant_assessment->status != 'belum_mulai') {
+                throw new Exception('Ujian sudah dimulai atau selesai. Status saat ini: ' . $applicant_assessment->status);
+            }
+
+            // Update status dan waktu mulai
+            $update_data = array(
+                'status' => 'sedang_mengerjakan',
+                'waktu_mulai' => date('Y-m-d H:i:s'),
+                'diperbarui_pada' => date('Y-m-d H:i:s')
+            );
+
+            $this->db->where('id', $applicant_assessment_id);
+            $result = $this->db->update('penilaian_pelamar', $update_data);
+
+            if (!$result) {
+                // Cek database error
+                $db_error = $this->db->error();
+                log_message('error', 'Database error saat memulai ujian: ' . json_encode($db_error));
+                throw new Exception('Gagal memperbarui database. Error: ' . $db_error['message']);
+            }
+
+            // Verifikasi update berhasil
+            $affected_rows = $this->db->affected_rows();
+            if ($affected_rows == 0) {
+                throw new Exception('Tidak ada data yang diperbarui. Mungkin ID tidak ditemukan.');
+            }
+
+            // Log untuk debugging
+            log_message('info', 'Ujian dimulai untuk penilaian_pelamar ID: ' . $applicant_assessment_id . ' pada ' . $update_data['waktu_mulai'] . ' oleh user ID: ' . $user_id);
+
+            // Response sukses
+            echo json_encode([
+                'status' => 'success',
+                'message' => 'Ujian berhasil dimulai',
+                'waktu_mulai' => $update_data['waktu_mulai'],
+                'applicant_assessment_id' => $applicant_assessment_id,
+                'affected_rows' => $affected_rows
+            ]);
+            exit;
+
+        } catch (Exception $e) {
+            // Log error
+            log_message('error', 'Error saat memulai ujian: ' . $e->getMessage() . ' | User ID: ' . ($user_id ?? 'unknown') . ' | Assessment ID: ' . $applicant_assessment_id);
+
+            // Ensure JSON response even on error
+            header('Content-Type: application/json; charset=utf-8');
+            http_response_code(500);
+            echo json_encode([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+                'debug_info' => [
+                    'user_id' => $user_id ?? null,
+                    'applicant_assessment_id' => $applicant_assessment_id,
+                    'timestamp' => date('Y-m-d H:i:s')
+                ]
+            ]);
+            exit;
+        } catch (Error $e) {
+            // Handle PHP fatal errors
+            log_message('error', 'PHP Error saat memulai ujian: ' . $e->getMessage() . ' | File: ' . $e->getFile() . ' | Line: ' . $e->getLine());
+
+            header('Content-Type: application/json; charset=utf-8');
+            http_response_code(500);
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Terjadi kesalahan sistem. Silakan coba lagi.',
+                'debug_info' => [
+                    'error_type' => 'PHP Error',
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                    'timestamp' => date('Y-m-d H:i:s')
+                ]
+            ]);
+            exit;
+        }
+    }
+
+    // Method test sederhana
+    public function test_json() {
+        header('Content-Type: application/json; charset=utf-8');
+        echo '{"status":"success","message":"JSON test berhasil","timestamp":"' . date('Y-m-d H:i:s') . '"}';
+        exit;
+    }
+
+    // Method test untuk debug
+    public function test_mulai_ujian($applicant_assessment_id = null) {
+        // Set headers to prevent caching and ensure JSON
+        header('Cache-Control: no-cache, must-revalidate');
+        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+        header('Content-Type: application/json; charset=utf-8');
+
+        // Simple test response
+        $response = [
+            'status' => 'success',
+            'message' => 'Test method berhasil',
+            'data' => [
+                'applicant_assessment_id' => $applicant_assessment_id,
+                'timestamp' => date('Y-m-d H:i:s'),
+                'user_id' => $this->session->userdata('user_id'),
+                'is_ajax' => $this->input->is_ajax_request() ? 'yes' : 'no',
+                'method' => $this->input->method(),
+                'user_agent' => $this->input->user_agent(),
+                'ip_address' => $this->input->ip_address()
+            ]
+        ];
+
+        echo json_encode($response);
+        exit; // Ensure no additional output
     }
 
     public function kirim_penilaian_cat() {
