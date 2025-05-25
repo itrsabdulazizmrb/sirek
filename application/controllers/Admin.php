@@ -2465,6 +2465,328 @@ class Admin extends CI_Controller {
         $this->load->view('templates/admin_footer');
     }
 
+    // ========== LAPORAN ==========
+
+    // Laporan Dashboard
+    public function laporan() {
+        // Load models for reports
+        $this->load->model('model_laporan');
+
+        // Get summary data for dashboard
+        $data['summary'] = $this->model_laporan->dapatkan_ringkasan_laporan();
+
+        // Load views
+        $data['title'] = 'Laporan & Statistik';
+        $this->load->view('templates/admin_header', $data);
+        $this->load->view('admin/laporan/index', $data);
+        $this->load->view('templates/admin_footer');
+    }
+
+    // Laporan Lowongan
+    public function laporan_lowongan() {
+        $this->load->model('model_laporan');
+
+        // Get filter parameters
+        $filters = [
+            'periode' => $this->input->get('periode') ?: 'bulan',
+            'tanggal_mulai' => $this->input->get('tanggal_mulai'),
+            'tanggal_selesai' => $this->input->get('tanggal_selesai'),
+            'kategori' => $this->input->get('kategori'),
+            'status' => $this->input->get('status'),
+            'lokasi' => $this->input->get('lokasi')
+        ];
+
+        // Get report data
+        $data['lowongan'] = $this->model_laporan->laporan_lowongan($filters);
+        $data['statistik_lowongan'] = $this->model_laporan->statistik_lowongan($filters);
+        $data['filters'] = $filters;
+
+        // Get filter options
+        $this->load->model('model_kategori');
+        $data['categories'] = $this->model_kategori->dapatkan_kategori_lowongan();
+        $data['locations'] = $this->model_laporan->dapatkan_lokasi_lowongan();
+
+        $data['title'] = 'Laporan Lowongan Pekerjaan';
+        $this->load->view('templates/admin_header', $data);
+        $this->load->view('admin/laporan/lowongan', $data);
+        $this->load->view('templates/admin_footer');
+    }
+
+    // Laporan Lamaran
+    public function laporan_lamaran() {
+        $this->load->model('model_laporan');
+
+        // Get filter parameters
+        $filters = [
+            'periode' => $this->input->get('periode') ?: 'bulan',
+            'tanggal_mulai' => $this->input->get('tanggal_mulai'),
+            'tanggal_selesai' => $this->input->get('tanggal_selesai'),
+            'status' => $this->input->get('status'),
+            'lowongan' => $this->input->get('lowongan')
+        ];
+
+        // Get report data
+        $data['lamaran'] = $this->model_laporan->laporan_lamaran($filters);
+        $data['statistik_lamaran'] = $this->model_laporan->statistik_lamaran($filters);
+        $data['conversion_rate'] = $this->model_laporan->conversion_rate_lamaran($filters);
+        $data['filters'] = $filters;
+
+        // Get filter options
+        $data['lowongan_list'] = $this->model_laporan->dapatkan_daftar_lowongan();
+
+        $data['title'] = 'Laporan Lamaran';
+        $this->load->view('templates/admin_header', $data);
+        $this->load->view('admin/laporan/lamaran', $data);
+        $this->load->view('templates/admin_footer');
+    }
+
+    // Laporan Pelamar
+    public function laporan_pelamar() {
+        $this->load->model('model_laporan');
+
+        // Get filter parameters
+        $filters = [
+            'periode' => $this->input->get('periode') ?: 'bulan',
+            'tanggal_mulai' => $this->input->get('tanggal_mulai'),
+            'tanggal_selesai' => $this->input->get('tanggal_selesai'),
+            'lokasi' => $this->input->get('lokasi'),
+            'pendidikan' => $this->input->get('pendidikan')
+        ];
+
+        // Get report data
+        $data['pelamar'] = $this->model_laporan->laporan_pelamar($filters);
+        $data['statistik_pelamar'] = $this->model_laporan->statistik_pelamar($filters);
+        $data['aktivitas_login'] = $this->model_laporan->aktivitas_login_pelamar($filters);
+        $data['filters'] = $filters;
+
+        $data['title'] = 'Laporan Pelamar';
+        $this->load->view('templates/admin_header', $data);
+        $this->load->view('admin/laporan/pelamar', $data);
+        $this->load->view('templates/admin_footer');
+    }
+
+    // Laporan Penilaian
+    public function laporan_penilaian() {
+        $this->load->model('model_laporan');
+
+        // Get filter parameters
+        $filters = [
+            'periode' => $this->input->get('periode') ?: 'semua',
+            'tanggal_mulai' => $this->input->get('tanggal_mulai'),
+            'tanggal_selesai' => $this->input->get('tanggal_selesai'),
+            'penilaian' => $this->input->get('penilaian'),
+            'lowongan' => $this->input->get('lowongan')
+        ];
+
+        // Get report data
+        $data['hasil_penilaian'] = $this->model_laporan->laporan_hasil_penilaian($filters);
+        $data['statistik_penilaian'] = $this->model_laporan->statistik_penilaian($filters);
+        $data['tingkat_kelulusan'] = $this->model_laporan->tingkat_kelulusan_penilaian($filters);
+        $data['filters'] = $filters;
+
+        // Get filter options
+        $data['penilaian_list'] = $this->model_laporan->dapatkan_daftar_penilaian();
+        $data['lowongan_list'] = $this->model_laporan->dapatkan_daftar_lowongan();
+
+        $data['title'] = 'Laporan Penilaian';
+        $this->load->view('templates/admin_header', $data);
+        $this->load->view('admin/laporan/penilaian', $data);
+        $this->load->view('templates/admin_footer');
+    }
+
+    // Perbaiki data waktu mulai yang kosong
+    public function perbaiki_waktu_mulai() {
+        $this->load->model('model_penilaian');
+
+        $result = $this->model_penilaian->perbaiki_waktu_mulai_kosong();
+
+        $this->session->set_flashdata('success',
+            'Berhasil memperbaiki data waktu mulai: ' .
+            $result['sedang_mengerjakan'] . ' data sedang mengerjakan, ' .
+            $result['selesai'] . ' data selesai'
+        );
+
+        redirect('admin/laporan_penilaian');
+    }
+
+    // Export Laporan
+    public function export_laporan() {
+        $this->load->model('model_laporan');
+
+        $jenis = $this->input->get('jenis');
+        $format = $this->input->get('format') ?: 'excel';
+
+        // Get filters from GET parameters
+        $filters = [
+            'periode' => $this->input->get('periode') ?: 'bulan',
+            'tanggal_mulai' => $this->input->get('tanggal_mulai'),
+            'tanggal_selesai' => $this->input->get('tanggal_selesai'),
+            'kategori' => $this->input->get('kategori'),
+            'status' => $this->input->get('status'),
+            'lokasi' => $this->input->get('lokasi'),
+            'lowongan' => $this->input->get('lowongan'),
+            'penilaian' => $this->input->get('penilaian'),
+            'pendidikan' => $this->input->get('pendidikan')
+        ];
+
+        switch ($jenis) {
+            case 'lowongan':
+                $data = $this->model_laporan->laporan_lowongan($filters);
+                $filename = 'Laporan_Lowongan_' . date('Y-m-d_H-i-s');
+                $this->_export_lowongan($data, $filename, $format);
+                break;
+            case 'lamaran':
+                $data = $this->model_laporan->laporan_lamaran($filters);
+                $filename = 'Laporan_Lamaran_' . date('Y-m-d_H-i-s');
+                $this->_export_lamaran($data, $filename, $format);
+                break;
+            case 'pelamar':
+                $data = $this->model_laporan->laporan_pelamar($filters);
+                $filename = 'Laporan_Pelamar_' . date('Y-m-d_H-i-s');
+                $this->_export_pelamar($data, $filename, $format);
+                break;
+            case 'penilaian':
+                $data = $this->model_laporan->laporan_hasil_penilaian($filters);
+                $filename = 'Laporan_Penilaian_' . date('Y-m-d_H-i-s');
+                $this->_export_penilaian($data, $filename, $format);
+                break;
+            default:
+                show_404();
+        }
+    }
+
+    private function _export_lowongan($data, $filename, $format) {
+        if ($format == 'excel') {
+            header('Content-Type: application/vnd.ms-excel');
+            header('Content-Disposition: attachment;filename="' . $filename . '.xls"');
+            header('Cache-Control: max-age=0');
+
+            echo '<table border="1">';
+            echo '<tr>';
+            echo '<th>No</th>';
+            echo '<th>Judul Lowongan</th>';
+            echo '<th>Kategori</th>';
+            echo '<th>Lokasi</th>';
+            echo '<th>Status</th>';
+            echo '<th>Tanggal Dibuat</th>';
+            echo '<th>Batas Waktu</th>';
+            echo '</tr>';
+
+            $no = 1;
+            foreach ($data as $row) {
+                echo '<tr>';
+                echo '<td>' . $no++ . '</td>';
+                echo '<td>' . $row->judul . '</td>';
+                echo '<td>' . ($row->kategori_nama ?: 'Tidak ada kategori') . '</td>';
+                echo '<td>' . $row->lokasi . '</td>';
+                echo '<td>' . ucfirst($row->status) . '</td>';
+                echo '<td>' . date('d/m/Y', strtotime($row->dibuat_pada)) . '</td>';
+                echo '<td>' . date('d/m/Y', strtotime($row->batas_waktu)) . '</td>';
+                echo '</tr>';
+            }
+            echo '</table>';
+        }
+    }
+
+    private function _export_lamaran($data, $filename, $format) {
+        if ($format == 'excel') {
+            header('Content-Type: application/vnd.ms-excel');
+            header('Content-Disposition: attachment;filename="' . $filename . '.xls"');
+            header('Cache-Control: max-age=0');
+
+            echo '<table border="1">';
+            echo '<tr>';
+            echo '<th>No</th>';
+            echo '<th>Pelamar</th>';
+            echo '<th>Lowongan</th>';
+            echo '<th>Status</th>';
+            echo '<th>Tanggal Lamaran</th>';
+            echo '</tr>';
+
+            $no = 1;
+            foreach ($data as $row) {
+                echo '<tr>';
+                echo '<td>' . $no++ . '</td>';
+                echo '<td>' . $row->pelamar_nama . '</td>';
+                echo '<td>' . $row->lowongan_judul . '</td>';
+                echo '<td>' . ucfirst($row->status) . '</td>';
+                echo '<td>' . date('d/m/Y H:i', strtotime($row->tanggal_lamaran)) . '</td>';
+                echo '</tr>';
+            }
+            echo '</table>';
+        }
+    }
+
+    private function _export_pelamar($data, $filename, $format) {
+        if ($format == 'excel') {
+            header('Content-Type: application/vnd.ms-excel');
+            header('Content-Disposition: attachment;filename="' . $filename . '.xls"');
+            header('Cache-Control: max-age=0');
+
+            echo '<table border="1">';
+            echo '<tr>';
+            echo '<th>No</th>';
+            echo '<th>Nama Lengkap</th>';
+            echo '<th>Email</th>';
+            echo '<th>Pendidikan</th>';
+            echo '<th>Total Lamaran</th>';
+            echo '<th>Tanggal Daftar</th>';
+            echo '<th>Last Login</th>';
+            echo '</tr>';
+
+            $no = 1;
+            foreach ($data as $row) {
+                echo '<tr>';
+                echo '<td>' . $no++ . '</td>';
+                echo '<td>' . $row->nama_lengkap . '</td>';
+                echo '<td>' . $row->email . '</td>';
+                echo '<td>' . ($row->pendidikan ?: '-') . '</td>';
+                echo '<td>' . $row->total_lamaran . '</td>';
+                echo '<td>' . date('d/m/Y', strtotime($row->dibuat_pada)) . '</td>';
+                echo '<td>' . ($row->last_login ? date('d/m/Y H:i', strtotime($row->last_login)) : 'Belum pernah') . '</td>';
+                echo '</tr>';
+            }
+            echo '</table>';
+        }
+    }
+
+    private function _export_penilaian($data, $filename, $format) {
+        if ($format == 'excel') {
+            header('Content-Type: application/vnd.ms-excel');
+            header('Content-Disposition: attachment;filename="' . $filename . '.xls"');
+            header('Cache-Control: max-age=0');
+
+            echo '<table border="1">';
+            echo '<tr>';
+            echo '<th>No</th>';
+            echo '<th>Pelamar</th>';
+            echo '<th>Penilaian</th>';
+            echo '<th>Lowongan</th>';
+            echo '<th>Nilai</th>';
+            echo '<th>Status</th>';
+            echo '<th>Waktu Pengerjaan (menit)</th>';
+            echo '<th>Tanggal Mulai</th>';
+            echo '<th>Tanggal Selesai</th>';
+            echo '</tr>';
+
+            $no = 1;
+            foreach ($data as $row) {
+                echo '<tr>';
+                echo '<td>' . $no++ . '</td>';
+                echo '<td>' . ($row->pelamar_nama ?: '-') . '</td>';
+                echo '<td>' . ($row->penilaian_judul ?: '-') . '</td>';
+                echo '<td>' . ($row->lowongan_judul ?: '-') . '</td>';
+                echo '<td>' . ($row->status == 'selesai' && isset($row->nilai) ? $row->nilai : '-') . '</td>';
+                echo '<td>' . ucfirst($row->status) . '</td>';
+                echo '<td>' . (isset($row->waktu_pengerjaan) && $row->waktu_pengerjaan ? $row->waktu_pengerjaan : '-') . '</td>';
+                echo '<td>' . (isset($row->waktu_mulai) && $row->waktu_mulai ? date('d/m/Y H:i', strtotime($row->waktu_mulai)) : '-') . '</td>';
+                echo '<td>' . (isset($row->waktu_selesai) && $row->waktu_selesai ? date('d/m/Y H:i', strtotime($row->waktu_selesai)) : '-') . '</td>';
+                echo '</tr>';
+            }
+            echo '</table>';
+        }
+    }
+
     // Tambah Artikel Blog
     public function tambah_artikel() {
         // Get blog categories
