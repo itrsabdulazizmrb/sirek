@@ -2041,7 +2041,8 @@ class Admin extends CI_Controller {
                 'email' => $this->input->post('email'),
                 'password' => password_hash($this->input->post('password'), PASSWORD_DEFAULT),
                 'role' => $this->input->post('role'),
-                'status' => 'active',
+                'nama_lengkap' => $this->input->post('nama_lengkap'),
+                'status' => $this->input->post('status') ? 'aktif' : 'nonaktif',
                 'foto_profil' => $profile_picture,
                 'dibuat_pada' => date('Y-m-d H:i:s')
             );

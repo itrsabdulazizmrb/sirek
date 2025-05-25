@@ -18,9 +18,9 @@
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
-                <label for="full_name" class="form-control-label">Nama Lengkap <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" id="full_name" name="full_name" value="<?= set_value('full_name') ?>" required>
-                <?= form_error('full_name', '<small class="text-danger">', '</small>') ?>
+                <label for="nama_lengkap" class="form-control-label">Nama Lengkap <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="nama_lengkap" name="nama_lengkap" value="<?= set_value('nama_lengkap') ?>" required>
+                <?= form_error('nama_lengkap', '<small class="text-danger">', '</small>') ?>
               </div>
             </div>
             <div class="col-md-6">
@@ -102,20 +102,20 @@
           <div class="row">
             <div class="col-md-12">
               <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="is_active" name="is_active" value="1" <?= set_checkbox('is_active', '1', true) ?>>
-                <label class="form-check-label" for="is_active">Aktifkan Pengguna</label>
+                <input class="form-check-input" type="checkbox" id="status" name="status" value="1" <?= set_checkbox('status', '1', true) ?>>
+                <label class="form-check-label" for="status">Aktifkan Pengguna</label>
               </div>
             </div>
           </div>
 
-          <div class="row">
+          <!-- <div class="row">
             <div class="col-md-12">
               <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox" id="kirim_email" name="kirim_email" value="1" <?= set_checkbox('kirim_email', '1', true) ?>>
                 <label class="form-check-label" for="kirim_email">Kirim Email Notifikasi ke Pengguna</label>
               </div>
             </div>
-          </div>
+          </div> -->
 
           <div class="row mt-4">
             <div class="col-md-12">
