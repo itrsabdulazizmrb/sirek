@@ -5,6 +5,7 @@ class Pelamar extends CI_Controller {
 
     public function __construct() {
         parent::__construct();
+
         // Check if user is logged in and is an applicant
         if (!$this->session->userdata('logged_in') || $this->session->userdata('role') != 'pelamar') {
             redirect('auth');
@@ -642,15 +643,288 @@ class Pelamar extends CI_Controller {
             show_404();
         }
 
-        // Get assessment questions
-        $data['questions'] = $this->model_penilaian->dapatkan_soal_penilaian($assessment_id);
+        // Check if assessment uses CAT mode
+        $cat_settings = $this->model_penilaian->cek_mode_cat($assessment_id);
+        $data['cat_mode'] = $cat_settings->mode_cat;
+        $data['acak_soal'] = $cat_settings->acak_soal;
 
-        // Load views
-        $data['title'] = 'Ikuti Penilaian';
+        if ($data['cat_mode']) {
+            // Redirect to CAT interface
+            redirect('pelamar/cat-penilaian/' . $assessment_id . '/' . $application_id);
+        } else {
+            // Get assessment questions (traditional mode)
+            $data['questions'] = $this->model_penilaian->dapatkan_soal_penilaian($assessment_id);
+
+            // Load views
+            $data['title'] = 'Ikuti Penilaian';
+            $data['application_id'] = $application_id;
+            $this->load->view('templates/applicant_header', $data);
+            $this->load->view('applicant/ikuti_penilaian', $data);
+            $this->load->view('templates/applicant_footer');
+        }
+    }
+
+    public function cat_penilaian($assessment_id, $application_id, $question_number = 1) {
+        // Get assessment details
+        $data['assessment'] = $this->model_penilaian->dapatkan_penilaian($assessment_id);
+
+        // If assessment not found, show 404
+        if (!$data['assessment']) {
+            show_404();
+        }
+
+        // Get applicant assessment
+        $user_id = $this->session->userdata('user_id');
+        $data['applicant_assessment'] = $this->model_penilaian->dapatkan_penilaian_pelamar_spesifik($application_id, $assessment_id);
+
+        // If applicant assessment not found or not owned by current user, show 404
+        if (!$data['applicant_assessment'] || $data['applicant_assessment']->id_pelamar != $user_id) {
+            show_404();
+        }
+
+        // Check if assessment uses CAT mode
+        $cat_settings = $this->model_penilaian->cek_mode_cat($assessment_id);
+        if (!$cat_settings->mode_cat) {
+            // Redirect to traditional mode if CAT is not enabled
+            redirect('pelamar/ikuti-penilaian/' . $assessment_id . '/' . $application_id);
+        }
+
+        // Initialize question order if needed
+        $total_questions = $this->model_penilaian->dapatkan_total_soal_cat($data['applicant_assessment']->id);
+        if ($total_questions == 0) {
+            $this->model_penilaian->buat_urutan_soal_acak($data['applicant_assessment']->id);
+            $total_questions = $this->model_penilaian->dapatkan_total_soal_cat($data['applicant_assessment']->id);
+        }
+
+        // Validate question number
+        if ($question_number < 1 || $question_number > $total_questions) {
+            $question_number = 1;
+        }
+
+        // Get current question
+        $data['current_question'] = $this->model_penilaian->dapatkan_soal_cat_berdasarkan_urutan($data['applicant_assessment']->id, $question_number);
+        $data['question_number'] = $question_number;
+        $data['total_questions'] = $total_questions;
         $data['application_id'] = $application_id;
-        $this->load->view('templates/applicant_header', $data);
-        $this->load->view('applicant/ikuti_penilaian', $data);
-        $this->load->view('templates/applicant_footer');
+
+        // Get question status for navigation
+        $data['question_status'] = $this->model_penilaian->dapatkan_status_jawaban_cat($data['applicant_assessment']->id);
+
+        // Load CAT views
+        $data['title'] = 'Ujian CAT - ' . $data['assessment']->judul;
+        $this->load->view('applicant/cat_penilaian', $data);
+    }
+
+    public function simpan_jawaban_cat() {
+        // Disable CSRF for this method
+        $this->security->csrf_verify = FALSE;
+
+        // Validasi AJAX request
+        if (!$this->input->is_ajax_request()) {
+            show_404();
+        }
+
+        $applicant_assessment_id = $this->input->post('applicant_assessment_id');
+        $question_id = $this->input->post('question_id');
+        $answer_type = $this->input->post('answer_type');
+
+        // Validasi input
+        if (!$applicant_assessment_id || !$question_id || !$answer_type) {
+            echo json_encode(['status' => 'error', 'message' => 'Data tidak lengkap']);
+            return;
+        }
+
+        $answer_data = array(
+            'id_penilaian_pelamar' => $applicant_assessment_id,
+            'id_soal' => $question_id,
+            'diperbarui_pada' => date('Y-m-d H:i:s')
+        );
+
+        // Handle different answer types
+        if ($answer_type == 'pilihan_ganda') {
+            $selected_option = $this->input->post('selected_option');
+            if ($selected_option) {
+                $answer_data['id_pilihan_terpilih'] = $selected_option;
+                $answer_data['teks_jawaban'] = null;
+                $answer_data['unggah_file'] = null;
+            }
+        } elseif ($answer_type == 'esai') {
+            $text_answer = $this->input->post('text_answer');
+            if ($text_answer) {
+                $answer_data['teks_jawaban'] = $text_answer;
+                $answer_data['id_pilihan_terpilih'] = null;
+                $answer_data['unggah_file'] = null;
+            }
+        }
+
+        // Save answer
+        $result = $this->model_penilaian->simpan_jawaban_cat($answer_data);
+
+        if ($result) {
+            echo json_encode(['status' => 'success', 'message' => 'Jawaban berhasil disimpan']);
+        } else {
+            echo json_encode(['status' => 'error', 'message' => 'Gagal menyimpan jawaban']);
+        }
+    }
+
+    public function tandai_ragu_cat() {
+        // Disable CSRF for this method
+        $this->security->csrf_verify = FALSE;
+
+        // Validasi AJAX request
+        if (!$this->input->is_ajax_request()) {
+            show_404();
+        }
+
+        $applicant_assessment_id = $this->input->post('applicant_assessment_id');
+        $question_id = $this->input->post('question_id');
+        $ragu = $this->input->post('ragu') ? 1 : 0;
+
+        // Validasi input
+        if (!$applicant_assessment_id || !$question_id) {
+            echo json_encode(['status' => 'error', 'message' => 'Data tidak lengkap']);
+            return;
+        }
+
+        $result = $this->model_penilaian->tandai_soal_ragu($applicant_assessment_id, $question_id, $ragu);
+
+        if ($result) {
+            echo json_encode(['status' => 'success', 'message' => 'Status ragu berhasil diperbarui']);
+        } else {
+            echo json_encode(['status' => 'error', 'message' => 'Gagal memperbarui status ragu']);
+        }
+    }
+
+    public function dapatkan_status_navigasi_cat() {
+        // Disable CSRF for this method
+        $this->security->csrf_verify = FALSE;
+
+        // Validasi AJAX request
+        if (!$this->input->is_ajax_request()) {
+            show_404();
+        }
+
+        $applicant_assessment_id = $this->input->post('applicant_assessment_id');
+
+        if (!$applicant_assessment_id) {
+            echo json_encode(['status' => 'error', 'message' => 'Data tidak lengkap']);
+            return;
+        }
+
+        $status = $this->model_penilaian->dapatkan_status_jawaban_cat($applicant_assessment_id);
+        echo json_encode(['status' => 'success', 'data' => $status]);
+    }
+
+    public function get_question_cat() {
+        // Disable CSRF for this method
+        $this->security->csrf_verify = FALSE;
+
+        // Validasi AJAX request
+        if (!$this->input->is_ajax_request()) {
+            show_404();
+        }
+
+        $applicant_assessment_id = $this->input->post('applicant_assessment_id');
+        $question_number = $this->input->post('question_number');
+
+        if (!$applicant_assessment_id || !$question_number) {
+            echo json_encode(['status' => 'error', 'message' => 'Data tidak lengkap']);
+            return;
+        }
+
+        // Validasi bahwa penilaian_pelamar milik user yang sedang login
+        $user_id = $this->session->userdata('user_id');
+        $applicant_assessment = $this->model_penilaian->dapatkan_penilaian_pelamar_by_id($applicant_assessment_id);
+
+        if (!$applicant_assessment) {
+            echo json_encode(['status' => 'error', 'message' => 'Penilaian tidak ditemukan']);
+            return;
+        }
+
+        // Cek apakah penilaian ini milik user yang sedang login
+        $lamaran = $this->model_lamaran->dapatkan_lamaran($applicant_assessment->id_lamaran);
+        if (!$lamaran || $lamaran->id_pelamar != $user_id) {
+            echo json_encode(['status' => 'error', 'message' => 'Akses ditolak']);
+            return;
+        }
+
+        // Get question data
+        $question = $this->model_penilaian->dapatkan_soal_cat_berdasarkan_urutan($applicant_assessment_id, $question_number);
+
+        if (!$question) {
+            echo json_encode(['status' => 'error', 'message' => 'Soal tidak ditemukan']);
+            return;
+        }
+
+        echo json_encode(['status' => 'success', 'question' => $question]);
+    }
+
+    public function log_security_violation() {
+        // Disable CSRF for this method
+        $this->security->csrf_verify = FALSE;
+
+        // Validasi AJAX request
+        if (!$this->input->is_ajax_request()) {
+            show_404();
+        }
+
+        $applicant_assessment_id = $this->input->post('applicant_assessment_id');
+        $violation = $this->input->post('violation');
+        $timestamp = $this->input->post('timestamp');
+
+        if (!$applicant_assessment_id || !$violation) {
+            echo json_encode(['status' => 'error', 'message' => 'Data tidak lengkap']);
+            return;
+        }
+
+        // Validasi bahwa penilaian_pelamar milik user yang sedang login
+        $user_id = $this->session->userdata('user_id');
+        $applicant_assessment = $this->model_penilaian->dapatkan_penilaian_pelamar_by_id($applicant_assessment_id);
+
+        if (!$applicant_assessment) {
+            echo json_encode(['status' => 'error', 'message' => 'Penilaian tidak ditemukan']);
+            return;
+        }
+
+        // Cek apakah penilaian ini milik user yang sedang login
+        $lamaran = $this->model_lamaran->dapatkan_lamaran($applicant_assessment->id_lamaran);
+        if (!$lamaran || $lamaran->id_pelamar != $user_id) {
+            echo json_encode(['status' => 'error', 'message' => 'Akses ditolak']);
+            return;
+        }
+
+        // Log ke database atau file
+        $log_data = array(
+            'id_penilaian_pelamar' => $applicant_assessment_id,
+            'id_pelamar' => $user_id,
+            'violation_type' => $violation,
+            'timestamp' => date('Y-m-d H:i:s', $timestamp ? $timestamp/1000 : time()),
+            'ip_address' => $this->input->ip_address(),
+            'user_agent' => $this->input->user_agent(),
+            'created_at' => date('Y-m-d H:i:s')
+        );
+
+        // Simpan ke tabel log_security_violations (jika ada) atau log file
+        $this->log_security_to_database($log_data);
+
+        echo json_encode(['status' => 'success', 'message' => 'Violation logged']);
+    }
+
+    private function log_security_to_database($log_data) {
+        try {
+            // Coba simpan ke tabel log_security_violations
+            $this->db->insert('log_security_violations', $log_data);
+        } catch (Exception $e) {
+            // Jika tabel tidak ada, simpan ke file log
+            $log_message = date('Y-m-d H:i:s') . " - Security Violation: " .
+                          "User ID: {$log_data['id_pelamar']}, " .
+                          "Assessment ID: {$log_data['id_penilaian_pelamar']}, " .
+                          "Violation: {$log_data['violation_type']}, " .
+                          "IP: {$log_data['ip_address']}" . PHP_EOL;
+
+            $log_file = APPPATH . 'logs/security_violations_' . date('Y-m-d') . '.log';
+            file_put_contents($log_file, $log_message, FILE_APPEND | LOCK_EX);
+        }
     }
 
     public function perbarui_status_penilaian($applicant_assessment_id, $status) {
@@ -670,6 +944,73 @@ class Pelamar extends CI_Controller {
             $this->output->set_status_header(500);
             echo json_encode(['status' => 'error', 'message' => 'Gagal memperbarui status']);
         }
+    }
+
+    public function kirim_penilaian_cat() {
+        // Disable CSRF for this method
+        $this->security->csrf_verify = FALSE;
+
+        // Get form data
+        $assessment_id = $this->input->post('assessment_id');
+        $application_id = $this->input->post('application_id');
+        $applicant_assessment_id = $this->input->post('applicant_assessment_id');
+
+        // Validate required data
+        if (!$assessment_id || !$application_id || !$applicant_assessment_id) {
+            $this->session->set_flashdata('error', 'Data penilaian tidak lengkap.');
+            redirect('pelamar/penilaian');
+            return;
+        }
+
+        // Validate user ownership
+        $user_id = $this->session->userdata('user_id');
+        $applicant_assessment = $this->model_penilaian->dapatkan_penilaian_pelamar_by_id($applicant_assessment_id);
+
+        if (!$applicant_assessment) {
+            $this->session->set_flashdata('error', 'Penilaian tidak ditemukan.');
+            redirect('pelamar/penilaian');
+            return;
+        }
+
+        $lamaran = $this->model_lamaran->dapatkan_lamaran($applicant_assessment->id_lamaran);
+        if (!$lamaran || $lamaran->id_pelamar != $user_id) {
+            $this->session->set_flashdata('error', 'Akses ditolak.');
+            redirect('pelamar/penilaian');
+            return;
+        }
+
+        // Update applicant assessment status and completion time
+        $update_data = array(
+            'status' => 'selesai',
+            'waktu_selesai' => date('Y-m-d H:i:s'),
+            'diperbarui_pada' => date('Y-m-d H:i:s')
+        );
+
+        $this->db->where('id', $applicant_assessment_id);
+        $this->db->update('penilaian_pelamar', $update_data);
+
+        // Calculate score for CAT assessment
+        $score = $this->model_penilaian->hitung_skor_penilaian_pelamar($applicant_assessment_id);
+
+        // Update score
+        $this->db->where('id', $applicant_assessment_id);
+        $this->db->update('penilaian_pelamar', array('nilai' => $score));
+
+        // Log completion
+        $log_data = array(
+            'id_penilaian_pelamar' => $applicant_assessment_id,
+            'id_pelamar' => $user_id,
+            'violation_type' => 'Assessment completed successfully',
+            'timestamp' => date('Y-m-d H:i:s'),
+            'ip_address' => $this->input->ip_address(),
+            'user_agent' => $this->input->user_agent(),
+            'created_at' => date('Y-m-d H:i:s')
+        );
+        $this->log_security_to_database($log_data);
+
+        // Show success message
+        $this->session->set_flashdata('success', 'Ujian CAT berhasil diselesaikan. Skor Anda: ' . $score . '%');
+        redirect('pelamar/detail_lamaran/' . $application_id);
     }
 
     public function kirim_penilaian() {

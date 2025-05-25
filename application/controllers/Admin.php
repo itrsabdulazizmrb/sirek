@@ -1038,6 +1038,8 @@ class Admin extends CI_Controller {
                 'nilai_lulus' => $this->input->post('passing_score'),
                 'maksimal_percobaan' => $this->input->post('max_attempts'),
                 'aktif' => $this->input->post('is_active') ? 1 : 0,
+                'acak_soal' => $this->input->post('acak_soal') ? 1 : 0,
+                'mode_cat' => $this->input->post('mode_cat') ? 1 : 0,
                 'dibuat_oleh' => $this->session->userdata('user_id'),
                 'dibuat_pada' => date('Y-m-d H:i:s')
             );
@@ -1106,6 +1108,8 @@ class Admin extends CI_Controller {
                 'nilai_lulus' => $this->input->post('passing_score'),
                 'maksimal_percobaan' => $this->input->post('max_attempts'),
                 'aktif' => $this->input->post('is_active') ? 1 : 0,
+                'acak_soal' => $this->input->post('acak_soal') ? 1 : 0,
+                'mode_cat' => $this->input->post('mode_cat') ? 1 : 0,
                 'diperbarui_pada' => date('Y-m-d H:i:s')
             );
 

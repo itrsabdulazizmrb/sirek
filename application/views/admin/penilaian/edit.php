@@ -91,11 +91,25 @@
           </div>
 
           <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-4">
               <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox" id="is_active" name="is_active" value="1" <?= set_checkbox('is_active', '1', ($assessment->aktif == 1)) ?>>
                 <label class="form-check-label" for="is_active">Aktifkan Penilaian</label>
                 <small class="form-text text-muted d-block">Penilaian yang aktif dapat digunakan dalam proses rekrutmen.</small>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="acak_soal" name="acak_soal" value="1" <?= set_checkbox('acak_soal', '1', (isset($assessment->acak_soal) && $assessment->acak_soal == 1)) ?>>
+                <label class="form-check-label" for="acak_soal">Acak Urutan Soal</label>
+                <small class="form-text text-muted d-block">Soal akan ditampilkan dalam urutan acak untuk setiap peserta.</small>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="mode_cat" name="mode_cat" value="1" <?= set_checkbox('mode_cat', '1', (isset($assessment->mode_cat) && $assessment->mode_cat == 1)) ?>>
+                <label class="form-check-label" for="mode_cat">Mode CAT (Computer Adaptive Test)</label>
+                <small class="form-text text-muted d-block">Aktifkan interface ujian CAT dengan navigasi soal dan mode layar penuh.</small>
               </div>
             </div>
           </div>
@@ -117,7 +131,7 @@ $(document).ready(function() {
     // Form validation
     $('form').on('submit', function(e) {
         let isValid = true;
-        
+
         // Check required fields
         $('input[required], select[required]').each(function() {
             if (!$(this).val()) {

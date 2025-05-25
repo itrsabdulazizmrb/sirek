@@ -467,7 +467,7 @@ class Model_Penilaian extends CI_Model {
 
     // Dapatkan soal dengan jawaban pelamar
     public function dapatkan_soal_dengan_jawaban_pelamar($applicant_assessment_id) {
-        $this->db->select('soal.*, jawaban_pelamar.id as answer_id, jawaban_pelamar.teks_jawaban, jawaban_pelamar.id_pilihan_terpilih, jawaban_pelamar.nilai as nilai_manual, jawaban_pelamar.tanggal_dinilai, pilihan_soal.teks_pilihan as selected_option_text, pilihan_soal.benar as is_correct');
+        $this->db->select('soal.*, jawaban_pelamar.id as answer_id, jawaban_pelamar.teks_jawaban, jawaban_pelamar.id_pilihan_terpilih, jawaban_pelamar.nilai as nilai_manual, jawaban_pelamar.tanggal_dinilai, jawaban_pelamar.ditandai_ragu, pilihan_soal.teks_pilihan as selected_option_text, pilihan_soal.benar as is_correct');
         $this->db->from('soal');
         $this->db->join('jawaban_pelamar', 'jawaban_pelamar.id_soal = soal.id AND jawaban_pelamar.id_penilaian_pelamar = ' . $applicant_assessment_id, 'left');
         $this->db->join('pilihan_soal', 'pilihan_soal.id = jawaban_pelamar.id_pilihan_terpilih', 'left');
@@ -485,6 +485,184 @@ class Model_Penilaian extends CI_Model {
         }
 
         return $questions;
+    }
+
+    // Dapatkan soal untuk mode CAT dengan urutan yang sudah diacak
+    public function dapatkan_soal_cat($applicant_assessment_id) {
+        // Cek apakah sudah ada urutan soal yang tersimpan
+        $this->db->select('urutan_soal_pelamar.urutan, soal.*, jawaban_pelamar.id as answer_id, jawaban_pelamar.teks_jawaban, jawaban_pelamar.id_pilihan_terpilih, jawaban_pelamar.ditandai_ragu');
+        $this->db->from('urutan_soal_pelamar');
+        $this->db->join('soal', 'soal.id = urutan_soal_pelamar.id_soal', 'inner');
+        $this->db->join('jawaban_pelamar', 'jawaban_pelamar.id_soal = soal.id AND jawaban_pelamar.id_penilaian_pelamar = ' . $applicant_assessment_id, 'left');
+        $this->db->where('urutan_soal_pelamar.id_penilaian_pelamar', $applicant_assessment_id);
+        $this->db->order_by('urutan_soal_pelamar.urutan', 'ASC');
+        $query = $this->db->get();
+        $questions = $query->result();
+
+        // Jika belum ada urutan soal, buat urutan baru
+        if (empty($questions)) {
+            $this->buat_urutan_soal_acak($applicant_assessment_id);
+            // Ambil ulang setelah urutan dibuat
+            return $this->dapatkan_soal_cat($applicant_assessment_id);
+        }
+
+        // Get all options for each question
+        foreach ($questions as &$question) {
+            if ($question->jenis_soal == 'pilihan_ganda' || $question->jenis_soal == 'benar_salah') {
+                $question->options = $this->dapatkan_opsi_soal($question->id);
+            }
+        }
+
+        return $questions;
+    }
+
+    // Buat urutan soal acak untuk pelamar
+    public function buat_urutan_soal_acak($applicant_assessment_id) {
+        // Dapatkan ID penilaian dari penilaian_pelamar
+        $this->db->select('id_penilaian');
+        $this->db->where('id', $applicant_assessment_id);
+        $query = $this->db->get('penilaian_pelamar');
+        $assessment_data = $query->row();
+
+        if (!$assessment_data) {
+            return false;
+        }
+
+        // Dapatkan semua soal untuk penilaian ini
+        $this->db->select('id');
+        $this->db->where('id_penilaian', $assessment_data->id_penilaian);
+        $this->db->order_by('id', 'ASC');
+        $query = $this->db->get('soal');
+        $questions = $query->result();
+
+        if (empty($questions)) {
+            return false;
+        }
+
+        // Acak urutan soal
+        $question_ids = array_column($questions, 'id');
+        shuffle($question_ids);
+
+        // Simpan urutan soal ke database
+        $batch_data = array();
+        foreach ($question_ids as $index => $question_id) {
+            $batch_data[] = array(
+                'id_penilaian_pelamar' => $applicant_assessment_id,
+                'id_soal' => $question_id,
+                'urutan' => $index + 1,
+                'dibuat_pada' => date('Y-m-d H:i:s')
+            );
+        }
+
+        return $this->db->insert_batch('urutan_soal_pelamar', $batch_data);
+    }
+
+    // Dapatkan soal berdasarkan nomor urutan untuk mode CAT
+    public function dapatkan_soal_cat_berdasarkan_urutan($applicant_assessment_id, $urutan) {
+        $this->db->select('urutan_soal_pelamar.urutan, soal.*, jawaban_pelamar.id as answer_id, jawaban_pelamar.teks_jawaban, jawaban_pelamar.id_pilihan_terpilih, jawaban_pelamar.ditandai_ragu');
+        $this->db->from('urutan_soal_pelamar');
+        $this->db->join('soal', 'soal.id = urutan_soal_pelamar.id_soal', 'inner');
+        $this->db->join('jawaban_pelamar', 'jawaban_pelamar.id_soal = soal.id AND jawaban_pelamar.id_penilaian_pelamar = ' . $applicant_assessment_id, 'left');
+        $this->db->where('urutan_soal_pelamar.id_penilaian_pelamar', $applicant_assessment_id);
+        $this->db->where('urutan_soal_pelamar.urutan', $urutan);
+        $query = $this->db->get();
+        $question = $query->row();
+
+        if ($question && ($question->jenis_soal == 'pilihan_ganda' || $question->jenis_soal == 'benar_salah')) {
+            $question->options = $this->dapatkan_opsi_soal($question->id);
+        }
+
+        return $question;
+    }
+
+    // Dapatkan total soal untuk mode CAT
+    public function dapatkan_total_soal_cat($applicant_assessment_id) {
+        $this->db->where('id_penilaian_pelamar', $applicant_assessment_id);
+        return $this->db->count_all_results('urutan_soal_pelamar');
+    }
+
+    // Simpan atau perbarui jawaban untuk mode CAT
+    public function simpan_jawaban_cat($data) {
+        // Cek apakah jawaban sudah ada
+        $this->db->where('id_penilaian_pelamar', $data['id_penilaian_pelamar']);
+        $this->db->where('id_soal', $data['id_soal']);
+        $existing = $this->db->get('jawaban_pelamar')->row();
+
+        if ($existing) {
+            // Update jawaban yang sudah ada
+            $this->db->where('id', $existing->id);
+            return $this->db->update('jawaban_pelamar', $data);
+        } else {
+            // Insert jawaban baru
+            return $this->db->insert('jawaban_pelamar', $data);
+        }
+    }
+
+    // Tandai soal sebagai ragu-ragu
+    public function tandai_soal_ragu($applicant_assessment_id, $question_id, $ragu = 1) {
+        // Cek apakah jawaban sudah ada
+        $this->db->where('id_penilaian_pelamar', $applicant_assessment_id);
+        $this->db->where('id_soal', $question_id);
+        $existing = $this->db->get('jawaban_pelamar')->row();
+
+        $data = array('ditandai_ragu' => $ragu);
+
+        if ($existing) {
+            // Update jawaban yang sudah ada
+            $this->db->where('id', $existing->id);
+            return $this->db->update('jawaban_pelamar', $data);
+        } else {
+            // Insert jawaban baru dengan hanya flag ragu
+            $data['id_penilaian_pelamar'] = $applicant_assessment_id;
+            $data['id_soal'] = $question_id;
+            $data['dibuat_pada'] = date('Y-m-d H:i:s');
+            return $this->db->insert('jawaban_pelamar', $data);
+        }
+    }
+
+    // Dapatkan status jawaban untuk navigasi CAT
+    public function dapatkan_status_jawaban_cat($applicant_assessment_id) {
+        $this->db->select('urutan_soal_pelamar.urutan, urutan_soal_pelamar.id_soal, jawaban_pelamar.id_pilihan_terpilih, jawaban_pelamar.teks_jawaban, jawaban_pelamar.unggah_file, jawaban_pelamar.ditandai_ragu');
+        $this->db->from('urutan_soal_pelamar');
+        $this->db->join('jawaban_pelamar', 'jawaban_pelamar.id_soal = urutan_soal_pelamar.id_soal AND jawaban_pelamar.id_penilaian_pelamar = ' . $applicant_assessment_id, 'left');
+        $this->db->where('urutan_soal_pelamar.id_penilaian_pelamar', $applicant_assessment_id);
+        $this->db->order_by('urutan_soal_pelamar.urutan', 'ASC');
+        $query = $this->db->get();
+        $results = $query->result();
+
+        $status = array();
+        foreach ($results as $result) {
+            $answered = false;
+            if ($result->id_pilihan_terpilih || $result->teks_jawaban || $result->unggah_file) {
+                $answered = true;
+            }
+
+            $status[] = array(
+                'urutan' => $result->urutan,
+                'id_soal' => $result->id_soal,
+                'dijawab' => $answered,
+                'ditandai_ragu' => $result->ditandai_ragu ? true : false
+            );
+        }
+
+        return $status;
+    }
+
+    // Cek apakah penilaian menggunakan mode CAT
+    public function cek_mode_cat($assessment_id) {
+        $this->db->select('mode_cat, acak_soal');
+        $this->db->where('id', $assessment_id);
+        $query = $this->db->get('penilaian');
+        $result = $query->row();
+
+        return $result ? $result : (object)array('mode_cat' => 0, 'acak_soal' => 0);
+    }
+
+    // Dapatkan penilaian pelamar berdasarkan ID
+    public function dapatkan_penilaian_pelamar_by_id($id) {
+        $this->db->where('id', $id);
+        $query = $this->db->get('penilaian_pelamar');
+        return $query->row();
     }
 
     // Dapatkan rata-rata skor penilaian

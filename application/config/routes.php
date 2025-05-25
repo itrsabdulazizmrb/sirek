@@ -81,8 +81,18 @@ $route['pelamar/penilaian'] = 'pelamar/penilaian';
 $route['pelamar/ikuti-penilaian/(:num)/(:num)'] = 'pelamar/ikuti_penilaian/$1/$2';
 $route['pelamar/detail_lamaran/(:num)'] = 'pelamar/detail_lamaran/$1';
 $route['pelamar/kirim-penilaian'] = 'pelamar/kirim_penilaian';
+$route['pelamar/kirim-penilaian-cat'] = 'pelamar/kirim_penilaian_cat';
 $route['pelamar/perbarui_status_penilaian/(:num)/(:any)'] = 'pelamar/perbarui_status_penilaian/$1/$2';
 $route['pelamar/ubah-password'] = 'pelamar/ubah_password';
+
+// Rute untuk sistem CAT (Computer Adaptive Test)
+$route['pelamar/cat-penilaian/(:num)/(:num)'] = 'pelamar/cat_penilaian/$1/$2';
+$route['pelamar/cat-penilaian/(:num)/(:num)/(:num)'] = 'pelamar/cat_penilaian/$1/$2/$3';
+$route['pelamar/simpan-jawaban-cat'] = 'pelamar/simpan_jawaban_cat';
+$route['pelamar/tandai-ragu-cat'] = 'pelamar/tandai_ragu_cat';
+$route['pelamar/dapatkan-status-navigasi-cat'] = 'pelamar/dapatkan_status_navigasi_cat';
+$route['pelamar/get-question-cat'] = 'pelamar/get_question_cat';
+$route['pelamar/log-security-violation'] = 'pelamar/log_security_violation';
 
 // Rute untuk admin
 $route['admin'] = 'admin/index';

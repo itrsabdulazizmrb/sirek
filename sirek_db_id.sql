@@ -31,6 +31,7 @@ CREATE TABLE `jawaban_pelamar`  (
   `nilai` int NULL DEFAULT NULL,
   `dinilai_oleh` int NULL DEFAULT NULL,
   `tanggal_dinilai` timestamp NULL DEFAULT NULL,
+  `ditandai_ragu` tinyint(1) NULL DEFAULT 0,
   `dibuat_pada` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `diperbarui_pada` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE,
@@ -42,6 +43,23 @@ CREATE TABLE `jawaban_pelamar`  (
   CONSTRAINT `jawaban_pelamar_ibfk_2` FOREIGN KEY (`id_soal`) REFERENCES `soal` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
   CONSTRAINT `jawaban_pelamar_ibfk_3` FOREIGN KEY (`id_pilihan_terpilih`) REFERENCES `pilihan_soal` (`id`) ON DELETE SET NULL ON UPDATE RESTRICT,
   CONSTRAINT `jawaban_pelamar_ibfk_4` FOREIGN KEY (`dinilai_oleh`) REFERENCES `pengguna` (`id`) ON DELETE SET NULL ON UPDATE RESTRICT
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Compact;
+
+-- ----------------------------
+-- Struktur tabel untuk urutan_soal_pelamar
+-- ----------------------------
+DROP TABLE IF EXISTS `urutan_soal_pelamar`;
+CREATE TABLE `urutan_soal_pelamar`  (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `id_penilaian_pelamar` int NOT NULL,
+  `id_soal` int NOT NULL,
+  `urutan` int NOT NULL,
+  `dibuat_pada` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `id_penilaian_pelamar`(`id_penilaian_pelamar` ASC) USING BTREE,
+  INDEX `id_soal`(`id_soal` ASC) USING BTREE,
+  CONSTRAINT `urutan_soal_pelamar_ibfk_1` FOREIGN KEY (`id_penilaian_pelamar`) REFERENCES `penilaian_pelamar` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
+  CONSTRAINT `urutan_soal_pelamar_ibfk_2` FOREIGN KEY (`id_soal`) REFERENCES `soal` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
@@ -119,6 +137,8 @@ CREATE TABLE `penilaian`  (
   `nilai_lulus` int NULL DEFAULT NULL,
   `aktif` tinyint(1) NULL DEFAULT 1,
   `maksimal_percobaan` int NULL DEFAULT 1,
+  `acak_soal` tinyint(1) NULL DEFAULT 0,
+  `mode_cat` tinyint(1) NULL DEFAULT 0,
   `dibuat_oleh` int NOT NULL,
   `dibuat_pada` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `diperbarui_pada` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
