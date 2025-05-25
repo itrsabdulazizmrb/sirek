@@ -1975,7 +1975,7 @@ class Admin extends CI_Controller {
     public function tambah_pengguna() {
         // Load upload configuration
         $this->load->config('upload');
-        
+
         // Form validation rules
         $this->form_validation->set_rules('username', 'Username', 'trim|required|is_unique[pengguna.nama_pengguna]');
         $this->form_validation->set_rules('email', 'Email', 'trim|required|valid_email|is_unique[pengguna.email]');
@@ -1994,7 +1994,7 @@ class Admin extends CI_Controller {
                 // Define upload path using absolute path
                 $upload_dir = 'uploads/profile_pictures';
                 $upload_path = str_replace('\\', '/', realpath(FCPATH . $upload_dir));
-                
+
                 // Create directory if it doesn't exist
                 if (!is_dir($upload_path)) {
                     if (!mkdir($upload_path, 0777, true)) {
@@ -2246,6 +2246,9 @@ class Admin extends CI_Controller {
 
         // Get applicant profile
         $data['profile'] = $this->model_pelamar->dapatkan_profil($id);
+
+        // Get applicant documents
+        $data['documents'] = $this->model_dokumen->dapatkan_dokumen_pelamar($id);
 
         // Load views
         $data['title'] = 'Profil Pelamar';

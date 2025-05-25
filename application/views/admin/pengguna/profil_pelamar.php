@@ -81,20 +81,7 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-md-6">
-            <div class="form-group">
-              <label class="form-control-label">CV</label>
-              <?php if (isset($profile->cv) && $profile->cv) : ?>
-                <p class="form-control-static">
-                  <a href="<?= base_url('uploads/cv/' . $profile->cv) ?>" target="_blank" class="btn btn-sm btn-outline-primary">
-                    <i class="fas fa-file-pdf me-2"></i> Lihat CV
-                  </a>
-                </p>
-              <?php else : ?>
-                <p class="form-control-static">Tidak tersedia</p>
-              <?php endif; ?>
-            </div>
-          </div>
+          <!--  -->
           <div class="col-md-6">
             <div class="form-group">
               <label class="form-control-label">URL Portofolio</label>
@@ -127,26 +114,128 @@
           </div>
         </div>
         <hr class="horizontal dark">
-        <p class="text-uppercase text-sm">Dokumen Pendukung</p>
-        <div class="row">
-          <?php if (isset($documents) && !empty($documents)) : ?>
-            <?php foreach ($documents as $doc) : ?>
-              <div class="col-md-6 mb-3">
+        <p class="text-uppercase text-sm">Dokumen</p>
+
+        <?php
+        // Buat array untuk menyimpan dokumen yang sudah diunggah
+        $uploaded_docs = [];
+        if (!empty($documents)) {
+            foreach ($documents as $doc) {
+                $uploaded_docs[$doc->jenis_dokumen] = $doc;
+            }
+        }
+
+        // Definisikan jenis dokumen yang akan ditampilkan
+        $document_types = [
+            'ktp' => [
+                'nama_dokumen' => 'KTP (Kartu Tanda Penduduk)',
+                'icon' => 'fas fa-id-card',
+                'color' => 'primary'
+            ],
+            'ijazah' => [
+                'nama_dokumen' => 'Ijazah Pendidikan Terakhir',
+                'icon' => 'fas fa-graduation-cap',
+                'color' => 'success'
+            ],
+            'transkrip' => [
+                'nama_dokumen' => 'Transkrip Nilai',
+                'icon' => 'fas fa-file-alt',
+                'color' => 'info'
+            ],
+            'sertifikat' => [
+                'nama_dokumen' => 'Sertifikat Keahlian',
+                'icon' => 'fas fa-certificate',
+                'color' => 'warning'
+            ],
+            'cv' => [
+                'nama_dokumen' => 'CV (Curriculum Vitae)',
+                'icon' => 'fas fa-file-pdf',
+                'color' => 'danger'
+            ],
+            'surat_lamaran' => [
+                'nama_dokumen' => 'Surat Lamaran',
+                'icon' => 'fas fa-envelope',
+                'color' => 'secondary'
+            ],
+            'foto' => [
+                'nama_dokumen' => 'Pas Foto',
+                'icon' => 'fas fa-camera',
+                'color' => 'dark'
+            ],
+            'skck' => [
+                'nama_dokumen' => 'SKCK (Surat Keterangan Catatan Kepolisian)',
+                'icon' => 'fas fa-shield-alt',
+                'color' => 'primary'
+            ],
+            'surat_sehat' => [
+                'nama_dokumen' => 'Surat Keterangan Sehat',
+                'icon' => 'fas fa-heartbeat',
+                'color' => 'success'
+            ]
+        ];
+
+        // Tampilkan hanya dokumen yang sudah ada dalam layout 2 kolom per baris
+        $available_docs = [];
+        if (!empty($documents)) {
+            foreach ($documents as $doc) {
+                // Cari info dokumen dari document_types
+                $doc_info = null;
+                if (isset($document_types[$doc->jenis_dokumen])) {
+                    $doc_info = $document_types[$doc->jenis_dokumen];
+                } else {
+                    // Jika tidak ada di document_types, buat info default
+                    $doc_info = [
+                        'nama_dokumen' => $doc->nama_dokumen,
+                        'icon' => 'fas fa-file',
+                        'color' => 'info'
+                    ];
+                }
+
+                $available_docs[] = [
+                    'doc' => $doc,
+                    'info' => $doc_info
+                ];
+            }
+        }
+
+        if (!empty($available_docs)) {
+            $doc_count = 0;
+            foreach ($available_docs as $item) {
+                $doc = $item['doc'];
+                $doc_info = $item['info'];
+
+                // Mulai baris baru setiap 2 dokumen
+                if ($doc_count % 2 == 0) {
+                    echo '<div class="row">';
+                }
+            ?>
+              <div class="col-md-6">
                 <div class="form-group">
-                  <label class="form-control-label"><?= $doc->nama_dokumen ?></label>
-                  <p class="form-control-static">
+                  <label class="form-control-label">
+                    <i class="<?= $doc_info['icon'] ?> me-2 text-<?= $doc_info['color'] ?>"></i>
+                    <?= $doc_info['nama_dokumen'] ?>
+                  </label>
+                  <div class="d-flex align-items-center mt-2">
+                    <span class="badge bg-gradient-success me-2">
+                      <i class="fas fa-check me-1"></i>Tersedia
+                    </span>
+                    <small class="text-muted">
+                      <?= $doc->nama_file ?> (<?= number_format($doc->ukuran_file / 1024, 2) ?> KB)
+                    </small>
+                  </div>
+                  <div class="mt-2">
                     <?php
                     $file_path = '';
                     $icon_class = 'fas fa-file';
 
-                    // Determine file path and icon based on document type
+                    // Tentukan path file dan icon berdasarkan jenis dokumen
                     if ($doc->jenis_dokumen == 'cv') {
-                        $file_path = base_url('uploads/resumes/' . $doc->nama_file);
+                        $file_path = base_url('uploads/cv/' . $doc->nama_file);
                         $icon_class = 'fas fa-file-pdf';
                     } else {
                         $file_path = base_url('uploads/documents/' . $doc->nama_file);
 
-                        // Set icon based on file type
+                        // Set icon berdasarkan tipe file
                         if (strpos($doc->tipe_file, 'pdf') !== false) {
                             $icon_class = 'fas fa-file-pdf';
                         } elseif (strpos($doc->tipe_file, 'image') !== false) {
@@ -156,22 +245,25 @@
                         }
                     }
                     ?>
-                    <a href="<?= $file_path ?>" target="_blank" class="btn btn-sm btn-outline-primary">
-                      <i class="<?= $icon_class ?> me-2"></i> Lihat <?= $doc->nama_dokumen ?>
+                    <a href="<?= $file_path ?>" target="_blank" class="btn btn-sm btn-outline-<?= $doc_info['color'] ?>">
+                      <i class="<?= $icon_class ?> me-2"></i> Lihat Dokumen
                     </a>
-                    <small class="text-muted d-block mt-1">
-                      Ukuran: <?= number_format($doc->ukuran_file / 1024, 2) ?> KB
-                    </small>
-                  </p>
+                  </div>
                 </div>
               </div>
-            <?php endforeach; ?>
-          <?php else : ?>
-            <div class="col-md-12">
-              <p class="form-control-static text-muted">Belum ada dokumen yang diunggah</p>
-            </div>
-          <?php endif; ?>
-        </div>
+            <?php
+                $doc_count++;
+                // Tutup baris setiap 2 dokumen atau di akhir
+                if ($doc_count % 2 == 0 || $doc_count == count($available_docs)) {
+                    echo '</div>';
+                }
+            }
+        } else {
+            // Jika tidak ada dokumen yang tersedia
+            echo '<div class="row"><div class="col-md-12"><p class="text-muted">Belum ada dokumen pendukung yang diunggah.</p></div></div>';
+        } ?>
+
+
       </div>
     </div>
   </div>
