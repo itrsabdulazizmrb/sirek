@@ -35,7 +35,7 @@
               <li><a href="<?= base_url('auth/register') ?>">Create Account</a></li>
               <li><a href="<?= base_url('auth') ?>">Login</a></li>
               <li><a href="<?= base_url('home/jobs') ?>">Browse Jobs</a></li>
-              <li><a href="<?= base_url('applicant/dashboard') ?>">Applicant Dashboard</a></li>
+              <li><a href="<?= base_url('pelamar/dasbor') ?>">Applicant Dashboard</a></li>
               <li><a href="<?= base_url('home/faq') ?>">FAQs</a></li>
             </ul>
           </div>

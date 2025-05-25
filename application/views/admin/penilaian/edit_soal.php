@@ -17,7 +17,7 @@
         </p>
       </div>
       <div class="card-body">
-        <?= form_open_multipart('admin/edit_question/' . $question->id, ['class' => 'needs-validation']) ?>
+        <?= form_open_multipart('admin/edit_soal/' . $question->id, ['class' => 'needs-validation']) ?>
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">

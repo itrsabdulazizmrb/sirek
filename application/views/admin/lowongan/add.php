@@ -4,7 +4,7 @@
       <div class="card-header pb-0">
         <div class="d-flex justify-content-between align-items-center">
           <h6>Tambah Lowongan Baru</h6>
-          <a href="<?= base_url('admin/jobs') ?>" class="btn btn-sm btn-outline-primary">
+          <a href="<?= base_url('admin/lowongan') ?>" class="btn btn-sm btn-outline-primary">
             <i class="fas fa-arrow-left me-2"></i> Kembali ke Daftar Lowongan
           </a>
         </div>

@@ -103,8 +103,8 @@
 
                       <div class="d-flex justify-content-between align-items-center mt-3">
                         <a href="<?= base_url('home/job_details/' . $job->id) ?>" class="btn btn-outline-primary btn-sm">Lihat Detail</a>
-                        <?php if ($this->session->userdata('logged_in') && $this->session->userdata('role') == 'applicant') : ?>
-                          <a href="<?= base_url('applicant/apply/' . $job->id) ?>" class="btn btn-primary btn-sm">Lamar Sekarang</a>
+                        <?php if ($this->session->userdata('logged_in') && $this->session->userdata('role') == 'pelamar') : ?>
+                          <a href="<?= base_url('pelamar/lamar/' . $job->id) ?>" class="btn btn-primary btn-sm">Lamar Sekarang</a>
                         <?php else : ?>
                           <a href="<?= base_url('auth') ?>" class="btn btn-primary btn-sm">Login untuk Melamar</a>
                         <?php endif; ?>

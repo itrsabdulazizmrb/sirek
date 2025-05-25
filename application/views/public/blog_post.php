@@ -140,26 +140,11 @@
         </div>
       </div>
 
-      <!-- Add Comment -->
+      <!-- Comment system will be implemented in future updates -->
       <div class="card mt-4">
-        <div class="card-body p-4">
-          <h5 class="mb-4">Tinggalkan Komentar</h5>
-          <form action="<?= base_url('home/add_comment') ?>" method="post">
-            <input type="hidden" name="post_id" value="<?= $post->id ?>">
-            <div class="mb-3">
-              <label for="name" class="form-label">Nama</label>
-              <input type="text" class="form-control" id="name" name="name" required>
-            </div>
-            <div class="mb-3">
-              <label for="email" class="form-label">Email</label>
-              <input type="email" class="form-control" id="email" name="email" required>
-            </div>
-            <div class="mb-3">
-              <label for="comment" class="form-label">Komentar</label>
-              <textarea class="form-control" id="comment" name="comment" rows="4" required></textarea>
-            </div>
-            <button type="submit" class="btn btn-primary">Kirim Komentar</button>
-          </form>
+        <div class="card-body p-4 text-center">
+          <h5 class="mb-3">Sistem Komentar</h5>
+          <p class="text-muted">Fitur komentar akan segera tersedia dalam pembaruan mendatang.</p>
         </div>
       </div>
     </div>
@@ -168,7 +153,7 @@
       <!-- Search -->
       <div class="card">
         <div class="card-body p-3">
-          <form action="<?= base_url('home/blog') ?>" method="get">
+          <form action="<?= base_url('blog') ?>" method="get">
             <div class="input-group">
               <span class="input-group-text"><i class="fas fa-search"></i></span>
               <input type="text" class="form-control" name="q" placeholder="Cari artikel...">
@@ -191,10 +176,10 @@
                   <div class="icon icon-shape icon-sm bg-gradient-primary shadow text-center me-2">
                     <i class="fas fa-tag text-white opacity-10"></i>
                   </div>
-                  <a href="<?= base_url('home/blog?category=' . $category->id) ?>" class="text-dark"><?= $category->name ?></a>
+                  <a href="<?= base_url('blog?category=' . $category->id) ?>" class="text-dark"><?= $category->nama ?></a>
                 </div>
                 <div>
-                  <span class="badge badge-sm bg-gradient-primary"><?= $this->blog_model->count_posts_by_category($category->id) ?></span>
+                  <span class="badge badge-sm bg-gradient-primary">0</span>
                 </div>
               </li>
             <?php endforeach; ?>
@@ -219,7 +204,7 @@
                   </div>
                 </div>
                 <div class="ms-3">
-                  <a href="<?= base_url('home/blog_post/' . $related_post->slug) ?>" class="text-dark">
+                  <a href="<?= base_url('blog/' . $related_post->slug) ?>" class="text-dark">
                     <h6 class="mb-0 text-sm"><?= $related_post->title ?></h6>
                   </a>
                   <p class="text-xs text-secondary mb-0"><?= date('d M Y', strtotime($related_post->created_at)) ?></p>

@@ -137,13 +137,13 @@
                           <i class="fas fa-ellipsis-v"></i>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end px-2 py-3" aria-labelledby="dropdownMenuButton">
-                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/edit_question/' . $question->id) ?>">Edit</a></li>
+                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/edit_soal/' . $question->id) ?>">Edit</a></li>
                           <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/question_options/' . $question->id) ?>">Kelola Opsi</a></li>
                           <li>
                             <hr class="dropdown-divider">
                           </li>
                           <li>
-                            <a class="dropdown-item border-radius-md text-danger btn-delete" href="<?= base_url('admin/delete_question/' . $question->id) ?>" onclick="return confirm('Apakah Anda yakin ingin menghapus soal ini?');">
+                            <a class="dropdown-item border-radius-md text-danger btn-delete" href="<?= base_url('admin/hapus_soal/' . $question->id) ?>" onclick="return confirm('Apakah Anda yakin ingin menghapus soal ini?');">
                               Hapus
                             </a>
                           </li>

@@ -42,7 +42,7 @@
             <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
               <i class="ni ni-tv-2 text-primary text-sm opacity-10"></i>
             </div>
-            <span class="nav-link-text ms-1">Dashboard</span>
+            <span class="nav-link-text ms-1">Dasbor</span>
           </a>
         </li>
         <li class="nav-item">
@@ -50,7 +50,7 @@
             <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
               <i class="ni ni-single-02 text-dark text-sm opacity-10"></i>
             </div>
-            <span class="nav-link-text ms-1">My Profile</span>
+            <span class="nav-link-text ms-1">Profil</span>
           </a>
         </li>
         <li class="nav-item">
@@ -58,7 +58,7 @@
             <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
               <i class="ni ni-single-copy-04 text-warning text-sm opacity-10"></i>
             </div>
-            <span class="nav-link-text ms-1">My Applications</span>
+            <span class="nav-link-text ms-1">Lamaran</span>
           </a>
         </li>
         <li class="nav-item">
@@ -66,7 +66,7 @@
             <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
               <i class="ni ni-ruler-pencil text-info text-sm opacity-10"></i>
             </div>
-            <span class="nav-link-text ms-1">My Assessments</span>
+            <span class="nav-link-text ms-1">Penilaian</span>
           </a>
         </li>
         <li class="nav-item">
@@ -74,7 +74,7 @@
             <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
               <i class="ni ni-key-25 text-danger text-sm opacity-10"></i>
             </div>
-            <span class="nav-link-text ms-1">Change Password</span>
+            <span class="nav-link-text ms-1">Ubah Password</span>
           </a>
         </li>
         <li class="nav-item">
@@ -86,14 +86,14 @@
           </a>
         </li>
         <li class="nav-item mt-3">
-          <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Job Portal</h6>
+          <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Portal Lowongan</h6>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="<?= base_url('home/jobs') ?>">
             <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
               <i class="ni ni-briefcase-24 text-primary text-sm opacity-10"></i>
             </div>
-            <span class="nav-link-text ms-1">Browse Jobs</span>
+            <span class="nav-link-text ms-1">Pencarian Lowongan</span>
           </a>
         </li>
         <li class="nav-item">
@@ -113,7 +113,7 @@
       <div class="container-fluid py-1 px-3">
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
-            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-white" href="<?= base_url('pelamar/dasbor') ?>">Applicant</a></li>
+            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-white" href="<?= base_url('pelamar/dasbor') ?>">Pelamar</a></li>
             <li class="breadcrumb-item text-sm text-white active" aria-current="page"><?= $title ?></li>
           </ol>
           <h6 class="font-weight-bolder text-white mb-0"><?= $title ?></h6>
@@ -122,7 +122,7 @@
           <div class="ms-md-auto pe-md-3 d-flex align-items-center">
             <div class="input-group">
               <span class="input-group-text text-body"><i class="fas fa-search" aria-hidden="true"></i></span>
-              <input type="text" class="form-control" placeholder="Type here...">
+              <input type="text" class="form-control" placeholder="Ketik di sini...">
             </div>
           </div>
           <ul class="navbar-nav  justify-content-end">

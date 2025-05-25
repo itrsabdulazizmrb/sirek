@@ -173,7 +173,7 @@ class Beranda extends CI_Controller {
         $data['post'] = $this->model_blog->dapatkan_artikel_dari_slug($slug);
 
         // If post not found or not published, show 404
-        if (!$data['post'] || $data['post']->status != 'published') {
+        if (!$data['post'] || $data['post']->status != 'dipublikasi') {
             show_404();
         }
 

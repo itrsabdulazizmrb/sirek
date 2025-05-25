@@ -12,10 +12,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |
 */
 
-// Add views column to blog_posts table if it doesn't exist
+// Add views column to post_blog table if it doesn't exist
 $hooks['post_controller_constructor'] = array(
     'class'    => '',
-    'function' => 'add_views_column_to_blog_posts',
+    'function' => 'add_views_column_to_post_blog',
     'filename' => 'Blog_hooks.php',
     'filepath' => 'hooks',
     'params'   => array()

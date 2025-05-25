@@ -10,9 +10,15 @@
               <span class="font-weight-bold">Kelola semua lowongan pekerjaan di sini</span>
             </p>
           </div>
-          <a href="<?= base_url('admin/add_job') ?>" class="btn btn-sm btn-primary">
-            <i class="fas fa-plus me-2"></i> Tambah Lowongan Baru
-          </a>
+          <div>
+            <a href="<?= base_url('admin/tambahLowongan') ?>" class="btn btn-sm btn-primary me-2">
+              <i class="fas fa-plus me-2"></i> Tambah Lowongan Baru
+            </a>
+            <a href="<?= base_url('admin/kategori') ?>" class="btn btn-sm btn-info">
+              <i class="fas fa-tasks me-2"></i> Kategori Lowongan
+            </a>
+          </div>
+          
         </div>
       </div>
       <div class="card-body p-0">
@@ -21,7 +27,7 @@
             <div class="text-center py-5">
               <h4 class="text-secondary">Tidak ada lowongan yang ditemukan</h4>
               <p class="text-muted">Mulai dengan menambahkan lowongan pekerjaan baru.</p>
-              <a href="<?= base_url('admin/add_job') ?>" class="btn btn-primary mt-3">Tambah Lowongan Baru</a>
+              <a href="<?= base_url('admin/tambahLowongan') ?>" class="btn btn-primary mt-3">Tambah Lowongan Baru</a>
             </div>
           <?php else : ?>
             <table class="table align-items-center mb-0 datatable">
@@ -42,9 +48,9 @@
                   <tr>
                     <td>
                       <div class="d-flex px-2 py-1">
-                        <div>
+                        <!-- <div>
                           <img src="<?= base_url('assets/img/small-logos/logo-company.svg') ?>" class="avatar avatar-sm me-3" alt="job">
-                        </div>
+                        </div> -->
                         <div class="d-flex flex-column justify-content-center">
                           <h6 class="mb-0 text-sm"><?= $job->judul ?></h6>
                           <p class="text-xs text-secondary mb-0">Dibuat oleh: <?= $job->created_by_name ?></p>
@@ -70,7 +76,7 @@
                       <?php
                       $applicant_count = $this->model_lamaran->hitung_lamaran_berdasarkan_lowongan($job->id);
                       ?>
-                      <a href="<?= base_url('admin/job_applications/' . $job->id) ?>" class="text-secondary font-weight-bold text-xs">
+                      <a href="<?= base_url('admin/lamaran_lowongan/' . $job->id) ?>" class="text-secondary font-weight-bold text-xs">
                         <?= $applicant_count ?> Pelamar
                       </a>
                     </td>
@@ -84,7 +90,7 @@
                           <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/edit_lowongan/' . $job->id) ?>"><i class="fas fa-edit me-2"></i> Edit</a></li>
                           <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/dokumen_lowongan/' . $job->id) ?>"><i class="fas fa-file-alt me-2"></i> Kelola Dokumen Persyaratan</a></li>
                           <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/lamaran_lowongan/' . $job->id) ?>"><i class="fas fa-users me-2"></i> Lihat Pelamar</a></li>
-                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/assign_assessment/' . $job->id) ?>"><i class="fas fa-tasks me-2"></i> Atur Penilaian</a></li>
+                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/atur_penilaian/' . $job->id) ?>"><i class="fas fa-tasks me-2"></i> Atur Penilaian</a></li>
                           <li>
                             <hr class="dropdown-divider">
                           </li>

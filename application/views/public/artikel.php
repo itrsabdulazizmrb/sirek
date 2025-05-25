@@ -16,9 +16,9 @@
             </div>
           </div>
 
-          <?php if ($post->gambar_unggulan) : ?>
+          <?php if ($post->gambar_utama) : ?>
             <div class="mb-4">
-              <img src="<?= base_url('uploads/blog_images/' . $post->gambar_unggulan) ?>" class="img-fluid rounded" alt="<?= $post->judul ?>">
+              <img src="<?= base_url('uploads/blog_images/' . $post->gambar_utama) ?>" class="img-fluid rounded" alt="<?= $post->judul ?>">
             </div>
           <?php endif; ?>
 
@@ -140,26 +140,11 @@
         </div>
       </div>
 
-      <!-- Add Comment -->
+      <!-- Comment system will be implemented in future updates -->
       <div class="card mt-4">
-        <div class="card-body p-4">
-          <h5 class="mb-4">Tinggalkan Komentar</h5>
-          <form action="<?= base_url('beranda/tambah_komentar') ?>" method="post">
-            <input type="hidden" name="post_id" value="<?= $post->id ?>">
-            <div class="mb-3">
-              <label for="name" class="form-label">Nama</label>
-              <input type="text" class="form-control" id="name" name="name" required>
-            </div>
-            <div class="mb-3">
-              <label for="email" class="form-label">Email</label>
-              <input type="email" class="form-control" id="email" name="email" required>
-            </div>
-            <div class="mb-3">
-              <label for="comment" class="form-label">Komentar</label>
-              <textarea class="form-control" id="comment" name="comment" rows="4" required></textarea>
-            </div>
-            <button type="submit" class="btn btn-primary">Kirim Komentar</button>
-          </form>
+        <div class="card-body p-4 text-center">
+          <h5 class="mb-3">Sistem Komentar</h5>
+          <p class="text-muted">Fitur komentar akan segera tersedia dalam pembaruan mendatang.</p>
         </div>
       </div>
     </div>

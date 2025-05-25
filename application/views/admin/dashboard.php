@@ -248,7 +248,7 @@
                 </div>
               </div>
               <div class="d-flex">
-                <a href="<?= base_url('admin/jobs?category=' . $category->id) ?>" class="btn btn-link btn-icon-only btn-rounded btn-sm text-dark icon-move-right my-auto">
+                <a href="<?= base_url('admin/lowongan?category=' . $category->id) ?>" class="btn btn-link btn-icon-only btn-rounded btn-sm text-dark icon-move-right my-auto">
                   <i class="ni ni-bold-right" aria-hidden="true"></i>
                 </a>
               </div>

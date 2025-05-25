@@ -91,67 +91,11 @@ class Admin extends CI_Controller {
         // Load views
         $data['title'] = 'Manajemen Lowongan';
         $this->load->view('templates/admin_header', $data);
-        $this->load->view('admin/jobs/index', $data);
+        $this->load->view('admin/lowongan/index', $data);
         $this->load->view('templates/admin_footer');
     }
 
-    public function tambah_lowongan() {
-        // Get job categories
-        $data['categories'] = $this->model_kategori->dapatkan_kategori_lowongan();
 
-        // Form validation rules
-        $this->form_validation->set_rules('title', 'Judul', 'trim|required');
-        $this->form_validation->set_rules('description', 'Deskripsi', 'trim|required');
-        $this->form_validation->set_rules('requirements', 'Persyaratan', 'trim|required');
-        $this->form_validation->set_rules('responsibilities', 'Tanggung Jawab', 'trim|required');
-        $this->form_validation->set_rules('location', 'Lokasi', 'trim|required');
-        $this->form_validation->set_rules('job_type', 'Tipe Pekerjaan', 'trim|required');
-        $this->form_validation->set_rules('deadline', 'Batas Waktu', 'trim|required');
-
-        if ($this->form_validation->run() == FALSE) {
-            // If validation fails, show form with errors
-            $data['title'] = 'Tambah Lowongan Baru';
-            $this->load->view('templates/admin_header', $data);
-            $this->load->view('admin/jobs/add', $data);
-            $this->load->view('templates/admin_footer');
-        } else {
-            // Get form data
-            $job_data = array(
-                'judul' => $this->input->post('title'),
-                'id_kategori' => $this->input->post('category_id'),
-                'deskripsi' => $this->input->post('description'),
-                'persyaratan' => $this->input->post('requirements'),
-                'tanggung_jawab' => $this->input->post('responsibilities'),
-                'lokasi' => $this->input->post('location'),
-                'jenis_pekerjaan' => $this->input->post('job_type'),
-                'rentang_gaji' => $this->input->post('salary_range'),
-                'batas_waktu' => $this->input->post('deadline'),
-                'jumlah_lowongan' => $this->input->post('vacancies'),
-                'unggulan' => $this->input->post('featured') ? 1 : 0,
-                'status' => $this->input->post('status'),
-                'dibuat_oleh' => $this->session->userdata('user_id')
-            );
-
-            // Insert job data
-            $job_id = $this->model_lowongan->tambah_lowongan($job_data);
-
-            if ($job_id) {
-                // Show success message
-                $this->session->set_flashdata('success', 'Lowongan berhasil ditambahkan.');
-
-                // Check if user wants to manage document requirements
-                if ($this->input->post('manage_documents') == '1') {
-                    redirect('admin/dokumen_lowongan/' . $job_id);
-                } else {
-                    redirect('admin/lowongan');
-                }
-            } else {
-                // If insertion fails, show error message
-                $this->session->set_flashdata('error', 'Gagal menambahkan lowongan. Silakan coba lagi.');
-                redirect('admin/tambah_lowongan');
-            }
-        }
-    }
 
     // Fungsi tambahLowongan untuk menggantikan add_job
     public function tambahLowongan() {
@@ -171,7 +115,7 @@ class Admin extends CI_Controller {
             // If validation fails, show form with errors
             $data['title'] = 'Tambah Lowongan Baru';
             $this->load->view('templates/admin_header', $data);
-            $this->load->view('admin/jobs/add', $data);
+            $this->load->view('admin/lowongan/add', $data);
             $this->load->view('templates/admin_footer');
         } else {
             // Get form data
@@ -207,7 +151,7 @@ class Admin extends CI_Controller {
             } else {
                 // If insertion fails, show error message
                 $this->session->set_flashdata('error', 'Gagal menambahkan lowongan. Silakan coba lagi.');
-                redirect('admin/tambah_lowongan');
+                redirect('admin/tambahLowongan');
             }
         }
     }
@@ -237,7 +181,7 @@ class Admin extends CI_Controller {
             // If validation fails, show form with errors
             $data['title'] = 'Edit Lowongan';
             $this->load->view('templates/admin_header', $data);
-            $this->load->view('admin/jobs/edit', $data);
+            $this->load->view('admin/lowongan/edit', $data);
             $this->load->view('templates/admin_footer');
         } else {
             // Get form data
@@ -443,8 +387,8 @@ class Admin extends CI_Controller {
         return $whatsapp_result;
     }
 
-    // Update status pelamar via URL
-    public function updateStatusPelamar($id, $status) {
+    // Update status pelamar via URL - versi Indonesia
+    public function perbaruiStatusPelamar($id, $status) {
         // Update application status
         $result = $this->model_lamaran->perbarui_status($id, $status);
 
@@ -459,69 +403,10 @@ class Admin extends CI_Controller {
         redirect('admin/lamaran');
     }
 
-    // Alias untuk updateStatusPelamar dengan nama Indonesia
-    public function perbaruiStatusPelamar($id, $status) {
-        return $this->updateStatusPelamar($id, $status);
-    }
 
-    // Perbarui status lamaran dengan notifikasi
-    public function update_application_status($id, $status) {
-        // Load fonnte helper
-        $this->load->helper('fonnte');
 
-        // Get notify parameter
-        $notify = $this->input->get('notify') === '1';
-
-        // Get application details
-        $application = $this->model_lamaran->dapatkan_lamaran($id);
-
-        // If application not found, show 404
-        if (!$application) {
-            show_404();
-        }
-
-        // Get job details
-        $job = $this->model_lowongan->dapatkan_lowongan($application->id_pekerjaan);
-
-        // Get applicant details
-        $applicant = $this->model_pengguna->dapatkan_pengguna($application->id_pelamar);
-
-        // Update application status
-        $data = [
-            'status' => $status,
-            'diperbarui_pada' => date('Y-m-d H:i:s')
-        ];
-
-        $result = $this->model_lamaran->perbarui_lamaran($id, $data);
-
-        if ($result) {
-            // If notification is requested and applicant has a phone number
-            if ($notify && !empty($applicant->phone)) {
-                // Get message based on status with complete information
-                $message = dapatkan_pesan_status_lamaran($status, $job->title, $applicant->full_name);
-
-                // Send WhatsApp notification
-                $whatsapp_result = kirim_whatsapp($applicant->phone, $message);
-
-                if ($whatsapp_result['success']) {
-                    $this->session->set_flashdata('success', 'Status lamaran berhasil diperbarui menjadi ' . ucfirst($status) . ' dan notifikasi WhatsApp telah dikirim.');
-                } else {
-                    $this->session->set_flashdata('success', 'Status lamaran berhasil diperbarui menjadi ' . ucfirst($status) . ', tetapi gagal mengirim notifikasi WhatsApp.');
-                    $this->session->set_flashdata('error', 'Pesan error: ' . ($whatsapp_result['error'] ?? $whatsapp_result['message'] ?? 'Unknown error'));
-                }
-            } else {
-                $this->session->set_flashdata('success', 'Status lamaran berhasil diperbarui menjadi ' . ucfirst($status) . '.');
-            }
-        } else {
-            // If update fails, show error message
-            $this->session->set_flashdata('error', 'Gagal memperbarui status lamaran. Silakan coba lagi.');
-        }
-
-        redirect('admin/detail_lamaran/' . $id);
-    }
-
-    // Add application note
-    public function add_application_note($id) {
+    // Tambah catatan lamaran - versi Indonesia
+    public function tambah_catatan_lamaran($id) {
         // Get note from form
         $note = $this->input->post('note');
 
@@ -539,12 +424,7 @@ class Admin extends CI_Controller {
         redirect('admin/detail_lamaran/' . $id);
     }
 
-    // Alias untuk add_application_note dengan nama Indonesia
-    public function tambah_catatan_lamaran($id) {
-        return $this->add_application_note($id);
-    }
-
-    // Edit pelamar
+    // Edit pelamar - versi Indonesia
     public function editPelamar($id) {
         // Get application details
         $data['application'] = $this->model_lamaran->dapatkan_lamaran($id);
@@ -593,8 +473,8 @@ class Admin extends CI_Controller {
         }
     }
 
-    // Delete pelamar
-    public function deletePelamar($id) {
+    // Hapus pelamar - versi Indonesia
+    public function hapusPelamar($id) {
         // Delete application
         $result = $this->model_lamaran->hapus_lamaran($id);
 
@@ -609,13 +489,8 @@ class Admin extends CI_Controller {
         redirect('admin/lamaran');
     }
 
-    // Alias untuk deletePelamar dengan nama Indonesia
-    public function hapusPelamar($id) {
-        return $this->deletePelamar($id);
-    }
-
-    // Download CV
-    public function downloadCV($id) {
+    // Unduh CV - versi Indonesia
+    public function unduhCV($id) {
         // Get application details
         $application = $this->model_lamaran->dapatkan_lamaran($id);
 
@@ -664,24 +539,14 @@ class Admin extends CI_Controller {
         exit;
     }
 
-    // Legacy support - alias untuk downloadCV
-    public function downloadResume($id) {
-        return $this->downloadCV($id);
-    }
-
-    // Alias untuk downloadCV dengan nama Indonesia
-    public function unduhCV($id) {
-        return $this->downloadCV($id);
-    }
-
     // Legacy support - alias untuk unduhCV
     public function unduhResume($id) {
-        return $this->downloadCV($id);
+        return $this->unduhCV($id);
     }
 
     // Legacy support - alias untuk unduhCV
     public function unduh_resume($id) {
-        return $this->downloadCV($id);
+        return $this->unduhCV($id);
     }
 
     // ===== MANAJEMEN DOKUMEN LOWONGAN =====
@@ -702,7 +567,7 @@ class Admin extends CI_Controller {
         // Load views
         $data['title'] = 'Kelola Dokumen Lowongan';
         $this->load->view('templates/admin_header', $data);
-        $this->load->view('admin/jobs/documents', $data);
+        $this->load->view('admin/lowongan/documents', $data);
         $this->load->view('templates/admin_footer');
     }
 
@@ -725,7 +590,7 @@ class Admin extends CI_Controller {
             // If validation fails, show form with errors
             $data['title'] = 'Tambah Dokumen Lowongan';
             $this->load->view('templates/admin_header', $data);
-            $this->load->view('admin/jobs/add_document', $data);
+            $this->load->view('admin/lowongan/add_document', $data);
             $this->load->view('templates/admin_footer');
         } else {
             // Get form data
@@ -776,7 +641,7 @@ class Admin extends CI_Controller {
             // If validation fails, show form with errors
             $data['title'] = 'Edit Dokumen Lowongan';
             $this->load->view('templates/admin_header', $data);
-            $this->load->view('admin/jobs/edit_document', $data);
+            $this->load->view('admin/lowongan/edit_document', $data);
             $this->load->view('templates/admin_footer');
         } else {
             // Get form data
@@ -892,8 +757,10 @@ class Admin extends CI_Controller {
         redirect('admin/dokumen_lowongan/' . $job_id);
     }
 
-    // Download dokumen lamaran
-    public function download_dokumen_lamaran($id) {
+
+
+    // Unduh dokumen lamaran - versi Indonesia
+    public function unduh_dokumen_lamaran($id) {
         // Get document details
         $document = $this->model_dokumen->dapatkan_dokumen_lamaran_by_id($id);
 
@@ -928,13 +795,8 @@ class Admin extends CI_Controller {
         exit;
     }
 
-    // Alias untuk download_dokumen_lamaran dengan nama Indonesia
-    public function unduh_dokumen_lamaran($id) {
-        return $this->download_dokumen_lamaran($id);
-    }
-
-    // Print pelamar
-    public function printPelamar($id) {
+    // Cetak pelamar - versi Indonesia
+    public function cetakPelamar($id) {
         // Get application details
         $data['application'] = $this->model_lamaran->dapatkan_lamaran($id);
 
@@ -952,11 +814,6 @@ class Admin extends CI_Controller {
         // Load print view
         $data['title'] = 'Cetak Lamaran';
         $this->load->view('admin/lamaran/print', $data);
-    }
-
-    // Alias untuk printPelamar dengan nama Indonesia
-    public function cetakPelamar($id) {
-        return $this->printPelamar($id);
     }
 
     // Lihat Lamaran Berdasarkan Lowongan
@@ -1195,8 +1052,8 @@ class Admin extends CI_Controller {
         redirect('admin/lamaran');
     }
 
-    // Atur Penilaian untuk Lowongan
-    public function assign_assessment($job_id, $application_id = null) {
+    // Atur Penilaian untuk Lowongan - versi Indonesia
+    public function atur_penilaian($job_id, $application_id = null) {
         // Get job details
         $data['job'] = $this->model_lowongan->dapatkan_lowongan($job_id);
 
@@ -1273,11 +1130,6 @@ class Admin extends CI_Controller {
         $this->load->view('templates/admin_header', $data);
         $this->load->view('admin/penilaian/atur', $data);
         $this->load->view('templates/admin_footer');
-    }
-
-    // Alias untuk assign_assessment dengan nama Indonesia
-    public function atur_penilaian($job_id, $application_id = null) {
-        return $this->assign_assessment($job_id, $application_id);
     }
 
     // Kelola Soal Penilaian
@@ -1780,31 +1632,8 @@ class Admin extends CI_Controller {
 
     // ========== FUNCTION NAMES INDONESIA ==========
 
-    // Note: Function yang sudah ada tidak perlu duplikasi:
-    // - penilaian() sudah ada di line 983
-    // - tambah_soal() sudah ada di line 1411
-    // - hasilPenilaian() sudah ada di line 1289
-    // - hapus_penilaian() sudah ada di line 1136
-    // - soal_penilaian() sudah ada di line 1269
-    // - opsi_soal() sudah ada di line 1462
-
+    // Function edit_soal - menggantikan edit_question
     public function edit_soal($question_id) {
-        return $this->edit_question($question_id);
-    }
-
-    public function hapus_soal($question_id) {
-        return $this->delete_question($question_id);
-    }
-
-    public function pratinjau_penilaian($assessment_id) {
-        return $this->preview_assessment($assessment_id);
-    }
-
-    public function hasil_penilaian($assessment_id) {
-        return $this->hasilPenilaian($assessment_id);
-    }
-
-    public function edit_question($question_id) {
         // Get question details
         $this->db->select('soal.*, penilaian.judul as assessment_title, penilaian.id as assessment_id');
         $this->db->from('soal');
@@ -1849,7 +1678,7 @@ class Admin extends CI_Controller {
                 if (!is_dir($upload_path_full)) {
                     if (!mkdir($upload_path_full, 0777, true)) {
                         $this->session->set_flashdata('error', 'Gagal membuat folder upload: ' . $upload_path_full);
-                        redirect('admin/edit_question/' . $question_id);
+                        redirect('admin/edit_soal/' . $question_id);
                         return;
                     }
                 }
@@ -1857,7 +1686,7 @@ class Admin extends CI_Controller {
                 // Check if directory is writable
                 if (!is_writable($upload_path_full)) {
                     $this->session->set_flashdata('error', 'Folder tidak dapat ditulis: ' . $upload_path_full);
-                    redirect('admin/edit_question/' . $question_id);
+                    redirect('admin/edit_soal/' . $question_id);
                     return;
                 }
 
@@ -1883,7 +1712,7 @@ class Admin extends CI_Controller {
                     }
                 } else {
                     $this->session->set_flashdata('error', 'Gagal mengunggah gambar: ' . $this->upload->display_errors());
-                    redirect('admin/edit_question/' . $question_id);
+                    redirect('admin/edit_soal/' . $question_id);
                     return;
                 }
             }
@@ -1898,12 +1727,13 @@ class Admin extends CI_Controller {
             } else {
                 // If update fails, show error message
                 $this->session->set_flashdata('error', 'Gagal memperbarui soal. Silakan coba lagi.');
-                redirect('admin/edit_question/' . $question_id);
+                redirect('admin/edit_soal/' . $question_id);
             }
         }
     }
 
-    public function delete_question($question_id) {
+    // Function hapus_soal - menggantikan delete_question
+    public function hapus_soal($question_id) {
         // Check if user is logged in and is admin
         if (!$this->session->userdata('logged_in') || $this->session->userdata('role') != 'admin') {
             redirect('auth/login');
@@ -1932,6 +1762,16 @@ class Admin extends CI_Controller {
 
         redirect('admin/soal_penilaian/' . $question->assessment_id);
     }
+
+    public function pratinjau_penilaian($assessment_id) {
+        return $this->previewPenilaian($assessment_id);
+    }
+
+    public function hasil_penilaian($assessment_id) {
+        return $this->hasilPenilaian($assessment_id);
+    }
+
+
 
     public function hapus_gambar_soal($question_id) {
         // Check if user is logged in and is admin
@@ -2300,8 +2140,8 @@ class Admin extends CI_Controller {
         $this->load->view('templates/admin_footer');
     }
 
-    // Export Lamaran Pelamar ke Excel
-    public function export_applicant_applications($id) {
+    // Export Lamaran Pelamar ke Excel - versi Indonesia
+    public function ekspor_lamaran_pelamar($id) {
         // Load helper
         $this->load->helper('phpspreadsheet');
 
@@ -2794,7 +2634,7 @@ class Admin extends CI_Controller {
 
         // Form validation rules
         $this->form_validation->set_rules('title', 'Title', 'trim|required');
-        $this->form_validation->set_rules('slug', 'Slug', 'trim|required|is_unique[blog_posts.slug]');
+        $this->form_validation->set_rules('slug', 'Slug', 'trim|required|is_unique[post_blog.slug]');
         $this->form_validation->set_rules('content', 'Content', 'trim|required');
 
         if ($this->form_validation->run() == FALSE) {
@@ -2806,12 +2646,12 @@ class Admin extends CI_Controller {
         } else {
             // Get form data
             $post_data = array(
-                'title' => $this->input->post('title'),
+                'judul' => $this->input->post('title'),
                 'slug' => $this->input->post('slug'),
-                'content' => $this->input->post('content'),
+                'konten' => $this->input->post('content'),
                 'status' => $this->input->post('status'),
-                'author_id' => $this->session->userdata('user_id'),
-                'created_at' => date('Y-m-d H:i:s')
+                'id_penulis' => $this->session->userdata('user_id'),
+                'dibuat_pada' => date('Y-m-d H:i:s')
             );
 
             // Upload featured image if provided
@@ -2847,7 +2687,7 @@ class Admin extends CI_Controller {
 
                 if ($this->upload->do_upload('featured_image')) {
                     $upload_data = $this->upload->data();
-                    $post_data['featured_image'] = $upload_data['file_name'];
+                    $post_data['gambar_utama'] = $upload_data['file_name'];
                 } else {
                     $error = $this->upload->display_errors();
                     $this->session->set_flashdata('error', $error);
@@ -2912,9 +2752,9 @@ class Admin extends CI_Controller {
         } else {
             // Get form data
             $post_data = array(
-                'title' => $this->input->post('title'),
+                'judul' => $this->input->post('title'),
                 'slug' => $this->input->post('slug'),
-                'content' => $this->input->post('content'),
+                'konten' => $this->input->post('content'),
                 'status' => $this->input->post('status'),
                 'diperbarui_pada' => date('Y-m-d H:i:s')
             );
@@ -2947,15 +2787,15 @@ class Admin extends CI_Controller {
 
                 if ($this->upload->do_upload('featured_image')) {
                     // Delete old featured image if exists
-                    if ($data['post']->featured_image) {
-                        $old_file = './uploads/blog_images/' . $data['post']->featured_image;
+                    if ($data['post']->gambar_utama) {
+                        $old_file = './uploads/blog_images/' . $data['post']->gambar_utama;
                         if (file_exists($old_file)) {
                             unlink($old_file);
                         }
                     }
 
                     $upload_data = $this->upload->data();
-                    $post_data['featured_image'] = $upload_data['file_name'];
+                    $post_data['gambar_utama'] = $upload_data['file_name'];
                 } else {
                     $error = $this->upload->display_errors();
                     $this->session->set_flashdata('error', $error);
@@ -3002,8 +2842,8 @@ class Admin extends CI_Controller {
 
         if ($result) {
             // Delete featured image if exists
-            if ($post->featured_image) {
-                $file_path = './uploads/blog_images/' . $post->featured_image;
+            if ($post->gambar_utama) {
+                $file_path = './uploads/blog_images/' . $post->gambar_utama;
                 if (file_exists($file_path)) {
                     unlink($file_path);
                 }
@@ -3021,7 +2861,7 @@ class Admin extends CI_Controller {
 
     // Publikasi Artikel Blog
     public function publikasi_artikel($id) {
-        $result = $this->model_blog->perbarui_artikel($id, array('status' => 'published'));
+        $result = $this->model_blog->perbarui_artikel($id, array('status' => 'dipublikasi'));
 
         if ($result) {
             $this->session->set_flashdata('success', 'Artikel berhasil dipublikasikan.');
@@ -3049,7 +2889,7 @@ class Admin extends CI_Controller {
     public function tambah_kategori_blog() {
         // Form validation rules
         $this->form_validation->set_rules('name', 'Name', 'trim|required');
-        $this->form_validation->set_rules('slug', 'Slug', 'trim|required|is_unique[blog_categories.slug]');
+        $this->form_validation->set_rules('slug', 'Slug', 'trim|is_unique[kategori_blog.slug]');
 
         if ($this->form_validation->run() == FALSE) {
             // If validation fails, show error message
@@ -3057,10 +2897,17 @@ class Admin extends CI_Controller {
             redirect('admin/blog');
         } else {
             // Get form data
+            $slug = $this->input->post('slug');
+
+            // Auto-generate slug if empty
+            if (empty($slug)) {
+                $slug = url_title($this->input->post('name'), 'dash', TRUE);
+            }
+
             $category_data = array(
-                'name' => $this->input->post('name'),
-                'slug' => $this->input->post('slug'),
-                'description' => $this->input->post('description')
+                'nama' => $this->input->post('name'),
+                'slug' => $slug,
+                'deskripsi' => $this->input->post('description')
             );
 
             // Insert category data
@@ -3085,7 +2932,7 @@ class Admin extends CI_Controller {
 
         // Form validation rules
         $this->form_validation->set_rules('name', 'Name', 'trim|required');
-        $this->form_validation->set_rules('slug', 'Slug', 'trim|required');
+        $this->form_validation->set_rules('slug', 'Slug', 'trim');
 
         if ($this->form_validation->run() == FALSE) {
             // If validation fails, show error message
@@ -3093,10 +2940,17 @@ class Admin extends CI_Controller {
             redirect('admin/blog');
         } else {
             // Get form data
+            $slug = $this->input->post('slug');
+
+            // Auto-generate slug if empty
+            if (empty($slug)) {
+                $slug = url_title($this->input->post('name'), 'dash', TRUE);
+            }
+
             $category_data = array(
-                'name' => $this->input->post('name'),
-                'slug' => $this->input->post('slug'),
-                'description' => $this->input->post('description')
+                'nama' => $this->input->post('name'),
+                'slug' => $slug,
+                'deskripsi' => $this->input->post('description')
             );
 
             // Update category data
@@ -3129,4 +2983,121 @@ class Admin extends CI_Controller {
 
         redirect('admin/blog');
     }
+
+    // ========== MANAJEMEN KATEGORI LOWONGAN ==========
+
+    // Manajemen Kategori Lowongan
+    public function kategori() {
+        // Get all job categories
+        $data['categories'] = $this->model_kategori->dapatkan_kategori_lowongan();
+
+        // Get category statistics
+        $data['category_stats'] = array();
+        foreach ($data['categories'] as $category) {
+            $data['category_stats'][$category->id] = $this->model_kategori->hitung_lowongan_berdasarkan_kategori($category->id);
+        }
+
+        // Load views
+        $data['title'] = 'Manajemen Kategori Lowongan';
+        $this->load->view('templates/admin_header', $data);
+        $this->load->view('admin/kategori/index', $data);
+        $this->load->view('templates/admin_footer');
+    }
+
+    // Tambah Kategori Lowongan
+    public function tambah_kategori_lowongan() {
+        // Form validation rules
+        $this->form_validation->set_rules('nama', 'Nama Kategori', 'trim|required');
+        $this->form_validation->set_rules('deskripsi', 'Deskripsi', 'trim');
+
+        if ($this->form_validation->run() == FALSE) {
+            // If validation fails, show error message
+            $this->session->set_flashdata('error', validation_errors());
+            redirect('admin/kategori');
+        } else {
+            // Get form data
+            $category_data = array(
+                'nama' => $this->input->post('nama'),
+                'deskripsi' => $this->input->post('deskripsi'),
+                'dibuat_pada' => date('Y-m-d H:i:s')
+            );
+
+            // Insert category data
+            $result = $this->model_kategori->tambah_kategori_lowongan($category_data);
+
+            if ($result) {
+                // Show success message
+                $this->session->set_flashdata('success', 'Kategori lowongan berhasil ditambahkan.');
+            } else {
+                // If insertion fails, show error message
+                $this->session->set_flashdata('error', 'Gagal menambahkan kategori lowongan. Silakan coba lagi.');
+            }
+
+            redirect('admin/kategori');
+        }
+    }
+
+    // Edit Kategori Lowongan
+    public function edit_kategori_lowongan() {
+        // Get category ID
+        $id = $this->input->post('id');
+
+        // Form validation rules
+        $this->form_validation->set_rules('nama', 'Nama Kategori', 'trim|required');
+        $this->form_validation->set_rules('deskripsi', 'Deskripsi', 'trim');
+
+        if ($this->form_validation->run() == FALSE) {
+            // If validation fails, show error message
+            $this->session->set_flashdata('error', validation_errors());
+            redirect('admin/kategori');
+        } else {
+            // Get form data
+            $category_data = array(
+                'nama' => $this->input->post('nama'),
+                'deskripsi' => $this->input->post('deskripsi'),
+                'diperbarui_pada' => date('Y-m-d H:i:s')
+            );
+
+            // Update category data
+            $result = $this->model_kategori->perbarui_kategori_lowongan($id, $category_data);
+
+            if ($result) {
+                // Show success message
+                $this->session->set_flashdata('success', 'Kategori lowongan berhasil diperbarui.');
+            } else {
+                // If update fails, show error message
+                $this->session->set_flashdata('error', 'Gagal memperbarui kategori lowongan. Silakan coba lagi.');
+            }
+
+            redirect('admin/kategori');
+        }
+    }
+
+    // Hapus Kategori Lowongan
+    public function hapus_kategori_lowongan($id) {
+        // Check if category is being used by any jobs
+        $job_count = $this->model_kategori->hitung_lowongan_berdasarkan_kategori($id);
+
+        if ($job_count > 0) {
+            // If category is being used, show error message
+            $this->session->set_flashdata('error', 'Kategori tidak dapat dihapus karena masih digunakan oleh ' . $job_count . ' lowongan.');
+            redirect('admin/kategori');
+            return;
+        }
+
+        // Delete category
+        $result = $this->model_kategori->hapus_kategori_lowongan($id);
+
+        if ($result) {
+            // Show success message
+            $this->session->set_flashdata('success', 'Kategori lowongan berhasil dihapus.');
+        } else {
+            // If deletion fails, show error message
+            $this->session->set_flashdata('error', 'Gagal menghapus kategori lowongan. Silakan coba lagi.');
+        }
+
+        redirect('admin/kategori');
+    }
+
+
 }

@@ -74,7 +74,7 @@
         <ul class="navbar-nav d-lg-block d-none">
           <?php if ($this->session->userdata('logged_in')) : ?>
             <li class="nav-item">
-              <a href="<?= $this->session->userdata('role') == 'applicant' ? base_url('pelamar/dasbor') : base_url('admin/dasbor') ?>" class="btn btn-sm mb-0 me-1 bg-gradient-light">Dasbor</a>
+              <a href="<?= $this->session->userdata('role') == 'pelamar' ? base_url('pelamar/dasbor') : base_url('admin/dasbor') ?>" class="btn btn-sm mb-0 me-1 bg-gradient-light">Dasbor</a>
             </li>
           <?php else : ?>
             <li class="nav-item">

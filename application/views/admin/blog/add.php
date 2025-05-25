@@ -53,7 +53,7 @@
                     <label for="status" class="form-control-label">Status</label>
                     <select class="form-control" id="status" name="status">
                       <option value="draft" <?= set_select('status', 'draft', true) ?>>Draft</option>
-                      <option value="published" <?= set_select('status', 'published') ?>>Publikasikan</option>
+                      <option value="dipublikasi" <?= set_select('status', 'dipublikasi') ?>>Publikasikan</option>
                     </select>
                   </div>
 
@@ -67,7 +67,7 @@
                     <label for="categories" class="form-control-label">Kategori <span class="text-danger">*</span></label>
                     <select class="form-control" id="categories" name="categories[]" multiple required>
                       <?php foreach ($categories as $category) : ?>
-                        <option value="<?= $category->id ?>" <?= set_select('categories[]', $category->id) ?>><?= $category->name ?></option>
+                        <option value="<?= $category->id ?>" <?= set_select('categories[]', $category->id) ?>><?= $category->nama ?></option>
                       <?php endforeach; ?>
                     </select>
                     <?= form_error('categories[]', '<small class="text-danger">', '</small>') ?>
@@ -80,10 +80,7 @@
                     <small class="text-muted">Pisahkan tag dengan koma (mis. rekrutmen, karir, wawancara).</small>
                   </div>
 
-                  <div class="form-check form-switch mt-3">
-                    <input class="form-check-input" type="checkbox" id="allow_comments" name="allow_comments" value="1" <?= set_checkbox('allow_comments', '1', true) ?>>
-                    <label class="form-check-label" for="allow_comments">Izinkan Komentar</label>
-                  </div>
+                  <!-- Comment system will be implemented in future updates -->
 
                   <div class="form-check form-switch mt-2">
                     <input class="form-check-input" type="checkbox" id="featured" name="featured" value="1" <?= set_checkbox('featured', '1') ?>>
@@ -172,7 +169,7 @@
 
     publishBtn.addEventListener('click', function(e) {
       e.preventDefault();
-      statusSelect.value = 'published';
+      statusSelect.value = 'dipublikasi';
       form.submit();
     });
   });

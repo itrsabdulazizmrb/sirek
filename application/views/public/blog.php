@@ -51,8 +51,8 @@
               <div class="card blog-card h-100">
                 <div class="card-header p-0 mx-3 mt-3 position-relative z-index-1">
                   <a href="<?= base_url('blog/' . $post->slug) ?>" class="d-block">
-                    <?php if ($post->gambar_unggulan) : ?>
-                      <img src="<?= base_url('uploads/blog_images/' . $post->gambar_unggulan) ?>" class="img-fluid border-radius-lg blog-featured-image" alt="<?= $post->judul ?>">
+                    <?php if ($post->gambar_utama) : ?>
+                      <img src="<?= base_url('uploads/blog_images/' . $post->gambar_utama) ?>" class="img-fluid border-radius-lg blog-featured-image" alt="<?= $post->judul ?>">
                     <?php else : ?>
                       <img src="<?= base_url('assets/img/blog-placeholder.jpg') ?>" class="img-fluid border-radius-lg blog-featured-image" alt="<?= $post->judul ?>">
                     <?php endif; ?>

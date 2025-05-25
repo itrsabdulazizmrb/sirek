@@ -47,7 +47,7 @@ class Pelamar extends CI_Controller {
         // Load views
         $data['title'] = 'Dasbor Pelamar';
         $this->load->view('templates/applicant_header', $data);
-        $this->load->view('applicant/dasbor', $data);
+        $this->load->view('pelamar/dasbor', $data);
         $this->load->view('templates/applicant_footer');
     }
 
@@ -83,7 +83,7 @@ class Pelamar extends CI_Controller {
             // If validation fails, show form with errors
             $data['title'] = 'Profil Saya';
             $this->load->view('templates/applicant_header', $data);
-            $this->load->view('applicant/profil', $data);
+            $this->load->view('pelamar/profil', $data);
             $this->load->view('templates/applicant_footer');
         } else {
             // Get form data
@@ -249,7 +249,7 @@ class Pelamar extends CI_Controller {
         // Load views
         $data['title'] = 'Lamaran Saya';
         $this->load->view('templates/applicant_header', $data);
-        $this->load->view('applicant/lamaran', $data);
+        $this->load->view('pelamar/lamaran', $data);
         $this->load->view('templates/applicant_footer');
     }
 
@@ -285,7 +285,7 @@ class Pelamar extends CI_Controller {
             // If validation fails, show form with errors
             $data['title'] = 'Lamar Lowongan';
             $this->load->view('templates/applicant_header', $data);
-            $this->load->view('applicant/lamar', $data);
+            $this->load->view('pelamar/lamar', $data);
             $this->load->view('templates/applicant_footer');
         } else {
             // Get form data
@@ -483,7 +483,7 @@ class Pelamar extends CI_Controller {
         // Load views
         $data['title'] = 'Detail Lamaran';
         $this->load->view('templates/applicant_header', $data);
-        $this->load->view('applicant/detail_lamaran', $data);
+        $this->load->view('pelamar/detail_lamaran', $data);
         $this->load->view('templates/applicant_footer');
     }
 
@@ -621,7 +621,7 @@ class Pelamar extends CI_Controller {
         // Load views
         $data['title'] = 'Penilaian Saya';
         $this->load->view('templates/applicant_header', $data);
-        $this->load->view('applicant/penilaian', $data);
+        $this->load->view('pelamar/penilaian', $data);
         $this->load->view('templates/applicant_footer');
     }
 
@@ -657,7 +657,7 @@ class Pelamar extends CI_Controller {
             $data['title'] = 'Konfirmasi Mulai Ujian';
             $data['application_id'] = $application_id;
             $this->load->view('templates/applicant_header', $data);
-            $this->load->view('applicant/konfirmasi_mulai_ujian', $data);
+            $this->load->view('pelamar/konfirmasi_mulai_ujian', $data);
             $this->load->view('templates/applicant_footer');
         } else {
             // If already started, redirect to appropriate interface
@@ -700,7 +700,7 @@ class Pelamar extends CI_Controller {
         $data['title'] = 'Ikuti Penilaian';
         $data['application_id'] = $application_id;
         $this->load->view('templates/applicant_header', $data);
-        $this->load->view('applicant/ikuti_penilaian', $data);
+        $this->load->view('pelamar/ikuti_penilaian', $data);
         $this->load->view('templates/applicant_footer');
     }
 
@@ -757,7 +757,7 @@ class Pelamar extends CI_Controller {
 
         // Load CAT views
         $data['title'] = 'Ujian CAT - ' . $data['assessment']->judul;
-        $this->load->view('applicant/cat_penilaian', $data);
+        $this->load->view('pelamar/cat_penilaian', $data);
     }
 
     public function simpan_jawaban_cat() {
@@ -1309,7 +1309,7 @@ class Pelamar extends CI_Controller {
             // If validation fails, show form with errors
             $data['title'] = 'Ubah Password';
             $this->load->view('templates/applicant_header', $data);
-            $this->load->view('applicant/ubah_password');
+            $this->load->view('pelamar/ubah_password');
             $this->load->view('templates/applicant_footer');
         } else {
             // Get form data

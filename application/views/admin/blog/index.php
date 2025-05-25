@@ -42,14 +42,14 @@
                     <td>
                       <div class="d-flex px-2 py-1">
                         <div>
-                          <?php if ($post->featured_image) : ?>
-                            <img src="<?= base_url('uploads/blog_images/' . $post->featured_image) ?>" class="avatar avatar-sm me-3" alt="post">
+                          <?php if ($post->gambar_utama) : ?>
+                            <img src="<?= base_url('uploads/blog_images/' . $post->gambar_utama) ?>" class="avatar avatar-sm me-3" alt="post">
                           <?php else : ?>
                             <img src="<?= base_url('assets/img/small-logos/logo-blog.svg') ?>" class="avatar avatar-sm me-3" alt="post">
                           <?php endif; ?>
                         </div>
                         <div class="d-flex flex-column justify-content-center">
-                          <h6 class="mb-0 text-sm"><?= $post->title ?></h6>
+                          <h6 class="mb-0 text-sm"><?= $post->judul ?></h6>
                           <p class="text-xs text-secondary mb-0">Oleh: <?= $post->author_name ?></p>
                         </div>
                       </div>
@@ -59,17 +59,17 @@
                       $post_categories = $this->model_blog->dapatkan_kategori_artikel($post->id);
                       foreach ($post_categories as $category) :
                       ?>
-                        <span class="badge badge-sm bg-gradient-info me-1"><?= $category->name ?></span>
+                        <span class="badge badge-sm bg-gradient-info me-1"><?= $category->nama ?></span>
                       <?php endforeach; ?>
                     </td>
                     <td class="align-middle text-center">
-                      <span class="text-secondary text-xs font-weight-bold"><?= date('d M Y', strtotime($post->created_at)) ?></span>
+                      <span class="text-secondary text-xs font-weight-bold"><?= date('d M Y', strtotime($post->dibuat_pada)) ?></span>
                     </td>
                     <td class="align-middle text-center text-sm">
-                      <span class="badge badge-sm bg-gradient-<?= $post->status == 'published' ? 'success' : 'secondary' ?>"><?= $post->status == 'published' ? 'Dipublikasikan' : 'Draft' ?></span>
+                      <span class="badge badge-sm bg-gradient-<?= $post->status == 'dipublikasi' ? 'success' : 'secondary' ?>"><?= $post->status == 'dipublikasi' ? 'Dipublikasikan' : 'Draft' ?></span>
                     </td>
                     <td class="align-middle text-center">
-                      <span class="text-secondary text-xs font-weight-bold"><?= $post->views ?></span>
+                      <span class="text-secondary text-xs font-weight-bold"><?= $post->tampilan ?></span>
                     </td>
                     <td class="align-middle">
                       <div class="dropdown">
@@ -77,7 +77,7 @@
                           <i class="fas fa-ellipsis-v"></i>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end px-2 py-3" aria-labelledby="dropdownMenuButton">
-                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('home/blog_post/' . $post->slug) ?>" target="_blank"><i class="fas fa-eye me-2"></i> Lihat</a></li>
+                          <li><a class="dropdown-item border-radius-md" href="<?= base_url('blog/' . $post->slug) ?>" target="_blank"><i class="fas fa-eye me-2"></i> Lihat</a></li>
                           <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/edit_artikel/' . $post->id) ?>"><i class="fas fa-edit me-2"></i> Edit</a></li>
                           <?php if ($post->status == 'draft') : ?>
                             <li><a class="dropdown-item border-radius-md" href="<?= base_url('admin/publikasi_artikel/' . $post->id) ?>"><i class="fas fa-globe me-2"></i> Publikasikan</a></li>
@@ -133,7 +133,7 @@
                   <td>
                     <div class="d-flex px-2 py-1">
                       <div class="d-flex flex-column justify-content-center">
-                        <h6 class="mb-0 text-sm"><?= $category->name ?></h6>
+                        <h6 class="mb-0 text-sm"><?= $category->nama ?></h6>
                       </div>
                     </div>
                   </td>
@@ -141,7 +141,7 @@
                     <span class="text-secondary text-xs font-weight-bold"><?= $this->model_kategori->hitung_artikel_berdasarkan_kategori($category->id) ?></span>
                   </td>
                   <td class="align-middle">
-                    <a href="javascript:;" class="text-secondary font-weight-bold text-xs" data-bs-toggle="modal" data-bs-target="#editCategoryModal" data-id="<?= $category->id ?>" data-name="<?= $category->name ?>">
+                    <a href="javascript:;" class="text-secondary font-weight-bold text-xs" data-bs-toggle="modal" data-bs-target="#editCategoryModal" data-id="<?= $category->id ?>" data-name="<?= $category->nama ?>" data-slug="<?= $category->slug ?>" data-description="<?= $category->deskripsi ?>">
                       Edit
                     </a>
                     <a href="<?= base_url('admin/hapus_kategori_blog/' . $category->id) ?>" class="text-danger font-weight-bold text-xs ms-2 btn-delete" onclick="return confirm('Apakah Anda yakin ingin menghapus kategori ini?');">
@@ -185,6 +185,15 @@
             <label for="category_name" class="form-label">Nama Kategori</label>
             <input type="text" class="form-control" id="category_name" name="name" required>
           </div>
+          <div class="form-group mb-3">
+            <label for="category_slug" class="form-label">Slug</label>
+            <input type="text" class="form-control" id="category_slug" name="slug" required>
+            <small class="text-muted">Akan dibuat otomatis dari nama kategori.</small>
+          </div>
+          <div class="form-group mb-3">
+            <label for="category_description" class="form-label">Deskripsi</label>
+            <textarea class="form-control" id="category_description" name="description" rows="3"></textarea>
+          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
@@ -209,6 +218,14 @@
           <div class="form-group mb-3">
             <label for="edit_category_name" class="form-label">Nama Kategori</label>
             <input type="text" class="form-control" id="edit_category_name" name="name" required>
+          </div>
+          <div class="form-group mb-3">
+            <label for="edit_category_slug" class="form-label">Slug</label>
+            <input type="text" class="form-control" id="edit_category_slug" name="slug" required>
+          </div>
+          <div class="form-group mb-3">
+            <label for="edit_category_description" class="form-label">Deskripsi</label>
+            <textarea class="form-control" id="edit_category_description" name="description" rows="3"></textarea>
           </div>
         </div>
         <div class="modal-footer">
@@ -272,15 +289,41 @@
       },
     });
 
+    // Auto-generate slug for add category
+    $('#category_name').on('input', function() {
+      var name = $(this).val();
+      var slug = name.toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .trim('-');
+      $('#category_slug').val(slug);
+    });
+
+    // Auto-generate slug for edit category
+    $('#edit_category_name').on('input', function() {
+      var name = $(this).val();
+      var slug = name.toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .trim('-');
+      $('#edit_category_slug').val(slug);
+    });
+
     // Edit Category Modal
     $('#editCategoryModal').on('show.bs.modal', function (event) {
       var button = $(event.relatedTarget);
       var id = button.data('id');
       var name = button.data('name');
+      var slug = button.data('slug');
+      var description = button.data('description');
 
       var modal = $(this);
       modal.find('#edit_category_id').val(id);
       modal.find('#edit_category_name').val(name);
+      modal.find('#edit_category_slug').val(slug);
+      modal.find('#edit_category_description').val(description);
     });
   });
 </script>

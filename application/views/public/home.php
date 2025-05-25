@@ -101,7 +101,7 @@
                     <p class="mb-0 text-sm"><i class="fas fa-calendar me-1"></i> Deadline: <?= date('d M Y', strtotime($job->batas_waktu)) ?></p>
                     <div class="d-flex align-items-center mt-3">
                       <a href="<?= base_url('home/job_details/' . $job->id) ?>" class="btn btn-outline-primary btn-sm mb-0">View Details</a>
-                      <a href="<?= base_url('applicant/apply/' . $job->id) ?>" class="btn btn-primary btn-sm ms-auto mb-0">Apply Now</a>
+                      <a href="<?= base_url('pelamar/lamar/' . $job->id) ?>" class="btn btn-primary btn-sm ms-auto mb-0">Apply Now</a>
                     </div>
                   </div>
                 </div>
@@ -140,7 +140,7 @@
                   <h6 class="mb-0"><?= $post->title ?></h6>
                   <p class="text-sm mb-0"><i class="fas fa-user me-1"></i> <?= $post->author_name ?></p>
                   <p class="text-sm mb-0"><i class="fas fa-calendar me-1"></i> <?= date('d M Y', strtotime($post->created_at)) ?></p>
-                  <a href="<?= base_url('home/blog_post/' . $post->slug) ?>" class="text-primary text-sm font-weight-bold mb-0">Read more</a>
+                  <a href="<?= base_url('blog/' . $post->slug) ?>" class="text-primary text-sm font-weight-bold mb-0">Read more</a>
                 </div>
               </div>
               <hr class="horizontal dark">
@@ -148,7 +148,7 @@
           <?php endif; ?>
 
           <div class="text-center mt-4">
-            <a href="<?= base_url('home/blog') ?>" class="btn btn-outline-primary btn-sm mb-0">View All Posts</a>
+            <a href="<?= base_url('blog') ?>" class="btn btn-outline-primary btn-sm mb-0">View All Posts</a>
           </div>
         </div>
       </div>

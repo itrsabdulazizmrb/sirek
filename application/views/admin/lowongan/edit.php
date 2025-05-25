@@ -4,7 +4,7 @@
       <div class="card-header pb-0">
         <div class="d-flex justify-content-between align-items-center">
           <h6>Edit Lowongan</h6>
-          <a href="<?= base_url('admin/jobs') ?>" class="btn btn-sm btn-outline-primary">
+          <a href="<?= base_url('admin/lowongan') ?>" class="btn btn-sm btn-outline-primary">
             <i class="fas fa-arrow-left me-2"></i> Kembali ke Daftar Lowongan
           </a>
         </div>
@@ -143,7 +143,7 @@
             <div class="col-md-12">
               <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
               <a href="<?= base_url('admin/dokumen_lowongan/' . $job->id) ?>" class="btn btn-info">Kelola Dokumen Persyaratan</a>
-              <a href="<?= base_url('admin/jobs') ?>" class="btn btn-secondary">Batal</a>
+              <a href="<?= base_url('admin/lowongan') ?>" class="btn btn-secondary">Batal</a>
             </div>
           </div>
         <?= form_close() ?>
@@ -224,7 +224,7 @@
             </table>
           </div>
           <div class="text-center mt-3">
-            <a href="<?= base_url('admin/job_applications/' . $job->id) ?>" class="btn btn-sm btn-primary">Lihat Semua Pelamar</a>
+            <a href="<?= base_url('admin/lamaran_lowongan/' . $job->id) ?>" class="btn btn-sm btn-primary">Lihat Semua Pelamar</a>
           </div>
         <?php endif; ?>
       </div>

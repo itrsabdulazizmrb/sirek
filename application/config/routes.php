@@ -67,6 +67,8 @@ $route['cari'] = 'beranda/cari';
 // Backward compatibility routes
 $route['home/jobs'] = 'beranda/lowongan';
 $route['home/search'] = 'beranda/cari';
+$route['home/blog'] = 'beranda/blog';
+$route['home/blog_post/(:any)'] = 'beranda/artikel/$1';
 $route['jobs'] = 'beranda/lowongan';
 
 // Rute untuk otentikasi
@@ -116,7 +118,7 @@ $route['admin/reset-kata-sandi/(:num)'] = 'admin/reset_kata_sandi/$1';
 $route['admin/profil-pelamar/(:num)'] = 'admin/profil_pelamar/$1';
 $route['admin/lamaran-pelamar/(:num)'] = 'admin/lamaran_pelamar/$1';
 $route['admin/lowongan'] = 'admin/lowongan';
-$route['admin/tambah-lowongan'] = 'admin/tambah_lowongan';
+$route['admin/tambah-lowongan'] = 'admin/tambahLowongan';
 $route['admin/edit-lowongan/(:num)'] = 'admin/edit_lowongan/$1';
 $route['admin/hapus-lowongan/(:num)'] = 'admin/hapus_lowongan/$1';
 $route['admin/lamaran'] = 'admin/lamaran';
@@ -154,6 +156,9 @@ $route['admin/tambah-kategori-blog'] = 'admin/tambah_kategori_blog';
 $route['admin/edit-kategori-blog'] = 'admin/edit_kategori_blog';
 $route['admin/hapus-kategori-blog/(:num)'] = 'admin/hapus_kategori_blog/$1';
 $route['admin/kategori'] = 'admin/kategori';
+$route['admin/tambah-kategori-lowongan'] = 'admin/tambah_kategori_lowongan';
+$route['admin/edit-kategori-lowongan'] = 'admin/edit_kategori_lowongan';
+$route['admin/hapus-kategori-lowongan/(:num)'] = 'admin/hapus_kategori_lowongan/$1';
 $route['admin/laporan'] = 'admin/laporan';
 $route['admin/laporan-lowongan'] = 'admin/laporan_lowongan';
 $route['admin/laporan-lamaran'] = 'admin/laporan_lamaran';
@@ -196,7 +201,7 @@ $route['admin/edit_dokumen_lowongan/(:num)'] = 'admin/edit_dokumen_lowongan/$1';
 $route['admin/hapus_dokumen_lowongan/(:num)'] = 'admin/hapus_dokumen_lowongan/$1';
 $route['admin/atur_dokumen_default/(:num)'] = 'admin/atur_dokumen_default/$1';
 $route['admin/hapus_semua_dokumen_lowongan/(:num)'] = 'admin/hapus_semua_dokumen_lowongan/$1';
-$route['admin/download_dokumen_lamaran/(:num)'] = 'admin/download_dokumen_lamaran/$1';
+$route['admin/download_dokumen_lamaran/(:num)'] = 'admin/unduh_dokumen_lamaran/$1';
 $route['pelamar/download_dokumen/(:num)'] = 'pelamar/download_dokumen/$1';
 $route['pelamar/download_dokumen_pelamar/(:num)'] = 'pelamar/download_dokumen_pelamar/$1';
 $route['pelamar/hapus_dokumen_pelamar/(:num)'] = 'pelamar/hapus_dokumen_pelamar/$1';
@@ -204,6 +209,10 @@ $route['pelamar/hapus_dokumen_pelamar/(:num)'] = 'pelamar/hapus_dokumen_pelamar/
 // Rute tambahan untuk pelamar (alias)
 $route['admin/profilPelamar/(:num)'] = 'admin/profilPelamar/$1';
 $route['admin/recruiter_jobs/(:num)'] = 'admin/lowongan_rekruter/$1';
+$route['admin/export_applicant_applications/(:num)'] = 'admin/ekspor_lamaran_pelamar/$1';
+$route['admin/assign_assessment/(:num)'] = 'admin/atur_penilaian/$1';
+$route['admin/assign_assessment/(:num)/(:num)'] = 'admin/atur_penilaian/$1/$2';
+// Backward compatibility route for old applicant URLs
 $route['applicant/application_details/(:num)'] = 'pelamar/detail_lamaran/$1';
 
 // Rute tambahan untuk pengguna (alias)

@@ -51,13 +51,21 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link <?= $this->uri->segment(2) == 'lowongan' || $this->uri->segment(2) == 'tambah_lowongan' || $this->uri->segment(2) == 'edit_lowongan' ? 'active' : '' ?>" href="<?= base_url('admin/lowongan') ?>">
+          <a class="nav-link <?= $this->uri->segment(2) == 'lowongan' || $this->uri->segment(2) == 'tambahLowongan' || $this->uri->segment(2) == 'edit_lowongan' ? 'active' : '' ?>" href="<?= base_url('admin/lowongan') ?>">
             <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
               <i class="ni ni-briefcase-24 text-warning text-sm opacity-10"></i>
             </div>
             <span class="nav-link-text ms-1">Manajemen Lowongan</span>
           </a>
         </li>
+        <!-- <li class="nav-item">
+          <a class="nav-link <?= $this->uri->segment(2) == 'kategori' ? 'active' : '' ?>" href="<?= base_url('admin/kategori') ?>">
+            <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+              <i class="ni ni-tag text-info text-sm opacity-10"></i>
+            </div>
+            <span class="nav-link-text ms-1">Kategori Lowongan</span>
+          </a>
+        </li> -->
         <li class="nav-item">
           <a class="nav-link <?= $this->uri->segment(2) == 'lamaran' || $this->uri->segment(2) == 'detail_lamaran' ? 'active' : '' ?>" href="<?= base_url('admin/lamaran') ?>">
             <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">

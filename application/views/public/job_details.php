@@ -15,7 +15,7 @@
               <?php endif; ?>
             </div>
           </div>
-          
+
           <div class="row mb-4">
             <div class="col-md-6">
               <div class="d-flex align-items-center mb-2">
@@ -72,39 +72,39 @@
               </div>
             </div>
           </div>
-          
+
           <div class="mb-4">
             <h5>Deskripsi Pekerjaan</h5>
             <div class="p-3 bg-gray-100 rounded">
               <?= nl2br($job->description) ?>
             </div>
           </div>
-          
+
           <div class="mb-4">
             <h5>Persyaratan</h5>
             <div class="p-3 bg-gray-100 rounded">
               <?= nl2br($job->requirements) ?>
             </div>
           </div>
-          
+
           <div class="mb-4">
             <h5>Tanggung Jawab</h5>
             <div class="p-3 bg-gray-100 rounded">
               <?= nl2br($job->responsibilities) ?>
             </div>
           </div>
-          
+
           <div class="d-flex justify-content-between align-items-center mt-5">
             <a href="<?= base_url('home/jobs') ?>" class="btn btn-outline-primary">Kembali ke Daftar Lowongan</a>
-            <?php if ($this->session->userdata('logged_in') && $this->session->userdata('role') == 'applicant') : ?>
-              <a href="<?= base_url('applicant/apply/' . $job->id) ?>" class="btn btn-primary">Lamar Sekarang</a>
+            <?php if ($this->session->userdata('logged_in') && $this->session->userdata('role') == 'pelamar') : ?>
+              <a href="<?= base_url('pelamar/lamar/' . $job->id) ?>" class="btn btn-primary">Lamar Sekarang</a>
             <?php else : ?>
               <a href="<?= base_url('auth') ?>" class="btn btn-primary">Login untuk Melamar</a>
             <?php endif; ?>
           </div>
         </div>
       </div>
-      
+
       <!-- Share Job -->
       <div class="card mt-4">
         <div class="card-body p-4">
@@ -129,15 +129,15 @@
         </div>
       </div>
     </div>
-    
+
     <div class="col-lg-4">
       <!-- Apply Now Card -->
       <div class="card">
         <div class="card-body p-4">
           <h5 class="mb-3">Tertarik dengan Posisi Ini?</h5>
           <p class="text-sm mb-4">Jangan lewatkan kesempatan untuk bergabung dengan tim kami. Lamar sekarang!</p>
-          <?php if ($this->session->userdata('logged_in') && $this->session->userdata('role') == 'applicant') : ?>
-            <a href="<?= base_url('applicant/apply/' . $job->id) ?>" class="btn btn-primary w-100">Lamar Sekarang</a>
+          <?php if ($this->session->userdata('logged_in') && $this->session->userdata('role') == 'pelamar') : ?>
+            <a href="<?= base_url('pelamar/lamar/' . $job->id) ?>" class="btn btn-primary w-100">Lamar Sekarang</a>
           <?php else : ?>
             <a href="<?= base_url('auth') ?>" class="btn btn-primary w-100">Login untuk Melamar</a>
             <div class="text-center mt-3">
@@ -146,7 +146,7 @@
           <?php endif; ?>
         </div>
       </div>
-      
+
       <!-- Company Info Card -->
       <div class="card mt-4">
         <div class="card-body p-4">
@@ -182,7 +182,7 @@
           </div>
         </div>
       </div>
-      
+
       <!-- Related Jobs Card -->
       <div class="card mt-4">
         <div class="card-body p-4">
