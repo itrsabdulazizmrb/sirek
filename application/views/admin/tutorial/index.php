@@ -110,6 +110,19 @@
               </div>
             </div>
           </div>
+
+          <div class="col-lg-6 col-md-6 mb-4">
+            <div class="card h-100">
+              <div class="card-body d-flex flex-column">
+                <div class="icon icon-shape icon-lg bg-gradient-info shadow text-center border-radius-lg mb-3">
+                  <i class="ni ni-vector text-white opacity-10"></i>
+                </div>
+                <h5 class="font-weight-bolder">Interactive Flowcharts</h5>
+                <p class="mb-4">Diagram visual interaktif untuk workflow development, CRUD operations, authentication, dan application process.</p>
+                <a href="<?= base_url('admin/tutorial?section=flowchart') ?>" class="btn btn-outline-info btn-sm mt-auto">Lihat Flowcharts</a>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -137,6 +150,8 @@ if ($section):
     <?php $this->load->view('admin/tutorial/api'); ?>
   <?php elseif ($section == 'testing'): ?>
     <?php $this->load->view('admin/tutorial/testing'); ?>
+  <?php elseif ($section == 'flowchart'): ?>
+    <?php $this->load->view('admin/tutorial/flowchart'); ?>
   <?php endif; ?>
 </div>
 <?php endif; ?>
