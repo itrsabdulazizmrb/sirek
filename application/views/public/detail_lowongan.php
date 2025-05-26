@@ -1,4 +1,38 @@
-<div class="container mt-7">
+<div class="page-header min-vh-50 d-flex align-items-center" style="background-image: url('<?= base_url('assets/img/gallery-hero-bg.jpg') ?>'); background-size: cover; background-position: center;">
+  <span class="mask bg-gradient-success opacity-7"></span>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-10 mx-auto">
+        <div class="text-center">
+          <h1 class="text-white display-5 font-weight-bold mb-4">Lowongan Pekerjaan</h1>
+          <!-- <p class="lead text-white fs-6 mb-4">Temukan Informasi Lengkap Produk Anyaman Eceng Gondok Pilihan Anda</p> -->
+          <!-- <div class="row justify-content-center">
+            <div class="col-md-8">
+              <div class="card card-body bg-white bg-opacity-10 backdrop-blur border-0 shadow-lg py-3">
+                <div class="row align-items-center">
+                  <div class="col-md-4 text-center mb-3 mb-md-0">
+                    <i class="fas fa-info-circle text-warning fa-2x mb-2"></i>
+                    <h6 class="text-white mb-0">Detail Lengkap</h6>
+                  </div>
+                  <div class="col-md-4 text-center mb-3 mb-md-0">
+                    <i class="fas fa-star text-warning fa-2x mb-2"></i>
+                    <h6 class="text-white mb-0">Kualitas Terjamin</h6>
+                  </div>
+                  <div class="col-md-4 text-center">
+                    <i class="fas fa-shopping-cart text-warning fa-2x mb-2"></i>
+                    <h6 class="text-white mb-0">Mudah Dipesan</h6>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div> -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container mt-n6">
   <div class="row">
     <div class="col-lg-8">
       <div class="card">
@@ -150,41 +184,49 @@
       <!-- Company Info Card -->
       <div class="card mt-4">
         <div class="card-body p-4">
-          <h5 class="mb-3">Tentang Perusahaan</h5>
+          <h5 class="mb-3">Tentang Gallery Kembang Ilung</h5>
           <div class="text-center mb-3">
-            <img src="<?= base_url('assets/img/company-logo.jpg') ?>" alt="Company Logo" class="img-fluid rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
+            <img src="<?= base_url('assets/img/gallery-logo.png') ?>" alt="Gallery Kembang Ilung Logo" class="img-fluid rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
           </div>
-          <h6 class="text-center mb-3"><?= $job->company_name ?? 'SIREK Company' ?></h6>
-          <p class="text-sm">SIREK adalah perusahaan teknologi terkemuka yang berfokus pada pengembangan solusi rekrutmen inovatif untuk berbagai industri.</p>
+          <h6 class="text-center mb-3 text-gray">Gallery Kembang Ilung</h6>
+          <p class="text-sm">Gallery Kembang Ilung adalah destinasi wisata seni kerajinan tradisional yang mengkhususkan diri pada anyaman eceng gondok. Kami melestarikan warisan budaya Indonesia melalui produk kerajinan berkualitas tinggi yang dibuat oleh pengrajin lokal berpengalaman.</p>
           <div class="d-flex align-items-center mb-2">
-            <div class="icon icon-shape icon-xs bg-gradient-primary shadow text-center">
-              <i class="fas fa-globe opacity-10"></i>
+            <div class="icon icon-shape icon-xs bg-gradient-success shadow text-center">
+              <i class="fas fa-leaf opacity-10"></i>
             </div>
             <div class="ms-2">
-              <p class="text-sm mb-0">Website: <a href="https://www.sirek.com" target="_blank">www.sirek.com</a></p>
+              <p class="text-sm mb-0">Spesialisasi: Anyaman Eceng Gondok & Kerajinan Tradisional</p>
             </div>
           </div>
           <div class="d-flex align-items-center mb-2">
-            <div class="icon icon-shape icon-xs bg-gradient-primary shadow text-center">
+            <div class="icon icon-shape icon-xs bg-gradient-success shadow text-center">
               <i class="fas fa-map-marker-alt opacity-10"></i>
             </div>
             <div class="ms-2">
-              <p class="text-sm mb-0">Lokasi: Jakarta, Indonesia</p>
+              <p class="text-sm mb-0">Lokasi: Desa Banyu Hirang, Amuntai Selatan, Kalimantan Selatan</p>
             </div>
           </div>
           <div class="d-flex align-items-center mb-2">
-            <div class="icon icon-shape icon-xs bg-gradient-primary shadow text-center">
-              <i class="fas fa-users opacity-10"></i>
+            <div class="icon icon-shape icon-xs bg-gradient-success shadow text-center">
+              <i class="fas fa-hands opacity-10"></i>
             </div>
             <div class="ms-2">
-              <p class="text-sm mb-0">Jumlah Karyawan: 100-500</p>
+              <p class="text-sm mb-0">Pengrajin: 25+ Master Pengrajin Berpengalaman</p>
+            </div>
+          </div>
+          <div class="d-flex align-items-center mb-2">
+            <div class="icon icon-shape icon-xs bg-gradient-success shadow text-center">
+              <i class="fas fa-award opacity-10"></i>
+            </div>
+            <div class="ms-2">
+              <p class="text-sm mb-0">Penghargaan: Produk Unggulan Daerah Kalimantan Selatan</p>
             </div>
           </div>
         </div>
       </div>
 
       <!-- Related Jobs Card -->
-      <div class="card mt-4">
+      <!-- <div class="card mt-4">
         <div class="card-body p-4">
           <h5 class="mb-3">Lowongan Terkait</h5>
           <?php if (empty($related_jobs)) : ?>
@@ -205,7 +247,7 @@
             <?php endforeach; ?>
           <?php endif; ?>
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
 </div>

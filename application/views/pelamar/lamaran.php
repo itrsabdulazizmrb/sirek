@@ -34,7 +34,7 @@
                     <td>
                       <div class="d-flex px-2 py-1">
                         <div>
-                          <img src="<?= base_url('assets/img/small-logos/logo-company.svg') ?>" class="avatar avatar-sm me-3" alt="job">
+                          <!-- <img src="<?= base_url('assets/img/small-logos/logo-company.svg') ?>" class="avatar avatar-sm me-3" alt="job"> -->
                         </div>
                         <div class="d-flex flex-column justify-content-center">
                           <h6 class="mb-0 text-sm"><?= $application->job_title ?></h6>

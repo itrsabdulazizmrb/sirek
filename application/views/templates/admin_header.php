@@ -7,7 +7,7 @@
   <link rel="apple-touch-icon" sizes="76x76" href="<?= base_url('assets/img/apple-icon.png') ?>">
   <link rel="icon" type="image/png" href="<?= base_url('assets/img/favicon.png') ?>">
   <title>
-    <?= $title ?> - SIREK Admin
+    <?= $title ?> - Gallery Kembang Ilung Admin
   </title>
   <!--     Fonts and icons     -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
@@ -30,13 +30,13 @@
 </head>
 
 <body class="g-sidenav-show bg-gray-100">
-  <div class="min-height-300 bg-dark position-absolute w-100"></div>
+  <div class="min-height-300 bg-gradient-success position-absolute w-100"></div>
   <aside class="sidenav bg-white navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-4 " id="sidenav-main">
     <div class="sidenav-header">
       <i class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
-      <a class="navbar-brand m-0" href="<?= base_url('admin/dasbor') ?>">
-        <img src="<?= base_url('assets/img/logo-ct-dark.png') ?>" class="navbar-brand-img h-100" alt="main_logo">
-        <span class="ms-1 font-weight-bold">SIREK Admin</span>
+      <a class="navbar-brand m-0" href="<?= base_url('beranda/index') ?>">
+        <img src="<?= base_url('assets/img/gallery-logo.png') ?>" class="navbar-brand-img h-100" alt="gallery_logo">
+        <span class="ms-1 font-weight-bold text-warning">Gallery Kembang Ilung</span>
       </a>
     </div>
     <hr class="horizontal dark mt-0">
@@ -50,7 +50,7 @@
             <span class="nav-link-text ms-1">Dasbor</span>
           </a>
         </li>
-        
+
         <!-- <li class="nav-item">
           <a class="nav-link <?= $this->uri->segment(2) == 'kategori' ? 'active' : '' ?>" href="<?= base_url('admin/kategori') ?>">
             <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
@@ -83,18 +83,44 @@
             <span class="nav-link-text ms-1">Manajemen Lowongan</span>
           </a>
         </li>
+
+        <!-- Next project -->
+        <!-- <li class="nav-item">
+          <a class="nav-link <?= $this->uri->segment(2) == 'koleksi' || $this->uri->segment(2) == 'detail_koleksi' ? 'active' : '' ?>" href="<?= base_url('admin/koleksi') ?>">
+            <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+              <i class="fas fa-palette text-success text-sm opacity-10"></i>
+            </div>
+            <span class="nav-link-text ms-1">Koleksi Kerajinan</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link <?= $this->uri->segment(2) == 'pesanan' ? 'active' : '' ?>" href="<?= base_url('admin/pesanan') ?>">
+            <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+              <i class="fas fa-shopping-cart text-info text-sm opacity-10"></i>
+            </div>
+            <span class="nav-link-text ms-1">Pesanan</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link <?= $this->uri->segment(2) == 'workshop' || $this->uri->segment(2) == 'tambah_workshop' || $this->uri->segment(2) == 'edit_workshop' ? 'active' : '' ?>" href="<?= base_url('admin/workshop') ?>">
+            <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+              <i class="fas fa-graduation-cap text-warning text-sm opacity-10"></i>
+            </div>
+            <span class="nav-link-text ms-1">Workshop & Pelatihan</span>
+          </a>
+        </li> -->
         <li class="nav-item">
           <a class="nav-link <?= $this->uri->segment(2) == 'blog' ? 'active' : '' ?>" href="<?= base_url('admin/blog') ?>">
             <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-              <i class="ni ni-collection text-primary text-sm opacity-10"></i>
+              <i class="fas fa-newspaper text-primary text-sm opacity-10"></i>
             </div>
-            <span class="nav-link-text ms-1">Manajemen Blog</span>
+            <span class="nav-link-text ms-1">Artikel & Blog</span>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link <?= $this->uri->segment(2) == 'pengguna' ? 'active' : '' ?>" href="<?= base_url('admin/pengguna') ?>">
             <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-              <i class="ni ni-single-02 text-dark text-sm opacity-10"></i>
+              <i class="fas fa-users text-dark text-sm opacity-10"></i>
             </div>
             <span class="nav-link-text ms-1">Manajemen Pengguna</span>
           </a>
@@ -142,10 +168,10 @@
         </nav>
         <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
           <div class="ms-md-auto pe-md-3 d-flex align-items-center">
-            <div class="input-group">
+            <!-- <div class="input-group">
               <span class="input-group-text text-body"><i class="fas fa-search" aria-hidden="true"></i></span>
               <input type="text" class="form-control" placeholder="Cari di sini...">
-            </div>
+            </div> -->
           </div>
           <ul class="navbar-nav  justify-content-end">
             <li class="nav-item d-flex align-items-center">
@@ -177,11 +203,11 @@
                   <a class="dropdown-item border-radius-md" href="javascript:;">
                     <div class="d-flex py-1">
                       <div class="my-auto">
-                        <img src="<?= base_url('assets/img/team-2.jpg') ?>" class="avatar avatar-sm  me-3 ">
+                        <img src="<?= base_url('assets/img/customer-1.jpg') ?>" class="avatar avatar-sm  me-3 ">
                       </div>
                       <div class="d-flex flex-column justify-content-center">
                         <h6 class="text-sm font-weight-normal mb-1">
-                          <span class="font-weight-bold">Lamaran baru</span> dari John Doe
+                          <span class="font-weight-bold">Pesanan baru</span> dari Siti Rahayu
                         </h6>
                         <p class="text-xs text-secondary mb-0">
                           <i class="fa fa-clock me-1"></i>
@@ -195,11 +221,13 @@
                   <a class="dropdown-item border-radius-md" href="javascript:;">
                     <div class="d-flex py-1">
                       <div class="my-auto">
-                        <img src="<?= base_url('assets/img/small-logos/logo-spotify.svg') ?>" class="avatar avatar-sm bg-gradient-dark  me-3 ">
+                        <div class="avatar avatar-sm bg-gradient-success me-3 d-flex align-items-center justify-content-center">
+                          <i class="fas fa-graduation-cap text-white"></i>
+                        </div>
                       </div>
                       <div class="d-flex flex-column justify-content-center">
                         <h6 class="text-sm font-weight-normal mb-1">
-                          <span class="font-weight-bold">Penilaian baru</span> selesai
+                          <span class="font-weight-bold">Workshop baru</span> terdaftar
                         </h6>
                         <p class="text-xs text-secondary mb-0">
                           <i class="fa fa-clock me-1"></i>

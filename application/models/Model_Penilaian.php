@@ -444,6 +444,12 @@ class Model_Penilaian extends CI_Model {
         return $this->db->count_all_results('penilaian_pelamar');
     }
 
+    // Hitung penilaian yang menunggu (belum diselesaikan)
+    public function hitung_penilaian_menunggu() {
+        $this->db->where('status', 'menunggu');
+        return $this->db->count_all_results('penilaian_pelamar');
+    }
+
     // Dapatkan statistik penilaian berdasarkan bulan
     public function dapatkan_statistik_penilaian_bulanan($year) {
         $this->db->select('MONTH(dibuat_pada) as month, COUNT(*) as count');

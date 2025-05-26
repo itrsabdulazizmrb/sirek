@@ -1,11 +1,32 @@
-<div class="page-header min-vh-50" style="background-image: url('<?= base_url('assets/img/blog-bg.jpg') ?>');">
-  <span class="mask bg-gradient-dark opacity-6"></span>
+<div class="page-header min-vh-75 d-flex align-items-center" style="background-image: url('<?= base_url('assets/img/gallery-hero-bg.jpg') ?>'); background-size: cover; background-position: center;">
+  <span class="mask bg-gradient-success opacity-7"></span>
   <div class="container">
     <div class="row">
-      <div class="col-md-8 mx-auto">
+      <div class="col-md-10 mx-auto">
         <div class="text-center">
-          <h1 class="text-white">Blog SIREK</h1>
-          <p class="lead text-white">Artikel, tips, dan berita terbaru seputar rekrutmen dan karir</p>
+          <h1 class="text-white display-4 font-weight-bold mb-4">Blog Gallery Kembang Ilung</h1>
+          <p class="lead text-white fs-5 mb-4">Cerita, Tips, dan Inspirasi Dunia Kerajinan Tradisional</p>
+          <p class="text-white opacity-9 mb-5">Jelajahi Artikel Menarik Seputar Seni Anyaman dan Budaya Lokal</p>
+          <div class="row justify-content-center">
+            <div class="col-md-8">
+              <div class="card card-body bg-white bg-opacity-10 backdrop-blur border-0 shadow-lg py-3">
+                <div class="row align-items-center">
+                  <div class="col-md-4 text-center mb-3 mb-md-0">
+                    <i class="fas fa-book-open text-warning fa-2x mb-2"></i>
+                    <h6 class="text-gray mb-0">Artikel Edukatif</h6>
+                  </div>
+                  <div class="col-md-4 text-center mb-3 mb-md-0">
+                    <i class="fas fa-lightbulb text-warning fa-2x mb-2"></i>
+                    <h6 class="text-gray mb-0">Tips & Inspirasi</h6>
+                  </div>
+                  <div class="col-md-4 text-center">
+                    <i class="fas fa-newspaper text-warning fa-2x mb-2"></i>
+                    <h6 class="text-gray mb-0">Berita Terkini</h6>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -78,6 +78,15 @@ class Model_Pengguna extends CI_Model {
         return $query->num_rows();
     }
 
+    // Hitung pelamar aktif (yang login dalam 30 hari terakhir)
+    public function hitung_pelamar_aktif() {
+        $this->db->where('role', 'pelamar');
+        $this->db->where('status', 'aktif');
+        $this->db->where('login_terakhir >=', date('Y-m-d H:i:s', strtotime('-30 days')));
+        $query = $this->db->get('pengguna');
+        return $query->num_rows();
+    }
+
     // Dapatkan pengguna dengan paginasi
     public function dapatkan_pengguna_paginasi($limit, $start) {
         $this->db->limit($limit, $start);

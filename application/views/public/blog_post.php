@@ -76,69 +76,7 @@
         </div>
       </div>
 
-      <!-- Comments -->
-      <div class="card mt-4">
-        <div class="card-body p-4">
-          <h5 class="mb-4">Komentar (3)</h5>
-
-          <!-- Comment 1 -->
-          <div class="d-flex mb-4">
-            <div class="avatar avatar-lg rounded-circle bg-gradient-secondary">
-              <span class="text-white">BS</span>
-            </div>
-            <div class="ms-3">
-              <div class="d-flex align-items-center">
-                <h6 class="mb-0">Budi Santoso</h6>
-                <span class="text-xs text-secondary ms-2">2 hari yang lalu</span>
-              </div>
-              <p class="text-sm mt-1 mb-0">Artikel yang sangat informatif! Saya mendapatkan banyak wawasan baru tentang proses rekrutmen modern. Terima kasih atas tipsnya.</p>
-              <div class="d-flex align-items-center mt-2">
-                <a href="#" class="text-xs text-primary me-3">Balas</a>
-                <a href="#" class="text-xs text-secondary me-1">Suka</a>
-                <span class="text-xs text-secondary">(5)</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Comment 2 -->
-          <div class="d-flex mb-4">
-            <div class="avatar avatar-lg rounded-circle bg-gradient-info">
-              <span class="text-white">DW</span>
-            </div>
-            <div class="ms-3">
-              <div class="d-flex align-items-center">
-                <h6 class="mb-0">Dewi Wijaya</h6>
-                <span class="text-xs text-secondary ms-2">1 minggu yang lalu</span>
-              </div>
-              <p class="text-sm mt-1 mb-0">Sebagai HR Manager, saya setuju dengan poin-poin yang disampaikan dalam artikel ini. Sangat relevan dengan tren rekrutmen saat ini.</p>
-              <div class="d-flex align-items-center mt-2">
-                <a href="#" class="text-xs text-primary me-3">Balas</a>
-                <a href="#" class="text-xs text-secondary me-1">Suka</a>
-                <span class="text-xs text-secondary">(3)</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Comment 3 -->
-          <div class="d-flex">
-            <div class="avatar avatar-lg rounded-circle bg-gradient-success">
-              <span class="text-white">RA</span>
-            </div>
-            <div class="ms-3">
-              <div class="d-flex align-items-center">
-                <h6 class="mb-0">Rudi Andika</h6>
-                <span class="text-xs text-secondary ms-2">2 minggu yang lalu</span>
-              </div>
-              <p class="text-sm mt-1 mb-0">Apakah ada rekomendasi platform untuk melatih kemampuan wawancara? Saya sedang mempersiapkan diri untuk beberapa wawancara kerja.</p>
-              <div class="d-flex align-items-center mt-2">
-                <a href="#" class="text-xs text-primary me-3">Balas</a>
-                <a href="#" class="text-xs text-secondary me-1">Suka</a>
-                <span class="text-xs text-secondary">(1)</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      
 
       <!-- Comment system will be implemented in future updates -->
       <div class="card mt-4">

@@ -36,20 +36,20 @@
             <div class="col-md-6">
               <div class="form-group">
                 <label for="nama_pengguna" class="form-control-label">Nama Pengguna <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" id="nama_pengguna" name="nama_pengguna" value="<?= set_value('nama_pengguna', $user->nama_pengguna) ?>" required>
+                <input type="text" class="form-control" id="nama_pengguna" name="nama_pengguna" value="<?= set_value('nama_pengguna', $user->nama_pengguna) ?>" required readonly>
                 <?= form_error('nama_pengguna', '<small class="text-danger">', '</small>') ?>
               </div>
             </div>
             <div class="col-md-6">
               <div class="form-group">
-                <label for="peran" class="form-control-label">Peran <span class="text-danger">*</span></label>
-                <select class="form-control" id="peran" name="peran" required>
-                  <option value="">Pilih Peran</option>
-                  <option value="admin" <?= set_select('peran', 'admin', ($user->peran == 'admin')) ?>>Admin</option>
-                  <option value="applicant" <?= set_select('peran', 'applicant', ($user->peran == 'applicant')) ?>>Pelamar</option>
-                  <option value="recruiter" <?= set_select('peran', 'recruiter', ($user->peran == 'recruiter')) ?>>Rekruter</option>
+                <label for="role" class="form-control-label">Role <span class="text-danger">*</span></label>
+                <select class="form-control" id="role" name="role" required>
+                  <option value="">Pilih Role</option>
+                  <option value="admin" <?= set_select('role', 'admin', ($user->role == 'admin')) ?>>Admin</option>
+                  <option value="pelamar" <?= set_select('role', 'pelamar', ($user->role == 'pelamar')) ?>>Pelamar</option>
+                  <option value="recruiter" <?= set_select('role', 'recruiter', ($user->role == 'recruiter')) ?>>Rekruter</option>
                 </select>
-                <?= form_error('peran', '<small class="text-danger">', '</small>') ?>
+                <?= form_error('role', '<small class="text-danger">', '</small>') ?>
               </div>
             </div>
           </div>
@@ -64,33 +64,21 @@
             </div>
             <div class="col-md-6">
               <div class="form-group">
-                <label for="foto_profil" class="form-control-label">Foto Profil</label>
-                <?php if ($user->foto_profil) : ?>
-                  <div class="mb-2">
-                    <img src="<?= base_url('uploads/profile_pictures/' . $user->foto_profil) ?>" class="img-fluid rounded" style="max-height: 100px;" alt="Profile Picture">
-                  </div>
-                <?php endif; ?>
-                <input type="file" class="form-control" id="foto_profil" name="foto_profil" accept="image/*">
-                <small class="text-muted">Format yang diizinkan: JPG, JPEG, PNG. Maks 1MB.</small>
+                <div class="form-group">
+                <label for="alamat" class="form-control-label">Alamat</label>
+                <textarea class="form-control" id="alamat" name="alamat" rows="1"><?= set_value('alamat', $user->alamat) ?></textarea>
+                <?= form_error('alamat', '<small class="text-danger">', '</small>') ?>
+              </div>
               </div>
             </div>
           </div>
 
-          <div class="row">
-            <div class="col-md-12">
-              <div class="form-group">
-                <label for="alamat" class="form-control-label">Alamat</label>
-                <textarea class="form-control" id="alamat" name="alamat" rows="3"><?= set_value('alamat', $user->alamat) ?></textarea>
-                <?= form_error('alamat', '<small class="text-danger">', '</small>') ?>
-              </div>
-            </div>
-          </div>
 
           <div class="row">
             <div class="col-md-12">
               <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="aktif" name="aktif" value="1" <?= set_checkbox('aktif', '1', ($user->status == 'active')) ?>>
-                <label class="form-check-label" for="aktif">Aktifkan Pengguna</label>
+                <input class="form-check-input" type="checkbox" id="status" name="status" value="aktif" <?= set_checkbox('status', 'aktif', ($user->status == 'aktif')) ?>>
+                <label class="form-check-label" for="status">Aktifkan Pengguna</label>
               </div>
             </div>
           </div>
@@ -131,13 +119,13 @@
           <strong>IP Terakhir:</strong> <?= $user->ip_terakhir ?? 'Tidak Tersedia' ?>
         </p>
         <p class="text-sm mb-1">
-          <strong>Status:</strong> <span class="badge badge-sm bg-gradient-<?= ($user->status == 'active') ? 'success' : 'secondary' ?>"><?= ($user->status == 'active') ? 'Aktif' : 'Tidak Aktif' ?></span>
+          <strong>Status:</strong> <span class="badge badge-sm bg-gradient-<?= ($user->status == 'aktif') ? 'success' : 'secondary' ?>"><?= ($user->status == 'aktif') ? 'Aktif' : 'Tidak Aktif' ?></span>
         </p>
       </div>
     </div>
   </div>
 
-  <?php if ($user->peran == 'applicant') : ?>
+  <?php if ($user->role == 'pelamar') : ?>
     <div class="col-md-6">
       <div class="card">
         <div class="card-header pb-0">
@@ -196,7 +184,7 @@
         </div>
       </div>
     </div>
-  <?php elseif ($user->peran == 'recruiter') : ?>
+  <?php elseif ($user->role == 'recruiter') : ?>
     <div class="col-md-6">
       <div class="card">
         <div class="card-header pb-0">
@@ -261,21 +249,21 @@
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     // Confirm before changing role
-    const roleSelect = document.getElementById('peran');
-    const originalRole = '<?= $user->peran ?>';
+    const roleSelect = document.getElementById('role');
+    const originalRole = '<?= $user->role ?>';
 
     roleSelect.addEventListener('change', function() {
       if (this.value !== originalRole) {
         const selectElement = this;
 
         Swal.fire({
-          title: 'Konfirmasi Perubahan Peran',
-          text: 'Mengubah peran pengguna dapat memengaruhi akses dan data mereka. Apakah Anda yakin ingin melanjutkan?',
+          title: 'Konfirmasi Perubahan role',
+          text: 'Mengubah role pengguna dapat memengaruhi akses dan data mereka. Apakah Anda yakin ingin melanjutkan?',
           icon: 'warning',
           showCancelButton: true,
           confirmButtonColor: '#3085d6',
           cancelButtonColor: '#d33',
-          confirmButtonText: 'Ya, Ubah Peran',
+          confirmButtonText: 'Ya, Ubah role',
           cancelButtonText: 'Batal'
         }).then((result) => {
           if (!result.isConfirmed) {

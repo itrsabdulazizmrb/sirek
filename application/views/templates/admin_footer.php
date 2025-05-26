@@ -6,23 +6,26 @@
                 © <script>
                   document.write(new Date().getFullYear())
                 </script>,
-                made with <i class="fa fa-heart"></i> by
-                <a href="javascript:;" class="font-weight-bold">SIREK Team</a>
+                dibuat dengan <i class="fa fa-heart text-success"></i> oleh
+                <a href="javascript:;" class="font-weight-bold text-success">Radina</a>
               </div>
             </div>
             <div class="col-lg-6">
               <ul class="nav nav-footer justify-content-center justify-content-lg-end">
                 <li class="nav-item">
-                  <a href="<?= base_url() ?>" class="nav-link text-muted">Home</a>
+                  <a href="<?= base_url() ?>" class="nav-link text-muted">Beranda</a>
                 </li>
                 <li class="nav-item">
-                  <a href="<?= base_url('home/about') ?>" class="nav-link text-muted">About Us</a>
+                  <a href="<?= base_url('gallery') ?>" class="nav-link text-muted">Galeri</a>
                 </li>
                 <li class="nav-item">
-                  <a href="<?= base_url('home/blog') ?>" class="nav-link text-muted">Blog</a>
+                  <a href="<?= base_url('tentang') ?>" class="nav-link text-muted">Tentang Kami</a>
                 </li>
                 <li class="nav-item">
-                  <a href="<?= base_url('home/contact') ?>" class="nav-link pe-0 text-muted">Contact</a>
+                  <a href="<?= base_url('blog') ?>" class="nav-link text-muted">Blog</a>
+                </li>
+                <li class="nav-item">
+                  <a href="<?= base_url('kontak') ?>" class="nav-link pe-0 text-muted">Kontak</a>
                 </li>
               </ul>
             </div>

@@ -87,11 +87,11 @@ class Model_Kategori extends CI_Model {
 
     // Dapatkan kategori lowongan dengan jumlah lowongan
     public function dapatkan_kategori_lowongan_dengan_jumlah() {
-        $this->db->select('kategori_pekerjaan.*, COUNT(lowongan_pekerjaan.id) as job_count');
+        $this->db->select('kategori_pekerjaan.*, COUNT(lowongan_pekerjaan.id) as jumlah_lowongan');
         $this->db->from('kategori_pekerjaan');
         $this->db->join('lowongan_pekerjaan', 'lowongan_pekerjaan.id_kategori = kategori_pekerjaan.id', 'left');
         $this->db->group_by('kategori_pekerjaan.id');
-        $this->db->order_by('kategori_pekerjaan.nama', 'ASC');
+        $this->db->order_by('jumlah_lowongan', 'DESC'); // Order by job count descending
         $query = $this->db->get();
         return $query->result();
     }

@@ -7,7 +7,7 @@
   <link rel="apple-touch-icon" sizes="76x76" href="<?= base_url('assets/img/apple-icon.png') ?>">
   <link rel="icon" type="image/png" href="<?= base_url('assets/img/favicon.png') ?>">
   <title>
-    <?= $title ?> - SIREK Recruitment System
+    <?= $title ?> - Gallery Kembang Ilung
   </title>
   <!--     Fonts and icons     -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
@@ -36,13 +36,13 @@
                   <h4 class="font-weight-bolder"><?= $title ?></h4>
                   <p class="mb-0">
                     <?php if ($title == 'Login') : ?>
-                      Enter your credentials to sign in
+                      Masuk ke akun Gallery Kembang Ilung Anda
                     <?php elseif ($title == 'Daftar') : ?>
-                      Enter your details to create an account
+                      Bergabunglah dengan komunitas Gallery Kembang Ilung
                     <?php elseif ($title == 'Lupa Password') : ?>
-                      Enter your email to reset your password
+                      Masukkan email Anda untuk reset password
                     <?php elseif ($title == 'Reset Password') : ?>
-                      Enter your new password
+                      Masukkan password baru Anda
                     <?php endif; ?>
                   </p>
                 </div>

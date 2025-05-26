@@ -177,16 +177,58 @@ class Model_Lamaran extends CI_Model {
     }
 
     // Dapatkan jumlah lamaran per lowongan
-    public function dapatkan_jumlah_lamaran_per_lowongan() {
-        $this->db->select('lowongan_pekerjaan.id, lowongan_pekerjaan.judul as title, COUNT(lamaran_pekerjaan.id) as application_count');
+    public function dapatkan_jumlah_lamaran_per_lowongan($limit = 10) {
+        $this->db->select('lowongan_pekerjaan.id, lowongan_pekerjaan.judul, COUNT(lamaran_pekerjaan.id) as jumlah_lamaran');
         $this->db->from('lowongan_pekerjaan');
         $this->db->join('lamaran_pekerjaan', 'lamaran_pekerjaan.id_pekerjaan = lowongan_pekerjaan.id', 'left');
         $this->db->where('lowongan_pekerjaan.status', 'aktif');
         $this->db->group_by('lowongan_pekerjaan.id');
-        $this->db->order_by('application_count', 'DESC');
-        $this->db->limit(10); // Ambil 10 lowongan teratas
+        $this->db->having('COUNT(lamaran_pekerjaan.id) > 0'); // Only jobs with applications
+        $this->db->order_by('jumlah_lamaran', 'DESC');
+        $this->db->limit($limit);
         $query = $this->db->get();
         return $query->result();
+    }
+
+    // Dapatkan lamaran terbaru dengan detail lengkap
+    public function dapatkan_lamaran_terbaru_detail($limit = 5) {
+        $this->db->select('lamaran_pekerjaan.*, lowongan_pekerjaan.judul as job_title, pengguna.nama_lengkap as applicant_name, pengguna.email as applicant_email, pengguna.foto_profil as profile_picture');
+        $this->db->from('lamaran_pekerjaan');
+        $this->db->join('lowongan_pekerjaan', 'lowongan_pekerjaan.id = lamaran_pekerjaan.id_pekerjaan', 'left');
+        $this->db->join('pengguna', 'pengguna.id = lamaran_pekerjaan.id_pelamar', 'left');
+        $this->db->order_by('lamaran_pekerjaan.tanggal_lamaran', 'DESC');
+        $this->db->limit($limit);
+        $query = $this->db->get();
+        return $query->result();
+    }
+
+    // Dapatkan aktivitas terbaru untuk timeline
+    public function dapatkan_aktivitas_terbaru($limit = 5) {
+        $activities = [];
+
+        // Get recent applications
+        $this->db->select('lamaran_pekerjaan.tanggal_lamaran as created_at, lowongan_pekerjaan.judul as job_title, pengguna.nama_lengkap as applicant_name');
+        $this->db->from('lamaran_pekerjaan');
+        $this->db->join('lowongan_pekerjaan', 'lowongan_pekerjaan.id = lamaran_pekerjaan.id_pekerjaan', 'left');
+        $this->db->join('pengguna', 'pengguna.id = lamaran_pekerjaan.id_pelamar', 'left');
+        $this->db->order_by('lamaran_pekerjaan.tanggal_lamaran', 'DESC');
+        $this->db->limit($limit);
+        $recent_applications = $this->db->get()->result();
+
+        foreach ($recent_applications as $app) {
+            $activities[] = (object)[
+                'type' => 'application',
+                'description' => 'Lamaran baru untuk posisi ' . $app->job_title . ' dari ' . $app->applicant_name,
+                'created_at' => $app->created_at
+            ];
+        }
+
+        // Sort by created_at and limit
+        usort($activities, function($a, $b) {
+            return strtotime($b->created_at) - strtotime($a->created_at);
+        });
+
+        return array_slice($activities, 0, $limit);
     }
 
     // Dapatkan semua lamaran aktif

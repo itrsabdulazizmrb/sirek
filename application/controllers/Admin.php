@@ -37,13 +37,13 @@ class Admin extends CI_Controller {
         $data['active_jobs'] = $this->model_lowongan->hitung_lowongan_aktif();
         $data['total_applications'] = $this->model_lamaran->hitung_lamaran();
         $data['new_applications'] = $this->model_lamaran->hitung_lamaran_baru();
-        $data['total_users'] = $this->model_pengguna->hitung_pengguna();
         $data['total_applicants'] = $this->model_pengguna->hitung_pelamar();
+        $data['active_applicants'] = $this->model_pengguna->hitung_pelamar_aktif();
         $data['total_assessments'] = $this->model_penilaian->hitung_penilaian();
-        $data['completed_assessments'] = $this->model_penilaian->hitung_penilaian_selesai_semua();
+        $data['pending_assessments'] = $this->model_penilaian->hitung_penilaian_menunggu();
 
-        // Get recent applications
-        $data['recent_applications'] = $this->model_lamaran->dapatkan_lamaran_terbaru(5);
+        // Get recent applications with detailed information
+        $data['recent_applications'] = $this->model_lamaran->dapatkan_lamaran_terbaru_detail(5);
 
         // Get job categories with count for chart
         $data['job_categories'] = $this->model_kategori->dapatkan_kategori_lowongan_dengan_jumlah();
@@ -62,19 +62,32 @@ class Admin extends CI_Controller {
 
         $data['monthly_application_stats'] = $monthly_data;
 
-        // Get application status statistics
+        // Calculate application trend (compare current month with previous month)
+        $current_month = date('n');
+        $previous_month = $current_month > 1 ? $current_month - 1 : 12;
+        $current_month_count = isset($monthly_data[$current_month]) ? $monthly_data[$current_month] : 0;
+        $previous_month_count = isset($monthly_data[$previous_month]) ? $monthly_data[$previous_month] : 0;
+
+        if ($previous_month_count > 0) {
+            $data['application_trend'] = round((($current_month_count - $previous_month_count) / $previous_month_count) * 100, 1);
+        } else {
+            $data['application_trend'] = $current_month_count > 0 ? 100 : 0;
+        }
+
+        // Get application status statistics (using Indonesian status terms)
         $data['application_status_stats'] = [
-            'pending' => $this->model_lamaran->hitung_lamaran_berdasarkan_status('pending'),
-            'reviewed' => $this->model_lamaran->hitung_lamaran_berdasarkan_status('reviewed'),
-            'shortlisted' => $this->model_lamaran->hitung_lamaran_berdasarkan_status('shortlisted'),
-            'interviewed' => $this->model_lamaran->hitung_lamaran_berdasarkan_status('interviewed'),
-            'offered' => $this->model_lamaran->hitung_lamaran_berdasarkan_status('offered'),
-            'hired' => $this->model_lamaran->hitung_lamaran_berdasarkan_status('hired'),
-            'rejected' => $this->model_lamaran->hitung_lamaran_berdasarkan_status('rejected')
+            'menunggu' => $this->model_lamaran->hitung_lamaran_berdasarkan_status('menunggu'),
+            'direview' => $this->model_lamaran->hitung_lamaran_berdasarkan_status('direview'),
+            'seleksi' => $this->model_lamaran->hitung_lamaran_berdasarkan_status('seleksi'),
+            'wawancara' => $this->model_lamaran->hitung_lamaran_berdasarkan_status('wawancara'),
+            'diterima' => $this->model_lamaran->hitung_lamaran_berdasarkan_status('diterima')
         ];
 
-        // Get applications per job position
-        $data['applications_per_job'] = $this->model_lamaran->dapatkan_jumlah_lamaran_per_lowongan();
+        // Get applications per job position (top 5)
+        $data['applications_per_job'] = $this->model_lamaran->dapatkan_jumlah_lamaran_per_lowongan(5);
+
+        // Get recent activities for timeline
+        $data['recent_activities'] = $this->model_lamaran->dapatkan_aktivitas_terbaru(5);
 
         // Load views
         $data['title'] = 'Dasbor Admin';
@@ -1911,9 +1924,9 @@ class Admin extends CI_Controller {
         }
 
         // Form validation rules
-        $this->form_validation->set_rules('username', 'Username', 'trim|required');
+        $this->form_validation->set_rules('nama_pengguna', 'Username', 'trim|required');
         $this->form_validation->set_rules('email', 'Email', 'trim|required|valid_email');
-        $this->form_validation->set_rules('full_name', 'Full Name', 'trim|required');
+        $this->form_validation->set_rules('nama_lengkap', 'Nama Lengkap', 'trim|required');
         $this->form_validation->set_rules('role', 'Role', 'trim|required');
 
         if ($this->form_validation->run() == FALSE) {
@@ -1925,13 +1938,13 @@ class Admin extends CI_Controller {
         } else {
             // Get form data
             $user_data = array(
-                'nama_pengguna' => $this->input->post('username'),
+                'nama_pengguna' => $this->input->post('nama_pengguna'),
                 'email' => $this->input->post('email'),
-                'nama_lengkap' => $this->input->post('full_name'),
-                'telepon' => $this->input->post('phone'),
-                'alamat' => $this->input->post('address'),
+                'nama_lengkap' => $this->input->post('nama_lengkap'),
+                'telepon' => $this->input->post('telepon'),
+                'alamat' => $this->input->post('alamat'),
                 'role' => $this->input->post('role'),
-                'status' => $this->input->post('is_active') ? 'aktif' : 'nonaktif',
+                'status' => $this->input->post('status') ? 'aktif' : 'nonaktif',
                 'diperbarui_pada' => date('Y-m-d H:i:s')
             );
 
