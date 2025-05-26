@@ -92,6 +92,22 @@
             <span class="nav-link-text ms-1">Laporan</span>
           </a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link <?= $this->uri->segment(2) == 'kategori' ? 'active' : '' ?>" href="<?= base_url('admin/kategori') ?>">
+            <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+              <i class="ni ni-tag text-warning text-sm opacity-10"></i>
+            </div>
+            <span class="nav-link-text ms-1">Kategori Lowongan</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link <?= $this->uri->segment(2) == 'tutorial' ? 'active' : '' ?>" href="<?= base_url('admin/tutorial') ?>">
+            <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+              <i class="ni ni-book-bookmark text-info text-sm opacity-10"></i>
+            </div>
+            <span class="nav-link-text ms-1">Tutorial & Dokumentasi</span>
+          </a>
+        </li>
         <li class="nav-item mt-3">
           <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Halaman Akun</h6>
         </li>

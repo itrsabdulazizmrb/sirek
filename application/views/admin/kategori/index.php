@@ -96,7 +96,7 @@
                           </li>
                           <li>
                             <a class="dropdown-item border-radius-md text-danger btn-delete"
-                               href="<?= base_url('admin/hapus-kategori-lowongan/' . $category->id) ?>"
+                               href="<?= base_url('admin/hapus_kategori_lowongan/' . $category->id) ?>"
                                onclick="return confirm('Apakah Anda yakin ingin menghapus kategori ini? Kategori yang sedang digunakan tidak dapat dihapus.');">
                               <i class="fas fa-trash me-2"></i> Hapus
                             </a>
@@ -123,7 +123,7 @@
         <h5 class="modal-title" id="addCategoryModalLabel">Tambah Kategori Baru</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <?= form_open('admin/tambah-kategori-lowongan') ?>
+      <?= form_open('admin/tambah_kategori_lowongan') ?>
         <div class="modal-body">
           <div class="form-group">
             <label for="nama" class="form-control-label">Nama Kategori <span class="text-danger">*</span></label>
@@ -151,7 +151,7 @@
         <h5 class="modal-title" id="editCategoryModalLabel">Edit Kategori</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <?= form_open('admin/edit-kategori-lowongan') ?>
+      <?= form_open('admin/edit_kategori_lowongan') ?>
         <input type="hidden" id="edit_category_id" name="id">
         <div class="modal-body">
           <div class="form-group">

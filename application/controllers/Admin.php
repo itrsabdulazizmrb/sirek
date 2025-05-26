@@ -82,6 +82,15 @@ class Admin extends CI_Controller {
         $this->load->view('templates/admin_footer');
     }
 
+    public function tutorial() {
+        $data['title'] = 'Tutorial & Dokumentasi';
+        $this->load->view('templates/admin_header', $data);
+        $this->load->view('admin/tutorial/index', $data);
+        $this->load->view('templates/admin_footer');
+    }
+
+
+
     // Manajemen Lowongan
     public function lowongan() {
         // Get all jobs
