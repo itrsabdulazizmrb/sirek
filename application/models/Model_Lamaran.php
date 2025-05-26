@@ -7,7 +7,6 @@ class Model_Lamaran extends CI_Model {
         parent::__construct();
     }
 
-    // Dapatkan semua lamaran
     public function dapatkan_lamaran_semua() {
         $this->db->select('lamaran_pekerjaan.*, lowongan_pekerjaan.judul as job_title, lowongan_pekerjaan.batas_waktu as deadline, pengguna.nama_lengkap as applicant_name, pengguna.email as applicant_email, pengguna.foto_profil as profile_picture');
         $this->db->from('lamaran_pekerjaan');
@@ -18,11 +17,8 @@ class Model_Lamaran extends CI_Model {
         return $query->result();
     }
 
-    // Dapatkan lamaran berdasarkan ID
     public function dapatkan_lamaran($id) {
-        // Check if catatan_admin column exists
         if (!$this->db->field_exists('catatan_admin', 'lamaran_pekerjaan')) {
-            // Add catatan_admin column if it doesn't exist
             $this->db->query('ALTER TABLE lamaran_pekerjaan ADD COLUMN catatan_admin TEXT NULL');
         }
 

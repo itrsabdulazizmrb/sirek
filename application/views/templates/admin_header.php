@@ -9,23 +9,15 @@
   <title>
     <?= $title ?> - Gallery Kembang Ilung Admin
   </title>
-  <!--     Fonts and icons     -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
-  <!-- Nucleo Icons -->
   <link href="https://demos.creative-tim.com/argon-dashboard-pro/assets/css/nucleo-icons.css" rel="stylesheet" />
   <link href="https://demos.creative-tim.com/argon-dashboard-pro/assets/css/nucleo-svg.css" rel="stylesheet" />
-  <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <!-- jQuery -->
   <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
-  <!-- CSS Files -->
   <link id="pagestyle" href="<?= base_url('assets/css/argon-dashboard.css?v=2.1.0') ?>" rel="stylesheet" />
-  <!-- DataTables CSS -->
   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.bootstrap5.min.css">
-  <!-- SweetAlert2 CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.min.css">
-  <!-- Custom CSS -->
   <link href="<?= base_url('assets/css/custom.css') ?>" rel="stylesheet" />
 </head>
 
@@ -51,14 +43,7 @@
           </a>
         </li>
 
-        <!-- <li class="nav-item">
-          <a class="nav-link <?= $this->uri->segment(2) == 'kategori' ? 'active' : '' ?>" href="<?= base_url('admin/kategori') ?>">
-            <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-              <i class="ni ni-tag text-info text-sm opacity-10"></i>
-            </div>
-            <span class="nav-link-text ms-1">Kategori Lowongan</span>
-          </a>
-        </li> -->
+
         <li class="nav-item">
           <a class="nav-link <?= $this->uri->segment(2) == 'lamaran' || $this->uri->segment(2) == 'detail_lamaran' ? 'active' : '' ?>" href="<?= base_url('admin/lamaran') ?>">
             <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
@@ -83,32 +68,6 @@
             <span class="nav-link-text ms-1">Manajemen Lowongan</span>
           </a>
         </li>
-
-        <!-- Next project -->
-        <!-- <li class="nav-item">
-          <a class="nav-link <?= $this->uri->segment(2) == 'koleksi' || $this->uri->segment(2) == 'detail_koleksi' ? 'active' : '' ?>" href="<?= base_url('admin/koleksi') ?>">
-            <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-              <i class="fas fa-palette text-success text-sm opacity-10"></i>
-            </div>
-            <span class="nav-link-text ms-1">Koleksi Kerajinan</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link <?= $this->uri->segment(2) == 'pesanan' ? 'active' : '' ?>" href="<?= base_url('admin/pesanan') ?>">
-            <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-              <i class="fas fa-shopping-cart text-info text-sm opacity-10"></i>
-            </div>
-            <span class="nav-link-text ms-1">Pesanan</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link <?= $this->uri->segment(2) == 'workshop' || $this->uri->segment(2) == 'tambah_workshop' || $this->uri->segment(2) == 'edit_workshop' ? 'active' : '' ?>" href="<?= base_url('admin/workshop') ?>">
-            <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-              <i class="fas fa-graduation-cap text-warning text-sm opacity-10"></i>
-            </div>
-            <span class="nav-link-text ms-1">Workshop & Pelatihan</span>
-          </a>
-        </li> -->
         <li class="nav-item">
           <a class="nav-link <?= $this->uri->segment(2) == 'blog' ? 'active' : '' ?>" href="<?= base_url('admin/blog') ?>">
             <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
@@ -168,10 +127,6 @@
         </nav>
         <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
           <div class="ms-md-auto pe-md-3 d-flex align-items-center">
-            <!-- <div class="input-group">
-              <span class="input-group-text text-body"><i class="fas fa-search" aria-hidden="true"></i></span>
-              <input type="text" class="form-control" placeholder="Cari di sini...">
-            </div> -->
           </div>
           <ul class="navbar-nav  justify-content-end">
             <li class="nav-item d-flex align-items-center">

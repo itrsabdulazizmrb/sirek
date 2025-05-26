@@ -221,6 +221,54 @@
         </table>
       </div>
     </div>
+
+    <div class="card mt-4">
+      <div class="card-header pb-0 p-3">
+        <h6 class="mb-0">Aktivitas Terbaru</h6>
+      </div>
+      <div class="card-body p-3">
+        <div class="timeline timeline-one-side">
+          <?php if (isset($recent_activities) && !empty($recent_activities)) : ?>
+            <?php foreach ($recent_activities as $activity) : ?>
+              <div class="timeline-block mb-3">
+                <span class="timeline-step">
+                  <?php
+                  $activity_type = $activity->type ?? 'default';
+                  switch($activity_type) {
+                    case 'job':
+                      echo '<i class="ni ni-briefcase-24 text-primary"></i>';
+                      break;
+                    case 'application':
+                      echo '<i class="ni ni-paper-diploma text-danger"></i>';
+                      break;
+                    case 'user':
+                      echo '<i class="ni ni-single-02 text-success"></i>';
+                      break;
+                    case 'assessment':
+                      echo '<i class="ni ni-ruler-pencil text-warning"></i>';
+                      break;
+                    default:
+                      echo '<i class="ni ni-bell-55 text-info"></i>';
+                      break;
+                  }
+                  ?>
+                </span>
+                <div class="timeline-content">
+                  <h6 class="text-dark text-sm font-weight-bold mb-0"><?= htmlspecialchars($activity->description ?? 'Aktivitas baru') ?></h6>
+                  <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">
+                    <?= isset($activity->created_at) ? date('d M Y H:i', strtotime($activity->created_at)) : date('d M Y H:i') ?>
+                  </p>
+                </div>
+              </div>
+            <?php endforeach; ?>
+          <?php else : ?>
+            <div class="text-center py-4">
+              <p class="text-muted mb-0">Belum ada aktivitas terbaru</p>
+            </div>
+          <?php endif; ?>
+        </div>
+      </div>
+    </div>
   </div>
   <div class="col-lg-4">
     <div class="card mb-4">
@@ -278,60 +326,11 @@
         </ul>
       </div>
     </div>
-
-    <div class="card mt-4">
-      <div class="card-header pb-0 p-3">
-        <h6 class="mb-0">Aktivitas Terbaru</h6>
-      </div>
-      <div class="card-body p-3">
-        <div class="timeline timeline-one-side">
-          <?php if (isset($recent_activities) && !empty($recent_activities)) : ?>
-            <?php foreach ($recent_activities as $activity) : ?>
-              <div class="timeline-block mb-3">
-                <span class="timeline-step">
-                  <?php
-                  $activity_type = $activity->type ?? 'default';
-                  switch($activity_type) {
-                    case 'job':
-                      echo '<i class="ni ni-briefcase-24 text-primary"></i>';
-                      break;
-                    case 'application':
-                      echo '<i class="ni ni-paper-diploma text-danger"></i>';
-                      break;
-                    case 'user':
-                      echo '<i class="ni ni-single-02 text-success"></i>';
-                      break;
-                    case 'assessment':
-                      echo '<i class="ni ni-ruler-pencil text-warning"></i>';
-                      break;
-                    default:
-                      echo '<i class="ni ni-bell-55 text-info"></i>';
-                      break;
-                  }
-                  ?>
-                </span>
-                <div class="timeline-content">
-                  <h6 class="text-dark text-sm font-weight-bold mb-0"><?= htmlspecialchars($activity->description ?? 'Aktivitas baru') ?></h6>
-                  <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">
-                    <?= isset($activity->created_at) ? date('d M Y H:i', strtotime($activity->created_at)) : date('d M Y H:i') ?>
-                  </p>
-                </div>
-              </div>
-            <?php endforeach; ?>
-          <?php else : ?>
-            <div class="text-center py-4">
-              <p class="text-muted mb-0">Belum ada aktivitas terbaru</p>
-            </div>
-          <?php endif; ?>
-        </div>
-      </div>
-    </div>
   </div>
 </div>
 
 <script>
   document.addEventListener("DOMContentLoaded", function() {
-    // Tren Lamaran Chart (Line Chart)
     var ctx1 = document.getElementById("chart-line").getContext("2d");
 
     var gradientStroke1 = ctx1.createLinearGradient(0, 230, 0, 50);
@@ -424,7 +423,6 @@
       },
     });
 
-    // Kategori Lowongan Chart (Doughnut Chart)
     var ctx2 = document.getElementById("job-category-chart").getContext("2d");
     new Chart(ctx2, {
       type: "doughnut",
@@ -476,7 +474,6 @@
       },
     });
 
-    // Status Lamaran Chart (Pie Chart)
     var ctx3 = document.getElementById("application-status-chart").getContext("2d");
     new Chart(ctx3, {
       type: "pie",
@@ -517,7 +514,6 @@
       },
     });
 
-    // Jumlah Pelamar per Posisi Chart (Bar Chart)
     var ctx4 = document.getElementById("applications-per-job-chart").getContext("2d");
     new Chart(ctx4, {
       type: "bar",

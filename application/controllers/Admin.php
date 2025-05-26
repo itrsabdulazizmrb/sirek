@@ -5,13 +5,11 @@ class Admin extends CI_Controller {
 
     public function __construct() {
         parent::__construct();
-        // Check if user is logged in and is admin or staff
         if (!$this->session->userdata('logged_in') ||
             ($this->session->userdata('role') != 'admin' && $this->session->userdata('role') != 'staff')) {
             redirect('auth');
         }
 
-        // Load models
         $this->load->model('model_pengguna');
         $this->load->model('model_lowongan');
         $this->load->model('model_lamaran');
@@ -21,7 +19,6 @@ class Admin extends CI_Controller {
         $this->load->model('model_pelamar');
         $this->load->model('model_dokumen');
 
-        // Load libraries
         $this->load->library('pagination');
         $this->load->library('form_validation');
         $this->load->library('upload');
@@ -32,7 +29,6 @@ class Admin extends CI_Controller {
     }
 
     public function dasbor() {
-        // Get dashboard statistics
         $data['total_jobs'] = $this->model_lowongan->hitung_lowongan();
         $data['active_jobs'] = $this->model_lowongan->hitung_lowongan_aktif();
         $data['total_applications'] = $this->model_lamaran->hitung_lamaran();
@@ -42,27 +38,21 @@ class Admin extends CI_Controller {
         $data['total_assessments'] = $this->model_penilaian->hitung_penilaian();
         $data['pending_assessments'] = $this->model_penilaian->hitung_penilaian_menunggu();
 
-        // Get recent applications with detailed information
         $data['recent_applications'] = $this->model_lamaran->dapatkan_lamaran_terbaru_detail(5);
 
-        // Get job categories with count for chart
         $data['job_categories'] = $this->model_kategori->dapatkan_kategori_lowongan_dengan_jumlah();
 
-        // Get monthly application statistics for current year
         $current_year = date('Y');
         $monthly_stats = $this->model_lamaran->dapatkan_statistik_lamaran_bulanan($current_year);
 
-        // Initialize array with 0 for all months
         $monthly_data = array_fill(1, 12, 0);
 
-        // Fill in actual data
         foreach ($monthly_stats as $stat) {
             $monthly_data[$stat->month] = $stat->count;
         }
 
         $data['monthly_application_stats'] = $monthly_data;
 
-        // Calculate application trend (compare current month with previous month)
         $current_month = date('n');
         $previous_month = $current_month > 1 ? $current_month - 1 : 12;
         $current_month_count = isset($monthly_data[$current_month]) ? $monthly_data[$current_month] : 0;
@@ -74,7 +64,6 @@ class Admin extends CI_Controller {
             $data['application_trend'] = $current_month_count > 0 ? 100 : 0;
         }
 
-        // Get application status statistics (using Indonesian status terms)
         $data['application_status_stats'] = [
             'menunggu' => $this->model_lamaran->hitung_lamaran_berdasarkan_status('menunggu'),
             'direview' => $this->model_lamaran->hitung_lamaran_berdasarkan_status('direview'),
@@ -83,13 +72,10 @@ class Admin extends CI_Controller {
             'diterima' => $this->model_lamaran->hitung_lamaran_berdasarkan_status('diterima')
         ];
 
-        // Get applications per job position (top 5)
         $data['applications_per_job'] = $this->model_lamaran->dapatkan_jumlah_lamaran_per_lowongan(5);
 
-        // Get recent activities for timeline
         $data['recent_activities'] = $this->model_lamaran->dapatkan_aktivitas_terbaru(5);
 
-        // Load views
         $data['title'] = 'Dasbor Admin';
         $this->load->view('templates/admin_header', $data);
         $this->load->view('admin/dashboard', $data);
