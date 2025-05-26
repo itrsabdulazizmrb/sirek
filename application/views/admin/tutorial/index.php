@@ -58,6 +58,58 @@
               </div>
             </div>
           </div>
+
+          <div class="col-lg-6 col-md-6 mb-4">
+            <div class="card h-100">
+              <div class="card-body d-flex flex-column">
+                <div class="icon icon-shape icon-lg bg-gradient-dark shadow text-center border-radius-lg mb-3">
+                  <i class="ni ni-laptop text-white opacity-10"></i>
+                </div>
+                <h5 class="font-weight-bolder">Code Playground</h5>
+                <p class="mb-4">Interactive code editor untuk testing dan eksperimen dengan code snippets SIREK.</p>
+                <a href="<?= base_url('admin/tutorial?section=playground') ?>" class="btn btn-outline-dark btn-sm mt-auto">Buka Playground</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-6 col-md-6 mb-4">
+            <div class="card h-100">
+              <div class="card-body d-flex flex-column">
+                <div class="icon icon-shape icon-lg bg-gradient-secondary shadow text-center border-radius-lg mb-3">
+                  <i class="ni ni-settings-gear-65 text-white opacity-10"></i>
+                </div>
+                <h5 class="font-weight-bolder">CRUD Generator</h5>
+                <p class="mb-4">Generate code CRUD otomatis untuk modul baru dengan konfigurasi yang mudah.</p>
+                <a href="<?= base_url('admin/tutorial?section=generator') ?>" class="btn btn-outline-secondary btn-sm mt-auto">Buka Generator</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-6 col-md-6 mb-4">
+            <div class="card h-100">
+              <div class="card-body d-flex flex-column">
+                <div class="icon icon-shape icon-lg bg-gradient-warning shadow text-center border-radius-lg mb-3">
+                  <i class="ni ni-world-2 text-white opacity-10"></i>
+                </div>
+                <h5 class="font-weight-bolder">API Documentation</h5>
+                <p class="mb-4">REST API endpoints, authentication, dan cara penggunaan API SIREK.</p>
+                <a href="<?= base_url('admin/tutorial?section=api') ?>" class="btn btn-outline-warning btn-sm mt-auto">Lihat API Docs</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-6 col-md-6 mb-4">
+            <div class="card h-100">
+              <div class="card-body d-flex flex-column">
+                <div class="icon icon-shape icon-lg bg-gradient-success shadow text-center border-radius-lg mb-3">
+                  <i class="ni ni-check-bold text-white opacity-10"></i>
+                </div>
+                <h5 class="font-weight-bolder">Testing Guide</h5>
+                <p class="mb-4">Panduan testing manual dan automated untuk memastikan kualitas code.</p>
+                <a href="<?= base_url('admin/tutorial?section=testing') ?>" class="btn btn-outline-success btn-sm mt-auto">Lihat Testing Guide</a>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -77,6 +129,14 @@ if ($section):
     <?php $this->load->view('admin/tutorial/menu'); ?>
   <?php elseif ($section == 'knowledge'): ?>
     <?php $this->load->view('admin/tutorial/knowledge'); ?>
+  <?php elseif ($section == 'playground'): ?>
+    <?php $this->load->view('admin/tutorial/playground'); ?>
+  <?php elseif ($section == 'generator'): ?>
+    <?php $this->load->view('admin/tutorial/generator'); ?>
+  <?php elseif ($section == 'api'): ?>
+    <?php $this->load->view('admin/tutorial/api'); ?>
+  <?php elseif ($section == 'testing'): ?>
+    <?php $this->load->view('admin/tutorial/testing'); ?>
   <?php endif; ?>
 </div>
 <?php endif; ?>
