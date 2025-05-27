@@ -94,7 +94,7 @@ try {
         }
     }
     
-    // Insert default notification settings for existing users
+    // Insert default default settings for existing users
     echo "<p>👥 Setting up default notification preferences for existing users...</p>\n";
     
     $existing_users = $CI->db->get('pengguna')->result();
