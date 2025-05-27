@@ -18,6 +18,7 @@ class Admin extends CI_Controller {
         $this->load->model('model_kategori');
         $this->load->model('model_pelamar');
         $this->load->model('model_dokumen');
+        $this->load->model('model_notifikasi');
 
         $this->load->library('pagination');
         $this->load->library('form_validation');
@@ -401,6 +402,9 @@ class Admin extends CI_Controller {
         $result = $this->model_lamaran->perbarui_status($id, $status);
 
         if ($result) {
+            // Create notification for status change
+            $this->buat_notifikasi_status_lamaran($id, $status);
+
             // Show success message
             $this->session->set_flashdata('success', 'Status lamaran berhasil diperbarui menjadi ' . ucfirst($status) . '.');
         } else {
@@ -3105,6 +3109,245 @@ class Admin extends CI_Controller {
         }
 
         redirect('admin/kategori');
+    }
+
+    // ===================================
+    // NOTIFICATION MANAGEMENT METHODS
+    // ===================================
+
+    // Halaman utama notifikasi
+    public function notifikasi() {
+        $id_pengguna = $this->session->userdata('user_id');
+
+        // Get filter parameters
+        $status = $this->input->get('status');
+        $jenis = $this->input->get('jenis');
+        $page = $this->input->get('page') ? (int)$this->input->get('page') : 1;
+        $limit = 20;
+        $offset = ($page - 1) * $limit;
+
+        // Get notifications
+        $data['notifications'] = $this->model_notifikasi->dapatkan_notifikasi_pengguna($id_pengguna, $limit, $offset, $status);
+
+        // Get statistics
+        $data['stats'] = $this->model_notifikasi->dapatkan_statistik_notifikasi($id_pengguna);
+
+        // Get notification settings
+        $data['settings'] = $this->model_notifikasi->dapatkan_pengaturan_notifikasi($id_pengguna);
+
+        // Pagination data
+        $data['current_page'] = $page;
+        $data['total_pages'] = ceil($data['stats']['total'] / $limit);
+        $data['status_filter'] = $status;
+        $data['jenis_filter'] = $jenis;
+
+        $data['title'] = 'Manajemen Notifikasi';
+        $this->load->view('templates/admin_header', $data);
+        $this->load->view('admin/notifikasi/index', $data);
+        $this->load->view('templates/admin_footer');
+    }
+
+    // API untuk mendapatkan notifikasi (AJAX)
+    public function api_notifikasi() {
+        $this->output->set_content_type('application/json');
+
+        $id_pengguna = $this->session->userdata('user_id');
+        $limit = $this->input->get('limit') ? (int)$this->input->get('limit') : 10;
+        $offset = $this->input->get('offset') ? (int)$this->input->get('offset') : 0;
+        $status = $this->input->get('status');
+
+        $notifications = $this->model_notifikasi->dapatkan_notifikasi_pengguna($id_pengguna, $limit, $offset, $status);
+        $unread_count = $this->model_notifikasi->hitung_notifikasi_belum_dibaca($id_pengguna);
+
+        $response = array(
+            'success' => true,
+            'data' => $notifications,
+            'unread_count' => $unread_count
+        );
+
+        $this->output->set_output(json_encode($response));
+    }
+
+    // Tandai notifikasi sebagai dibaca
+    public function tandai_dibaca_notifikasi($id) {
+        $id_pengguna = $this->session->userdata('user_id');
+        $result = $this->model_notifikasi->tandai_dibaca($id, $id_pengguna);
+
+        if ($this->input->is_ajax_request()) {
+            $this->output->set_content_type('application/json');
+            $unread_count = $this->model_notifikasi->hitung_notifikasi_belum_dibaca($id_pengguna);
+
+            $response = array(
+                'success' => $result,
+                'unread_count' => $unread_count
+            );
+
+            $this->output->set_output(json_encode($response));
+        } else {
+            if ($result) {
+                $this->session->set_flashdata('success', 'Notifikasi berhasil ditandai sebagai dibaca.');
+            } else {
+                $this->session->set_flashdata('error', 'Gagal menandai notifikasi sebagai dibaca.');
+            }
+            redirect('admin/notifikasi');
+        }
+    }
+
+    // Tandai semua notifikasi sebagai dibaca
+    public function tandai_semua_dibaca_notifikasi() {
+        $id_pengguna = $this->session->userdata('user_id');
+        $result = $this->model_notifikasi->tandai_semua_dibaca($id_pengguna);
+
+        if ($this->input->is_ajax_request()) {
+            $this->output->set_content_type('application/json');
+            $response = array(
+                'success' => $result,
+                'unread_count' => 0
+            );
+            $this->output->set_output(json_encode($response));
+        } else {
+            if ($result) {
+                $this->session->set_flashdata('success', 'Semua notifikasi berhasil ditandai sebagai dibaca.');
+            } else {
+                $this->session->set_flashdata('error', 'Gagal menandai semua notifikasi sebagai dibaca.');
+            }
+            redirect('admin/notifikasi');
+        }
+    }
+
+    // Hapus notifikasi
+    public function hapus_notifikasi($id) {
+        $id_pengguna = $this->session->userdata('user_id');
+        $result = $this->model_notifikasi->hapus_notifikasi($id, $id_pengguna);
+
+        if ($this->input->is_ajax_request()) {
+            $this->output->set_content_type('application/json');
+            $unread_count = $this->model_notifikasi->hitung_notifikasi_belum_dibaca($id_pengguna);
+
+            $response = array(
+                'success' => $result,
+                'unread_count' => $unread_count
+            );
+
+            $this->output->set_output(json_encode($response));
+        } else {
+            if ($result) {
+                $this->session->set_flashdata('success', 'Notifikasi berhasil dihapus.');
+            } else {
+                $this->session->set_flashdata('error', 'Gagal menghapus notifikasi.');
+            }
+            redirect('admin/notifikasi');
+        }
+    }
+
+    // Buat notifikasi baru (untuk admin)
+    public function buat_notifikasi() {
+        // Form validation
+        $this->form_validation->set_rules('id_pengguna', 'Penerima', 'required');
+        $this->form_validation->set_rules('judul', 'Judul', 'required|max_length[255]');
+        $this->form_validation->set_rules('pesan', 'Pesan', 'required');
+        $this->form_validation->set_rules('jenis', 'Jenis', 'required');
+        $this->form_validation->set_rules('prioritas', 'Prioritas', 'required');
+
+        if ($this->form_validation->run() == FALSE) {
+            // Get users for dropdown
+            $data['users'] = $this->model_pengguna->dapatkan_pengguna_semua();
+
+            $data['title'] = 'Buat Notifikasi Baru';
+            $this->load->view('templates/admin_header', $data);
+            $this->load->view('admin/notifikasi/create', $data);
+            $this->load->view('templates/admin_footer');
+        } else {
+            $notification_data = array(
+                'id_pengguna' => $this->input->post('id_pengguna'),
+                'judul' => $this->input->post('judul'),
+                'pesan' => $this->input->post('pesan'),
+                'jenis' => $this->input->post('jenis'),
+                'prioritas' => $this->input->post('prioritas'),
+                'url_aksi' => $this->input->post('url_aksi'),
+                'kedaluwarsa_pada' => $this->input->post('kedaluwarsa_pada'),
+                'dibuat_oleh' => $this->session->userdata('user_id')
+            );
+
+            $result = $this->model_notifikasi->buat_notifikasi($notification_data);
+
+            if ($result) {
+                $this->session->set_flashdata('success', 'Notifikasi berhasil dibuat.');
+                redirect('admin/notifikasi');
+            } else {
+                $this->session->set_flashdata('error', 'Gagal membuat notifikasi.');
+                redirect('admin/buat_notifikasi');
+            }
+        }
+    }
+
+    // Helper method: Buat notifikasi otomatis untuk lamaran baru
+    public function buat_notifikasi_lamaran_baru($id_lamaran) {
+        // Get application details
+        $lamaran = $this->model_lamaran->dapatkan_lamaran($id_lamaran);
+        if (!$lamaran) return false;
+
+        // Get job details
+        $lowongan = $this->model_lowongan->dapatkan_lowongan($lamaran->id_pekerjaan);
+        if (!$lowongan) return false;
+
+        // Get applicant details
+        $pelamar = $this->model_pengguna->dapatkan_pengguna($lamaran->id_pelamar);
+        if (!$pelamar) return false;
+
+        // Get all admin users
+        $admins = $this->model_pengguna->dapatkan_pengguna_berdasarkan_peran('admin');
+
+        $notification_data = array(
+            'judul' => 'Lamaran Baru Diterima',
+            'pesan' => "Lamaran baru telah diterima untuk posisi {$lowongan->judul} dari {$pelamar->nama_lengkap}. Silakan tinjau dan proses lamaran ini.",
+            'jenis' => 'lamaran_baru',
+            'prioritas' => 'normal',
+            'id_referensi' => $id_lamaran,
+            'tabel_referensi' => 'lamaran_pekerjaan',
+            'url_aksi' => 'admin/detail_lamaran/' . $id_lamaran,
+            'dibuat_oleh' => null
+        );
+
+        // Send notification to all admins
+        $admin_ids = array_column($admins, 'id');
+        return $this->model_notifikasi->buat_notifikasi_massal($notification_data, $admin_ids);
+    }
+
+    // Helper method: Buat notifikasi untuk perubahan status lamaran
+    public function buat_notifikasi_status_lamaran($id_lamaran, $status_baru) {
+        // Get application details
+        $lamaran = $this->model_lamaran->dapatkan_lamaran($id_lamaran);
+        if (!$lamaran) return false;
+
+        // Get job details
+        $lowongan = $this->model_lowongan->dapatkan_lowongan($lamaran->id_pekerjaan);
+        if (!$lowongan) return false;
+
+        // Create notification for applicant
+        $status_messages = array(
+            'direview' => 'Lamaran Anda sedang ditinjau oleh tim HR.',
+            'seleksi' => 'Selamat! Anda lolos ke tahap seleksi.',
+            'wawancara' => 'Anda telah dijadwalkan untuk wawancara.',
+            'diterima' => 'Selamat! Lamaran Anda diterima.',
+            'ditolak' => 'Mohon maaf, lamaran Anda tidak dapat kami proses lebih lanjut.'
+        );
+
+        $pesan = isset($status_messages[$status_baru]) ? $status_messages[$status_baru] : "Status lamaran Anda telah diperbarui menjadi: " . ucfirst($status_baru);
+
+        $notification_data = array(
+            'id_pengguna' => $lamaran->id_pelamar,
+            'judul' => 'Update Status Lamaran',
+            'pesan' => "Status lamaran Anda untuk posisi {$lowongan->judul} telah diperbarui. {$pesan}",
+            'jenis' => 'status_lamaran',
+            'prioritas' => 'normal',
+            'id_referensi' => $id_lamaran,
+            'tabel_referensi' => 'lamaran_pekerjaan',
+            'url_aksi' => 'pelamar/lamaran/' . $id_lamaran,
+            'dibuat_oleh' => $this->session->userdata('user_id')
+        );
+
+        return $this->model_notifikasi->buat_notifikasi($notification_data);
     }
 
 

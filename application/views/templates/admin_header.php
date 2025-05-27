@@ -108,6 +108,15 @@
             <span class="nav-link-text ms-1">Tutorial & Dokumentasi</span>
           </a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link <?= $this->uri->segment(2) == 'notifikasi' ? 'active' : '' ?>" href="<?= base_url('admin/notifikasi') ?>">
+            <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+              <i class="ni ni-bell-55 text-primary text-sm opacity-10"></i>
+            </div>
+            <span class="nav-link-text ms-1">Notifikasi</span>
+            <span id="sidebar-notification-badge" class="badge badge-sm bg-gradient-warning ms-auto" style="display: none;">0</span>
+          </a>
+        </li>
         <li class="nav-item mt-3">
           <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Halaman Akun</h6>
         </li>
@@ -166,46 +175,35 @@
               </a>
             </li>
             <li class="nav-item dropdown pe-2 d-flex align-items-center">
-              <a href="javascript:;" class="nav-link text-white p-0" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+              <a href="javascript:;" class="nav-link text-white p-0 position-relative" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="fa fa-bell cursor-pointer"></i>
+                <span id="header-notification-badge" class="badge badge-sm bg-gradient-danger position-absolute top-0 start-100 translate-middle rounded-pill" style="display: none;">0</span>
               </a>
-              <ul class="dropdown-menu  dropdown-menu-end  px-2 py-3 me-sm-n4" aria-labelledby="dropdownMenuButton">
-                <li class="mb-2">
-                  <a class="dropdown-item border-radius-md" href="javascript:;">
-                    <div class="d-flex py-1">
-                      <div class="my-auto">
-                        <img src="<?= base_url('assets/img/customer-1.jpg') ?>" class="avatar avatar-sm  me-3 ">
-                      </div>
-                      <div class="d-flex flex-column justify-content-center">
-                        <h6 class="text-sm font-weight-normal mb-1">
-                          <span class="font-weight-bold">Pesanan baru</span> dari Siti Rahayu
-                        </h6>
-                        <p class="text-xs text-secondary mb-0">
-                          <i class="fa fa-clock me-1"></i>
-                          13 menit yang lalu
-                        </p>
-                      </div>
-                    </div>
-                  </a>
+              <ul class="dropdown-menu dropdown-menu-end px-2 py-3 me-sm-n4" aria-labelledby="dropdownMenuButton" style="min-width: 350px; max-height: 400px; overflow-y: auto;">
+                <li class="dropdown-header d-flex justify-content-between align-items-center">
+                  <h6 class="mb-0">Notifikasi</h6>
+                  <div>
+                    <button type="button" class="btn btn-link text-primary p-0 me-2" onclick="markAllNotificationsAsRead()" title="Tandai semua dibaca">
+                      <i class="ni ni-check-bold"></i>
+                    </button>
+                    <a href="<?= base_url('admin/notifikasi') ?>" class="btn btn-link text-primary p-0" title="Lihat semua">
+                      <i class="ni ni-bold-right"></i>
+                    </a>
+                  </div>
                 </li>
-                <li>
-                  <a class="dropdown-item border-radius-md" href="javascript:;">
-                    <div class="d-flex py-1">
-                      <div class="my-auto">
-                        <div class="avatar avatar-sm bg-gradient-success me-3 d-flex align-items-center justify-content-center">
-                          <i class="fas fa-graduation-cap text-white"></i>
-                        </div>
-                      </div>
-                      <div class="d-flex flex-column justify-content-center">
-                        <h6 class="text-sm font-weight-normal mb-1">
-                          <span class="font-weight-bold">Workshop baru</span> terdaftar
-                        </h6>
-                        <p class="text-xs text-secondary mb-0">
-                          <i class="fa fa-clock me-1"></i>
-                          1 hari
-                        </p>
-                      </div>
+                <li><hr class="dropdown-divider"></li>
+                <div id="notification-dropdown-content">
+                  <li class="text-center py-3">
+                    <div class="spinner-border spinner-border-sm text-primary" role="status">
+                      <span class="visually-hidden">Loading...</span>
                     </div>
+                    <p class="text-sm text-muted mt-2 mb-0">Memuat notifikasi...</p>
+                  </li>
+                </div>
+                <li><hr class="dropdown-divider"></li>
+                <li class="text-center">
+                  <a href="<?= base_url('admin/notifikasi') ?>" class="btn btn-link text-primary text-sm">
+                    Lihat Semua Notifikasi
                   </a>
                 </li>
               </ul>
@@ -229,3 +227,203 @@
           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
       <?php endif; ?>
+
+      <!-- Notification System JavaScript -->
+      <script>
+        // Global notification variables
+        let notificationUpdateInterval;
+        let lastNotificationCheck = new Date();
+
+        // Initialize notification system when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+          loadNotifications();
+          startNotificationPolling();
+
+          // Load notifications when dropdown is opened
+          document.getElementById('dropdownMenuButton').addEventListener('click', function() {
+            loadNotifications();
+          });
+        });
+
+        // Load notifications from server
+        function loadNotifications() {
+          fetch('<?= base_url("admin/api_notifikasi") ?>?limit=5&status=belum_dibaca', {
+            method: 'GET',
+            headers: {
+              'X-Requested-With': 'XMLHttpRequest'
+            }
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              updateNotificationDropdown(data.data);
+              updateNotificationBadges(data.unread_count);
+            }
+          })
+          .catch(error => {
+            console.error('Error loading notifications:', error);
+          });
+        }
+
+        // Update notification dropdown content
+        function updateNotificationDropdown(notifications) {
+          const container = document.getElementById('notification-dropdown-content');
+
+          if (notifications.length === 0) {
+            container.innerHTML = `
+              <li class="text-center py-3">
+                <i class="ni ni-check-bold text-success" style="font-size: 2rem;"></i>
+                <p class="text-sm text-muted mt-2 mb-0">Tidak ada notifikasi baru</p>
+              </li>
+            `;
+            return;
+          }
+
+          let html = '';
+          notifications.forEach(notification => {
+            const timeAgo = getTimeAgo(notification.dibuat_pada);
+            const iconClass = notification.icon || 'ni ni-bell-55';
+            const colorClass = notification.warna || 'primary';
+
+            html += `
+              <li class="mb-2">
+                <a class="dropdown-item border-radius-md" href="${notification.url_aksi ? '<?= base_url() ?>' + notification.url_aksi : 'javascript:;'}" onclick="markNotificationAsRead(${notification.id})">
+                  <div class="d-flex py-1">
+                    <div class="my-auto">
+                      <div class="icon icon-shape icon-sm bg-gradient-${colorClass} shadow text-center border-radius-md me-3">
+                        <i class="${iconClass} text-white opacity-10"></i>
+                      </div>
+                    </div>
+                    <div class="d-flex flex-column justify-content-center">
+                      <h6 class="text-sm font-weight-bold mb-1">
+                        ${escapeHtml(notification.judul)}
+                      </h6>
+                      <p class="text-xs text-secondary mb-0">
+                        ${escapeHtml(notification.pesan.substring(0, 80))}${notification.pesan.length > 80 ? '...' : ''}
+                      </p>
+                      <p class="text-xs text-secondary mb-0">
+                        <i class="fa fa-clock me-1"></i>
+                        ${timeAgo}
+                      </p>
+                    </div>
+                  </div>
+                </a>
+              </li>
+            `;
+          });
+
+          container.innerHTML = html;
+        }
+
+        // Update notification badges
+        function updateNotificationBadges(count) {
+          const headerBadge = document.getElementById('header-notification-badge');
+          const sidebarBadge = document.getElementById('sidebar-notification-badge');
+
+          if (count > 0) {
+            headerBadge.textContent = count > 99 ? '99+' : count;
+            headerBadge.style.display = 'block';
+
+            if (sidebarBadge) {
+              sidebarBadge.textContent = count > 99 ? '99+' : count;
+              sidebarBadge.style.display = 'inline-block';
+            }
+          } else {
+            headerBadge.style.display = 'none';
+            if (sidebarBadge) {
+              sidebarBadge.style.display = 'none';
+            }
+          }
+        }
+
+        // Mark notification as read
+        function markNotificationAsRead(notificationId) {
+          fetch('<?= base_url("admin/tandai_dibaca_notifikasi/") ?>' + notificationId, {
+            method: 'POST',
+            headers: {
+              'X-Requested-With': 'XMLHttpRequest'
+            }
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              updateNotificationBadges(data.unread_count);
+            }
+          })
+          .catch(error => {
+            console.error('Error marking notification as read:', error);
+          });
+        }
+
+        // Mark all notifications as read
+        function markAllNotificationsAsRead() {
+          fetch('<?= base_url("admin/tandai_semua_dibaca_notifikasi") ?>', {
+            method: 'POST',
+            headers: {
+              'X-Requested-With': 'XMLHttpRequest'
+            }
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              updateNotificationBadges(0);
+              loadNotifications(); // Reload to show updated status
+            }
+          })
+          .catch(error => {
+            console.error('Error marking all notifications as read:', error);
+          });
+        }
+
+        // Start polling for new notifications
+        function startNotificationPolling() {
+          // Check for new notifications every 30 seconds
+          notificationUpdateInterval = setInterval(function() {
+            loadNotifications();
+          }, 30000);
+        }
+
+        // Stop notification polling
+        function stopNotificationPolling() {
+          if (notificationUpdateInterval) {
+            clearInterval(notificationUpdateInterval);
+          }
+        }
+
+        // Helper function to escape HTML
+        function escapeHtml(text) {
+          const map = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+          };
+          return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+        }
+
+        // Helper function to get time ago
+        function getTimeAgo(dateString) {
+          const now = new Date();
+          const date = new Date(dateString);
+          const diffInSeconds = Math.floor((now - date) / 1000);
+
+          if (diffInSeconds < 60) {
+            return 'Baru saja';
+          } else if (diffInSeconds < 3600) {
+            const minutes = Math.floor(diffInSeconds / 60);
+            return minutes + ' menit yang lalu';
+          } else if (diffInSeconds < 86400) {
+            const hours = Math.floor(diffInSeconds / 3600);
+            return hours + ' jam yang lalu';
+          } else {
+            const days = Math.floor(diffInSeconds / 86400);
+            return days + ' hari yang lalu';
+          }
+        }
+
+        // Clean up when page unloads
+        window.addEventListener('beforeunload', function() {
+          stopNotificationPolling();
+        });
+      </script>

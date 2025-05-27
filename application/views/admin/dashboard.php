@@ -222,6 +222,28 @@
       </div>
     </div>
 
+    <!-- Notification Widget -->
+    <div class="card mt-4">
+      <div class="card-header pb-0 p-3">
+        <div class="d-flex justify-content-between align-items-center">
+          <h6 class="mb-0">Notifikasi Terbaru</h6>
+          <a href="<?= base_url('admin/notifikasi') ?>" class="btn btn-link text-primary p-0">
+            <i class="ni ni-bold-right"></i>
+          </a>
+        </div>
+      </div>
+      <div class="card-body p-3">
+        <div id="dashboard-notifications" style="max-height: 250px; overflow-y: auto;">
+          <div class="text-center py-3">
+            <div class="spinner-border spinner-border-sm text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="text-sm text-muted mt-2 mb-0">Memuat notifikasi...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="card mt-4">
       <div class="card-header pb-0 p-3">
         <h6 class="mb-0">Aktivitas Terbaru</h6>
@@ -587,5 +609,124 @@
         },
       },
     });
+
+    // Load dashboard notifications
+    loadDashboardNotifications();
   });
+
+  // Function to load notifications for dashboard widget
+  function loadDashboardNotifications() {
+    fetch('<?= base_url("admin/api_notifikasi") ?>?limit=5', {
+      method: 'GET',
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest'
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        updateDashboardNotifications(data.data);
+      }
+    })
+    .catch(error => {
+      console.error('Error loading dashboard notifications:', error);
+      document.getElementById('dashboard-notifications').innerHTML = `
+        <div class="text-center py-3">
+          <i class="ni ni-fat-remove text-danger" style="font-size: 2rem;"></i>
+          <p class="text-sm text-muted mt-2 mb-0">Gagal memuat notifikasi</p>
+        </div>
+      `;
+    });
+  }
+
+  // Function to update dashboard notifications
+  function updateDashboardNotifications(notifications) {
+    const container = document.getElementById('dashboard-notifications');
+
+    if (notifications.length === 0) {
+      container.innerHTML = `
+        <div class="text-center py-3">
+          <i class="ni ni-check-bold text-success" style="font-size: 2rem;"></i>
+          <p class="text-sm text-muted mt-2 mb-0">Tidak ada notifikasi baru</p>
+        </div>
+      `;
+      return;
+    }
+
+    let html = '';
+    notifications.forEach((notification, index) => {
+      const timeAgo = getTimeAgo(notification.dibuat_pada);
+      const iconClass = notification.icon || 'ni ni-bell-55';
+      const colorClass = notification.warna || 'primary';
+      const isUnread = notification.status === 'belum_dibaca';
+
+      html += `
+        <div class="d-flex align-items-start mb-3 ${isUnread ? 'bg-light rounded p-2' : ''}">
+          <div class="icon icon-shape icon-sm bg-gradient-${colorClass} shadow text-center border-radius-md me-3">
+            <i class="${iconClass} text-white opacity-10"></i>
+          </div>
+          <div class="flex-grow-1">
+            <h6 class="mb-1 text-sm ${isUnread ? 'font-weight-bold' : ''}">
+              ${escapeHtml(notification.judul)}
+            </h6>
+            <p class="text-xs text-secondary mb-1">
+              ${escapeHtml(notification.pesan.substring(0, 60))}${notification.pesan.length > 60 ? '...' : ''}
+            </p>
+            <p class="text-xs text-secondary mb-0">
+              <i class="fa fa-clock me-1"></i>
+              ${timeAgo}
+            </p>
+          </div>
+          ${notification.url_aksi ? `
+            <a href="<?= base_url() ?>${notification.url_aksi}" class="btn btn-link text-primary p-0" onclick="markNotificationAsRead(${notification.id})">
+              <i class="ni ni-bold-right"></i>
+            </a>
+          ` : ''}
+        </div>
+      `;
+
+      // Add separator except for last item
+      if (index < notifications.length - 1) {
+        html += '<hr class="my-2">';
+      }
+    });
+
+    container.innerHTML = html;
+  }
+
+  // Helper function to escape HTML (if not already defined)
+  if (typeof escapeHtml === 'undefined') {
+    function escapeHtml(text) {
+      const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+      };
+      return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+    }
+  }
+
+  // Helper function to get time ago (if not already defined)
+  if (typeof getTimeAgo === 'undefined') {
+    function getTimeAgo(dateString) {
+      const now = new Date();
+      const date = new Date(dateString);
+      const diffInSeconds = Math.floor((now - date) / 1000);
+
+      if (diffInSeconds < 60) {
+        return 'Baru saja';
+      } else if (diffInSeconds < 3600) {
+        const minutes = Math.floor(diffInSeconds / 60);
+        return minutes + ' menit yang lalu';
+      } else if (diffInSeconds < 86400) {
+        const hours = Math.floor(diffInSeconds / 3600);
+        return hours + ' jam yang lalu';
+      } else {
+        const days = Math.floor(diffInSeconds / 86400);
+        return days + ' hari yang lalu';
+      }
+    }
+  }
 </script>

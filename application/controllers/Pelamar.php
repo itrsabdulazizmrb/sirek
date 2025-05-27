@@ -18,6 +18,7 @@ class Pelamar extends CI_Controller {
         $this->load->model('model_lamaran');
         $this->load->model('model_penilaian');
         $this->load->model('model_dokumen');
+        $this->load->model('model_notifikasi');
 
         // Load libraries
         $this->load->library('upload');
@@ -449,6 +450,9 @@ class Pelamar extends CI_Controller {
                     $this->session->set_flashdata('error', 'Terjadi kesalahan saat mengunggah dokumen: ' . implode('; ', $upload_errors));
                     redirect('pelamar/lamar/' . $job_id);
                 }
+
+                // Create notification for new application
+                $this->buat_notifikasi_lamaran_baru($application_id);
 
                 // Show success message
                 $this->session->set_flashdata('success', 'Lamaran Anda berhasil dikirim.');
@@ -1333,5 +1337,38 @@ class Pelamar extends CI_Controller {
                 redirect('pelamar/ubah_password');
             }
         }
+    }
+
+    // Helper method: Buat notifikasi untuk lamaran baru
+    private function buat_notifikasi_lamaran_baru($id_lamaran) {
+        // Get application details
+        $lamaran = $this->model_lamaran->dapatkan_lamaran($id_lamaran);
+        if (!$lamaran) return false;
+
+        // Get job details
+        $lowongan = $this->model_lowongan->dapatkan_lowongan($lamaran->id_pekerjaan);
+        if (!$lowongan) return false;
+
+        // Get applicant details
+        $pelamar = $this->model_pengguna->dapatkan_pengguna($lamaran->id_pelamar);
+        if (!$pelamar) return false;
+
+        // Get all admin users
+        $admins = $this->model_pengguna->dapatkan_pengguna_berdasarkan_peran('admin');
+
+        $notification_data = array(
+            'judul' => 'Lamaran Baru Diterima',
+            'pesan' => "Lamaran baru telah diterima untuk posisi {$lowongan->judul} dari {$pelamar->nama_lengkap}. Silakan tinjau dan proses lamaran ini.",
+            'jenis' => 'lamaran_baru',
+            'prioritas' => 'normal',
+            'id_referensi' => $id_lamaran,
+            'tabel_referensi' => 'lamaran_pekerjaan',
+            'url_aksi' => 'admin/detail_lamaran/' . $id_lamaran,
+            'dibuat_oleh' => null
+        );
+
+        // Send notification to all admins
+        $admin_ids = array_column($admins, 'id');
+        return $this->model_notifikasi->buat_notifikasi_massal($notification_data, $admin_ids);
     }
 }
